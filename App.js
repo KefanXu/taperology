@@ -1,21 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import { NavigationContainer, StackActions } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import { Index } from "./index";
+import { Calculator } from "./Calculator";
+import { Resources } from "./Resource";
+
+const Stack = createStackNavigator();
+
+class App extends React.Component {
+  render() {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Calculator"
+          screenOptions={{
+            headerShown: false,
+            headerLeft: null,
+          }}
+        >
+          <Stack.Screen name="Index" component={Index} />
+          <Stack.Screen name="Calculator" component={Calculator} />
+          <Stack.Screen name="Resources" component={Resources} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+// 	text: {
+// 		fontWeight: "bold",
+// 		fontSize: 30
+// 	}
+// })
+
+export default App;
