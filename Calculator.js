@@ -8,39 +8,328 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
-  Modal,
+  // Modal,
   LayoutAnimation,
   SectionList,
   // Button,
   Animated,
   StyleSheet,
+  Dimensions,
   Platform,
   Picker,
+  FlatList,
 } from "react-native";
-import { Button } from "react-native-paper";
-import { DatePickerModal } from "react-native-paper-dates";
-import moment, { min } from "moment";
 
-import Datepicker from "react-native-web-ui-components/Datepicker";
+import { Button, DataTable } from "react-native-paper";
+import { DatePickerModal } from "react-native-paper-dates";
+// import AwesomeAlert from "react-native-awesome-alerts";
+import Modal from "modal-enhanced-react-native-web";
+import { Ionicons } from "@expo/vector-icons";
+
+import moment, { min } from "moment";
 
 const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
-
+const BENZO_TYPE_DATA = [
+  { title: "Alprazolam", id: "Alprazolam", strength: "3, 2, 1, 0.5, 0.25" },
+  { title: "Lorazepam", id: "Lorazepam", strength: "2, 1, 0.5" },
+  { title: "Clonazepam", id: "Clonazepam", strength: "2, 1, 0.5, 0.25, 0.125" },
+  { title: "Diazepam", id: "Diazepam", strength: "10, 5, 2" },
+  { title: "Temazepam", id: "Temazepam", strength: "30, 22.5, 15, 7.5" },
+];
+const DATA = [
+  {
+    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+    title: "First Item",
+  },
+  {
+    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
+    title: "Second Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d72",
+    title: "Third Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d74",
+    title: "4 Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d75",
+    title: "5 Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d76",
+    title: "6 Item",
+  },
+  {
+    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba7",
+    title: "First Item",
+  },
+  {
+    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f638",
+    title: "Second Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d729",
+    title: "Third Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d7410",
+    title: "4 Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d7511",
+    title: "5 Item",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d7612",
+    title: "6 Item",
+  },
+];
+// const Item = ({ title }) => (
+//   <View style={styles.item}>
+//     <Text style={styles.title}>{title}</Text>
+//   </View>
+// );
+// const styles = StyleSheet.create({
+//   container: {
+//     // marginTop: StatusBar.currentHeight || 0,
+//   },
+//   item: {
+//     flex:1,
+//     backgroundColor: "#f9c2ff",
+//     padding: 20,
+//     marginVertical: 8,
+//     marginHorizontal: 16,
+//   },
+//   title: {
+//     fontSize: 32,
+//   },
+// });
 export class Calculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDatePickerVis:false,
-      datePickerButtonTxt: "Pick the start date"
-    }
+      isDatePickerVis: false,
+      datePickerButtonTxt: "Pick the start date",
+      benzoType: "Select the benzo type",
+      generateBtnTxt: "Generate Schedule",
+      page: 0,
+      optionsPerPage: [2, 3, 4],
+      itemsPerPage: [2, 3, 4],
+      // slowAlert: false,
+      visibleModal: false,
+      isAlertVisibleModal: false,
+      isConfirmationVisibleModal: false,
+      listOpacity: 0,
+      scheduleData: [],
+      stepNum: "",
+      startingDose: "",
+      alertTxt: "",
+    };
+    this.stepInput = React.createRef();
+    this.startDoseInput = React.createRef();
   }
   closeDatePicker = () => {
-    this.setState({isDatePickerVis: false});
-    console.log("close");
-  }
-  shoeDatePicker = () => {
-    this.setState({isDatePickerVis: true})
-  }
+    this.setState({ isDatePickerVis: false });
+    // console.log("close");
+  };
+  showDatePicker = () => {
+    this.setState({ isDatePickerVis: true });
+  };
+  _renderButton = (text, onPress) => (
+    <TouchableOpacity style={{ flex: 0.5 }} onPress={onPress}>
+      <View
+        style={{
+          backgroundColor: "black",
+          padding: 12,
+          margin: 16,
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 50,
+          borderColor: "rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Text style={{ fontWeight: "bold", fontSize: 16, color: "white" }}>
+          {text}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  _renderModalContent = () => (
+    <View
+      style={{
+        backgroundColor: "white",
+        width: "20%",
+        padding: 22,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        borderColor: "rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <Text
+        style={{
+          flex: 0.5,
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        {this.state.alertTxt}
+      </Text>
+      {this._renderButton("Close", () =>
+        this.setState({ isAlertVisibleModal: null })
+      )}
+    </View>
+  );
+  _renderModalContentConfirmation = () => (
+    <View
+      style={{
+        backgroundColor: "white",
+        width: "20%",
+        padding: 22,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        borderColor: "rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <Text
+        style={{
+          flex: 0.5,
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginBottom: 10,
+        }}
+      >
+        New Tapper Schedule Created!
+      </Text>
+      <Ionicons name="checkmark-circle" size={34} color="black" />
+    </View>
+  );
+
+  _renderModalContentBenzoType = () => (
+    <View
+      style={{
+        backgroundColor: "white",
+        width: "20%",
+        padding: 22,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        borderColor: "rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      {/* <Text>Hi!</Text>
+      {this._renderButton("Close", () => this.setState({ visibleModal: null }))} */}
+      <FlatList
+        style={{ width: "90%" }}
+        data={BENZO_TYPE_DATA}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{
+              backgroundColor: "black",
+              padding: 10,
+              marginVertical: 8,
+              marginHorizontal: 16,
+              flex: 1,
+              borderRadius: 30,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              this.setState({ benzoType: item.title });
+              this.setState({ visibleModal: false });
+            }}
+          >
+            <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
+              {item.title}
+            </Text>
+            <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
+              Strength / mg: {item.strength}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
+
+  calculateTapperSchedule = () => {
+    if (this.state.generateBtnTxt === "Reset") {
+      this.setState({ benzoType: "Select the benzo type" });
+      this.setState({ datePickerButtonTxt: "Pick the start date" });
+      this.setState({ stepNum: "" });
+      this.setState({ startingDose: "" });
+      this.setState({ listOpacity: 0 });
+      this.setState({ generateBtnTxt: "Generate Schedule" });
+      this.stepInput.current.clear();
+      this.startDoseInput.current.clear();
+    } else {
+      if (
+        this.state.benzoType === "" ||
+        this.state.benzoType === "Select the benzo type"
+      ) {
+        this.setState({ isAlertVisibleModal: true });
+        this.setState({ alertTxt: "Benzo type missing" });
+        return;
+      }
+      if (
+        this.state.datePickerButtonTxt === "" ||
+        this.state.datePickerButtonTxt === "Pick the start date"
+      ) {
+        this.setState({ isAlertVisibleModal: true });
+        this.setState({ alertTxt: "Please specify the start date" });
+        return;
+      }
+      if (this.state.stepNum === "" || !/^\d+$/.test(this.state.stepNum)) {
+        this.setState({ isAlertVisibleModal: true });
+        this.setState({ alertTxt: "Total Step has to be a valid number" });
+        return;
+      }
+      if (
+        this.state.startingDose === "" ||
+        !/^\d+$/.test(this.state.startingDose)
+      ) {
+        this.setState({ isAlertVisibleModal: true });
+        this.setState({ alertTxt: "Starting dose has to be a valid number" });
+        return;
+      }
+
+      this.setState({ generateBtnTxt: "Reset" });
+
+      let initialDate = this.state.datePickerButtonTxt;
+
+      console.log("initialDate", initialDate);
+      let schedule = [];
+      let startingDose = parseInt(this.state.startingDose);
+      let reducedDose = startingDose * 0.05;
+      let recurrentDate = initialDate;
+      for (let i = 0; i < this.state.stepNum; i++) {
+        let id = i + 1;
+        let duration = 7;
+        let recurrentDose = startingDose - reducedDose;
+        startingDose = recurrentDose;
+        let step = {
+          id: id,
+          duration: duration,
+          startDate: recurrentDate,
+          dosage: recurrentDose,
+        };
+        schedule.push(step);
+        recurrentDate = moment(moment(new Date(recurrentDate)).add(8, "d"))
+          .format()
+          .slice(0, 10);
+      }
+      console.log("schedule", schedule);
+      this.setState({ scheduleData: schedule });
+      this.setState({ listOpacity: 100 });
+      this.setState({ isConfirmationVisibleModal: true });
+    }
+  };
 
   render() {
     return (
@@ -50,8 +339,33 @@ export class Calculator extends React.Component {
           //backgroundColor: "blue",
           margin: 5,
           flexDirection: "row",
+          height: Dimensions.get("window").height,
+          width: Dimensions.get("window").width,
         }}
       >
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isAlertVisibleModal}
+          onBackdropPress={() => this.setState({ isAlertVisibleModal: false })}
+        >
+          {this._renderModalContent()}
+        </Modal>
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isConfirmationVisibleModal}
+          onBackdropPress={() =>
+            this.setState({ isConfirmationVisibleModal: false })
+          }
+        >
+          {this._renderModalContentConfirmation()}
+        </Modal>
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.visibleModal}
+          onBackdropPress={() => this.setState({ visibleModal: false })}
+        >
+          {this._renderModalContentBenzoType()}
+        </Modal>
         <View
           style={{
             flex: 0.2,
@@ -126,16 +440,25 @@ export class Calculator extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={{ flex: 0.8, backgroundColor: "", margin: 5 }}>
-          <View style={{ flex: 0.1, margin: 10, backgroundColor: "blue" }}>
+          <View
+            style={{
+              height: 60,
+              margin: 10,
+              //backgroundColor: "blue"
+            }}
+          >
             <Text style={{ fontWeight: "bold", fontSize: 65 }}>
               Tapper Schedular
             </Text>
           </View>
+          {/* Input field */}
           <View
             style={{
-              flex: 0.1,
-              margin: 10,
-              backgroundColor: "red",
+              // flex: 0.06,
+              height: 80,
+              marginTop: 30,
+              marginLeft: 20,
+              // backgroundColor: "red",
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
@@ -143,7 +466,7 @@ export class Calculator extends React.Component {
           >
             <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
               <Text style={{ fontWeight: "bold" }}>#1 Benzodiazeoines</Text>
-              <View
+              <TouchableOpacity
                 style={{
                   flex: 1,
 
@@ -152,30 +475,21 @@ export class Calculator extends React.Component {
                   borderWidth: 2,
                   borderRadius: 30,
                   borderColor: "black",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "black",
+                }}
+                onPress={() => {
+                  this.setState({ visibleModal: true });
                 }}
               >
-                <TextInput
-                  // secureTextEntry={true}
-                  style={Platform.select({
-                    web: {
-                      outlineStyle: "none",
-                      flex: 1,
-                      marginLeft: 20,
-                      marginRight: 20,
-                      fontSize: 20,
-                    },
-                  })}
-                  maxLength={35}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  // value={this.state.reason}
-                  onChangeText={(text) => {}}
-                />
-              </View>
+                <Text style={{ fontWeight: "bold", color: "white" }}>
+                  {this.state.benzoType}
+                </Text>
+              </TouchableOpacity>
             </View>
             {/* Pick the start date */}
             <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-            
               <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
 
               <DatePickerModal
@@ -185,9 +499,11 @@ export class Calculator extends React.Component {
                 onDismiss={this.closeDatePicker}
                 date={new Date()}
                 onConfirm={(date) => {
-                  let selectedDate = moment(new Date(date.date)).format().slice(0,10)
-                  console.log("selectedDate",selectedDate);
-                  this.setState({datePickerButtonTxt:selectedDate});
+                  let selectedDate = moment(new Date(date.date))
+                    .format()
+                    .slice(0, 10);
+                  console.log("selectedDate", selectedDate);
+                  this.setState({ datePickerButtonTxt: selectedDate });
                   this.closeDatePicker();
                 }}
                 // validRange={{
@@ -208,13 +524,15 @@ export class Calculator extends React.Component {
                   borderWidth: 2,
                   borderRadius: 30,
                   borderColor: "black",
-                  alignItems:"center",
-                  justifyContent:"center",
-                  backgroundColor:"black"
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "black",
                 }}
-                onPress={this.shoeDatePicker}
+                onPress={this.showDatePicker}
               >
-                <Text style={{fontWeight:"bold", color:"white"}}>{this.state.datePickerButtonTxt}</Text>
+                <Text style={{ fontWeight: "bold", color: "white" }}>
+                  {this.state.datePickerButtonTxt}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
@@ -232,6 +550,8 @@ export class Calculator extends React.Component {
               >
                 <TextInput
                   // secureTextEntry={true}
+                  ref={this.stepInput}
+                  placeholder="i.e., 3,4,5"
                   style={Platform.select({
                     web: {
                       outlineStyle: "none",
@@ -245,7 +565,9 @@ export class Calculator extends React.Component {
                   autoCapitalize="none"
                   autoCorrect={false}
                   // value={this.state.reason}
-                  onChangeText={(text) => {}}
+                  onChangeText={(text) => {
+                    this.setState({ stepNum: text });
+                  }}
                 />
               </View>
             </View>
@@ -264,6 +586,8 @@ export class Calculator extends React.Component {
               >
                 <TextInput
                   // secureTextEntry={true}
+                  ref={this.startDoseInput}
+                  placeholder="i.e., 100, 120"
                   style={Platform.select({
                     web: {
                       outlineStyle: "none",
@@ -277,12 +601,16 @@ export class Calculator extends React.Component {
                   autoCapitalize="none"
                   autoCorrect={false}
                   // value={this.state.reason}
-                  onChangeText={(text) => {}}
+                  onChangeText={(text) => {
+                    this.setState({ startingDose: text });
+                  }}
                 />
               </View>
             </View>
             <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-              <Text style={{ color: "white" }}>#1 Benzodiazeoines</Text>
+              <Text style={{ color: "white", opacity: 0 }}>
+                {this.state.generateBtnTxt}
+              </Text>
               <TouchableOpacity
                 style={{
                   flex: 1,
@@ -297,14 +625,136 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                 }}
                 onPress={() => {
-                  console.log("generate");
+                  this.calculateTapperSchedule();
+                  // this.setState({ generateBtnTxt: "Reset" });
                 }}
               >
                 <Text style={{ fontWeight: "bold", color: "white" }}>
-                  Generate Schedule
+                  {this.state.generateBtnTxt}
                 </Text>
               </TouchableOpacity>
             </View>
+          </View>
+          <View style={{ marginTop: 20 }}>
+            <View
+              style={{
+                padding: 20,
+                marginVertical: 8,
+                marginHorizontal: 16,
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderBottomColor: "black",
+                borderBottomWidth: 2,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>Step</Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  Duration
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  Start Date
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>Dosage</Text>
+              </View>
+            </View>
+          </View>
+          <View
+            style={{
+              flex: 0.6,
+              margin: 10,
+              flexDirection: "row",
+              justifyContent: "center",
+              opacity: this.state.listOpacity,
+
+              //alignItems: "center",
+            }}
+          >
+            <FlatList
+              data={this.state.scheduleData}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    padding: 20,
+                    marginVertical: 8,
+                    marginHorizontal: 16,
+                    flex: 1,
+                    flexDirection: "row",
+                    borderBottomColor: "black",
+                    borderBottomWidth: 1,
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ fontSize: 14 }}>Step {item.id}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ fontSize: 14 }}>{item.duration} days</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ fontSize: 14 }}>{item.startDate}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ fontSize: 14 }}>{item.dosage}</Text>
+                  </View>
+                </View>
+              )}
+            />
           </View>
         </View>
       </View>

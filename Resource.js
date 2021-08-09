@@ -95,7 +95,9 @@ export class Resources extends React.Component {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 0.8, backgroundColor: "red", margin: 5 }}>
+        <View style={{ flex: 0.8, 
+        //backgroundColor: "red", 
+        margin: 5 }}>
           <Text style={{ fontWeight: "bold", fontSize: 30 }}>Resources</Text>
         </View>
       </View>

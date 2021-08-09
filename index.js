@@ -32,7 +32,7 @@ export class Index extends React.Component {
       <View
         style={{
           flex: 1,
-          // backgroundColor: "blue",
+          //backgroundColor: "blue",
           margin: 5,
           flexDirection: "row",
         }}
@@ -95,7 +95,9 @@ export class Index extends React.Component {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 0.8, backgroundColor: "red", margin: 5 }}>
+        <View style={{ flex: 0.8, 
+        //backgroundColor: "red", 
+        margin: 5 }}>
           <Text style={{ fontWeight: "bold", fontSize: 30 }}>Index</Text>
         </View>
       </View>
