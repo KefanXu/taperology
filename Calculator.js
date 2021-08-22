@@ -25,6 +25,9 @@ import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
 import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { Menu } from "./menu";
 
 import moment, { min } from "moment";
 
@@ -36,56 +39,6 @@ const BENZO_TYPE_DATA = [
   { title: "Clonazepam", id: "Clonazepam", strength: "2, 1, 0.5, 0.25, 0.125" },
   { title: "Diazepam", id: "Diazepam", strength: "10, 5, 2" },
   { title: "Temazepam", id: "Temazepam", strength: "30, 22.5, 15, 7.5" },
-];
-const DATA = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    title: "First Item",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    title: "Second Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d74",
-    title: "4 Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d75",
-    title: "5 Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d76",
-    title: "6 Item",
-  },
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba7",
-    title: "First Item",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f638",
-    title: "Second Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d729",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d7410",
-    title: "4 Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d7511",
-    title: "5 Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d7612",
-    title: "6 Item",
-  },
 ];
 // const Item = ({ title }) => (
 //   <View style={styles.item}>
@@ -124,13 +77,30 @@ export class Calculator extends React.Component {
       isConfirmationVisibleModal: false,
       listOpacity: 0,
       scheduleData: [],
-      stepNum: "",
+      stepNum: 12,
       startingDose: "",
       alertTxt: "",
+      confirmModalTxt: "",
+      isAddBtnDisable: true,
     };
-    this.stepInput = React.createRef();
+    //this.stepInput = React.createRef();
     this.startDoseInput = React.createRef();
   }
+  navResource = () => {
+    this.props.navigation.navigate("Resources", {
+      // needsUpdate: this.needsUpdate,
+    });
+  };
+  navIndex = () => {
+    this.props.navigation.navigate("Index", {
+      // needsUpdate: this.needsUpdate,
+    });
+  };
+  navCal = () => {
+    this.props.navigation.navigate("Calculator", {
+      // needsUpdate: this.needsUpdate,
+    });
+  };
   closeDatePicker = () => {
     this.setState({ isDatePickerVis: false });
     // console.log("close");
@@ -206,7 +176,7 @@ export class Calculator extends React.Component {
           marginBottom: 10,
         }}
       >
-        New Tapper Schedule Created!
+        {this.state.confirmModalTxt}
       </Text>
       <Ionicons name="checkmark-circle" size={34} color="black" />
     </View>
@@ -262,11 +232,12 @@ export class Calculator extends React.Component {
     if (this.state.generateBtnTxt === "Reset") {
       this.setState({ benzoType: "Select the benzo type" });
       this.setState({ datePickerButtonTxt: "Pick the start date" });
-      this.setState({ stepNum: "" });
+      this.setState({ stepNum: 12 });
       this.setState({ startingDose: "" });
       this.setState({ listOpacity: 0 });
       this.setState({ generateBtnTxt: "Generate Schedule" });
-      this.stepInput.current.clear();
+      this.setState({ isAddBtnDisable: true });
+      //this.stepInput.current.clear();
       this.startDoseInput.current.clear();
     } else {
       if (
@@ -285,11 +256,11 @@ export class Calculator extends React.Component {
         this.setState({ alertTxt: "Please specify the start date" });
         return;
       }
-      if (this.state.stepNum === "" || !/^\d+$/.test(this.state.stepNum)) {
-        this.setState({ isAlertVisibleModal: true });
-        this.setState({ alertTxt: "Total Step has to be a valid number" });
-        return;
-      }
+      // if (this.state.stepNum === "" || !/^\d+$/.test(this.state.stepNum)) {
+      //   this.setState({ isAlertVisibleModal: true });
+      //   this.setState({ alertTxt: "Total Step has to be a valid number" });
+      //   return;
+      // }
       if (
         this.state.startingDose === "" ||
         !/^\d+$/.test(this.state.startingDose)
@@ -303,14 +274,14 @@ export class Calculator extends React.Component {
 
       let initialDate = this.state.datePickerButtonTxt;
 
-      console.log("initialDate", initialDate);
+      //console.log("initialDate", initialDate);
       let schedule = [];
       let startingDose = parseInt(this.state.startingDose);
       let reducedDose = startingDose * 0.05;
       let recurrentDate = initialDate;
-      for (let i = 0; i < this.state.stepNum; i++) {
+      for (let i = 0; i < 2; i++) {
         let id = i + 1;
-        let duration = 7;
+        let duration = 14;
         let recurrentDose = startingDose - reducedDose;
         startingDose = recurrentDose;
         let step = {
@@ -320,15 +291,131 @@ export class Calculator extends React.Component {
           dosage: recurrentDose,
         };
         schedule.push(step);
-        recurrentDate = moment(moment(new Date(recurrentDate)).add(8, "d"))
+        recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+          .format()
+          .slice(0, 10);
+      }
+      reducedDose = startingDose * 0.05;
+      for (let i = 2; i < this.state.stepNum; i++) {
+        let id = i + 1;
+        let duration = 14;
+        let recurrentDose = startingDose - reducedDose;
+        startingDose = recurrentDose;
+        let step = {
+          id: id,
+          duration: duration,
+          startDate: recurrentDate,
+          dosage: recurrentDose,
+        };
+        schedule.push(step);
+        recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
           .format()
           .slice(0, 10);
       }
       console.log("schedule", schedule);
       this.setState({ scheduleData: schedule });
       this.setState({ listOpacity: 100 });
+      this.setState({ confirmModalTxt: "New tapper schedule created!" });
       this.setState({ isConfirmationVisibleModal: true });
+      this.setState({ isAddBtnDisable: false });
     }
+  };
+  addStep = () => {
+    let currentStepNum = this.state.stepNum;
+    currentStepNum++;
+    this.setState({ stepNum: currentStepNum });
+    let duration = 14;
+    let currentSchedule = this.state.scheduleData;
+    let lastStep = currentSchedule[this.state.scheduleData.length - 1];
+    let recurrentDose =
+      lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
+    let step = {
+      id: lastStep.id + 1,
+      duration: duration,
+      startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
+        .format()
+        .slice(0, 10),
+      dosage: recurrentDose,
+    };
+    currentSchedule.push(step);
+    this.setState({ scheduleData: currentSchedule });
+    this.setState({ confirmModalTxt: "One step added." });
+    this.setState({ isConfirmationVisibleModal: true });
+    console.log("step", step);
+  };
+  removeStep = () => {
+    let currentSchedule = this.state.scheduleData;
+    currentSchedule.pop();
+    this.setState({ scheduleData: currentSchedule });
+  };
+
+  reduceDose = (id) => {
+    let currentSchedule = this.state.scheduleData;
+    for (let step of currentSchedule) {
+      if (step.id === id) {
+        if (step.dosage === 0) {
+          return;
+        } else {
+          step.dosage--;
+        }
+      }
+    }
+    this.setState({ schedule: currentSchedule });
+  };
+  increaseDose = (id) => {
+    let currentSchedule = this.state.scheduleData;
+    for (let step of currentSchedule) {
+      if (step.id === id) {
+        if (step.dosage >= this.state.startingDose) {
+          return;
+        } else {
+          step.dosage++;
+        }
+      }
+    }
+    this.setState({ schedule: currentSchedule });
+  };
+  reduceDuration = (id) => {
+    let currentSchedule = this.state.scheduleData;
+    for (let step of currentSchedule) {
+      if (step.id === id) {
+        if (step.duration === 1) {
+          return;
+        } else {
+          step.duration--;
+          step.startDate = moment(
+            moment(new Date(step.startDate)).subtract(0, "d")
+          )
+            .format()
+            .slice(0, 10);
+        }
+      }
+      if (step.id > id) {
+        step.startDate = moment(
+          moment(new Date(step.startDate)).subtract(0, "d")
+        )
+          .format()
+          .slice(0, 10);
+      }
+    }
+    this.setState({ schedule: currentSchedule });
+  };
+  increaseDuration = (id) => {
+    let currentSchedule = this.state.scheduleData;
+    for (let step of currentSchedule) {
+      if (step.id === id) {
+        step.duration++;
+        step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
+          .format()
+          .slice(0, 10);
+      }
+      if (step.id > id) {
+        step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
+          .format()
+          .slice(0, 10);
+      }
+    }
+    this.setState({ schedule: currentSchedule });
   };
 
   render() {
@@ -366,176 +453,110 @@ export class Calculator extends React.Component {
         >
           {this._renderModalContentBenzoType()}
         </Modal>
-        <View
-          style={{
-            flex: 0.2,
-            backgroundColor: PRIMARY_COLOR,
-            margin: 5,
-            borderRadius: 15,
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate("Index", {
-                // needsUpdate: this.needsUpdate,
-              });
-            }}
-            style={{ margin: 10 }}
-          >
-            <Text style={{ fontWeight: "bold", fontSize: 50, margin: 5 }}>
-              Taperology
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate("Calculator", {
-                // needsUpdate: this.needsUpdate,
-              });
-            }}
-            style={{ margin: 10 }}
-          >
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: SEC_COLOR,
-                margin: 5,
-                borderRadius: 5,
-                padding: 10,
-              }}
-            >
-              <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-                Tapper Schedular
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate("Resources", {
-                // needsUpdate: this.needsUpdate,
-              });
-            }}
-            style={{ margin: 10 }}
-          >
-            <View style={{ flex: 1, margin: 5, padding: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-                Resources
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate("Calculator", {
-                // needsUpdate: this.needsUpdate,
-              });
-            }}
-            style={{ margin: 10 }}
-            disabled={true}
-          >
-            <View style={{ flex: 1, margin: 5, padding: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-                Refer Patient
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        <Menu
+          navResource={this.navResource}
+          navIndex={this.navIndex}
+          navCal={this.navCal}
+        />
         <View style={{ flex: 0.8, backgroundColor: "", margin: 5 }}>
           <View
             style={{
-              height: 60,
+              height: 200,
               margin: 10,
-              //backgroundColor: "blue"
-            }}
-          >
-            <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-              Tapper Schedular
-            </Text>
-          </View>
-          {/* Input field */}
-          <View
-            style={{
-              // flex: 0.06,
-              height: 80,
-              marginTop: 30,
-              marginLeft: 20,
-              // backgroundColor: "red",
+
+              justifyContent: "space-between",
               flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
             }}
           >
-            <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-              <Text style={{ fontWeight: "bold" }}>#1 Benzodiazeoines</Text>
-              <TouchableOpacity
+            <View style={{ width: "70%" }}>
+              <Text style={{ fontWeight: "bold", fontSize: 65 }}>
+                Tapper Schedular
+              </Text>
+              {/* Input field */}
+              <View
                 style={{
+                  // flex: 0.06,
+                  height: 60,
                   flex: 1,
-
-                  marginRight: 50,
-                  marginTop: 10,
-                  borderWidth: 2,
-                  borderRadius: 30,
-                  borderColor: "black",
+                  marginTop: 30,
+                  //backgroundColor: "red",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
                   alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "black",
-                }}
-                onPress={() => {
-                  this.setState({ visibleModal: true });
                 }}
               >
-                <Text style={{ fontWeight: "bold", color: "white" }}>
-                  {this.state.benzoType}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {/* Pick the start date */}
-            <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-              <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
+                <View style={{ flex: 0.25, height: "80%" }}>
+                  <Text style={{ fontWeight: "bold" }}>#1 Benzodiazeoines</Text>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
 
-              <DatePickerModal
-                // locale={'en'} optional, default: automatic
-                mode="single"
-                visible={this.state.isDatePickerVis}
-                onDismiss={this.closeDatePicker}
-                date={new Date()}
-                onConfirm={(date) => {
-                  let selectedDate = moment(new Date(date.date))
-                    .format()
-                    .slice(0, 10);
-                  console.log("selectedDate", selectedDate);
-                  this.setState({ datePickerButtonTxt: selectedDate });
-                  this.closeDatePicker();
-                }}
-                // validRange={{
-                //   startDate: new Date(2021, 1, 2),  // optional
-                //   endDate: new Date(), // optional
-                // }}
-                // onChange={} // same props as onConfirm but triggered without confirmed by user
-                // saveLabel="Save" // optional
-                // label="Select date" // optional
-                // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
-              />
-              <TouchableOpacity
-                style={{
-                  flex: 1,
+                      marginRight: 50,
+                      marginTop: 10,
+                      borderWidth: 2,
+                      borderRadius: 30,
+                      borderColor: "black",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "black",
+                    }}
+                    onPress={() => {
+                      this.setState({ visibleModal: true });
+                    }}
+                  >
+                    <Text style={{ fontWeight: "bold", color: "white" }}>
+                      {this.state.benzoType}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {/* Pick the start date */}
+                <View style={{ flex: 0.25, height: "80%" }}>
+                  <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
 
-                  marginRight: 50,
-                  marginTop: 10,
-                  borderWidth: 2,
-                  borderRadius: 30,
-                  borderColor: "black",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "black",
-                }}
-                onPress={this.showDatePicker}
-              >
-                <Text style={{ fontWeight: "bold", color: "white" }}>
-                  {this.state.datePickerButtonTxt}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
+                  <DatePickerModal
+                    // locale={'en'} optional, default: automatic
+                    mode="single"
+                    visible={this.state.isDatePickerVis}
+                    onDismiss={this.closeDatePicker}
+                    date={new Date()}
+                    onConfirm={(date) => {
+                      let selectedDate = moment(new Date(date.date))
+                        .format()
+                        .slice(0, 10);
+                      console.log("selectedDate", selectedDate);
+                      this.setState({ datePickerButtonTxt: selectedDate });
+                      this.closeDatePicker();
+                    }}
+                    // validRange={{
+                    //   startDate: new Date(2021, 1, 2),  // optional
+                    //   endDate: new Date(), // optional
+                    // }}
+                    // onChange={} // same props as onConfirm but triggered without confirmed by user
+                    // saveLabel="Save" // optional
+                    // label="Select date" // optional
+                    // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
+                  />
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+
+                      marginRight: 50,
+                      marginTop: 10,
+                      borderWidth: 2,
+                      borderRadius: 30,
+                      borderColor: "black",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "black",
+                    }}
+                    onPress={this.showDatePicker}
+                  >
+                    <Text style={{ fontWeight: "bold", color: "white" }}>
+                      {this.state.datePickerButtonTxt}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {/* <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
               <Text style={{ fontWeight: "bold" }}>#3 Total Steps</Text>
               <View
                 style={{
@@ -570,72 +591,175 @@ export class Calculator extends React.Component {
                   }}
                 />
               </View>
-            </View>
-            <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-              <Text style={{ fontWeight: "bold" }}>#4 Starting Dose</Text>
-              <View
-                style={{
-                  flex: 1,
-
-                  marginRight: 50,
-                  marginTop: 10,
-                  borderWidth: 2,
-                  borderRadius: 30,
-                  borderColor: "black",
-                }}
-              >
-                <TextInput
-                  // secureTextEntry={true}
-                  ref={this.startDoseInput}
-                  placeholder="i.e., 100, 120"
-                  style={Platform.select({
-                    web: {
-                      outlineStyle: "none",
+            </View> */}
+                <View style={{ flex: 0.25, height: "80%" }}>
+                  <Text style={{ fontWeight: "bold" }}>#3 Starting Dose</Text>
+                  <View
+                    style={{
                       flex: 1,
-                      marginLeft: 20,
-                      marginRight: 20,
-                      fontSize: 20,
-                    },
-                  })}
-                  maxLength={35}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  // value={this.state.reason}
-                  onChangeText={(text) => {
-                    this.setState({ startingDose: text });
-                  }}
-                />
+
+                      marginRight: 50,
+                      marginTop: 10,
+                      borderWidth: 2,
+                      borderRadius: 30,
+                      borderColor: "black",
+                    }}
+                  >
+                    <TextInput
+                      // secureTextEntry={true}
+                      ref={this.startDoseInput}
+                      placeholder="i.e., 100, 120"
+                      style={Platform.select({
+                        web: {
+                          outlineStyle: "none",
+                          flex: 1,
+                          marginLeft: 20,
+                          marginRight: 20,
+                          fontSize: 20,
+                        },
+                      })}
+                      maxLength={35}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      // value={this.state.reason}
+                      onChangeText={(text) => {
+                        this.setState({ startingDose: text });
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={{ flex: 0.25, height: "80%" }}>
+                  <Text style={{ color: "white", opacity: 0 }}>
+                    {this.state.generateBtnTxt}
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+
+                      marginRight: 50,
+                      marginTop: 10,
+                      borderWidth: 2,
+                      borderRadius: 30,
+                      borderColor: "black",
+                      backgroundColor: "black",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    onPress={() => {
+                      this.calculateTapperSchedule();
+                      // this.setState({ generateBtnTxt: "Reset" });
+                    }}
+                  >
+                    <Text style={{ fontWeight: "bold", color: "white" }}>
+                      {this.state.generateBtnTxt}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-            <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-              <Text style={{ color: "white", opacity: 0 }}>
-                {this.state.generateBtnTxt}
-              </Text>
+            <View
+              style={{
+                height: "90%",
+                width: 400,
+                padding: 10,
+                backgroundColor: PRIMARY_COLOR,
+                borderRadius: 20,
+                marginRight: 50,
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Tips</Text>
+              <View style={{ flexDirection: "row", marginTop: 10 }}>
+                <View style={{ flex: 1, marginRight: 15 }}>
+                  <Text
+                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
+                  >
+                    Alprazolam
+                  </Text>
+                  <Text style={{ fontSize: 11, marginTop: 2 }}>
+                    Strength (mg): 3, 2, 1, 0.5, 0.25
+                  </Text>
+                  <Text
+                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
+                  >
+                    Lorazepam
+                  </Text>
+                  <Text style={{ fontSize: 11, marginTop: 2 }}>
+                    Strength (mg): 2, 1, 0.5
+                  </Text>
+                  <Text
+                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
+                  >
+                    Clonazepam
+                  </Text>
+                  <Text style={{ fontSize: 11, marginTop: 2 }}>
+                    Strength (mg): 2, 1, 0.5, 0.25, 0.125
+                  </Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
+                  >
+                    Diazepam
+                  </Text>
+                  <Text style={{ fontSize: 11, marginTop: 2 }}>
+                    Strength (mg): 10, 5, 2
+                  </Text>
+                  <Text
+                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
+                  >
+                    Temazepam
+                  </Text>
+                  <Text style={{ fontSize: 11, marginTop: 2 }}>
+                    Strength (mg): 30, 22.5, 15, 7.5
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={{ marginTop: 20 }}>
+            <View style={{ marginLeft: 20, flexDirection: "row" }}>
               <TouchableOpacity
                 style={{
-                  flex: 1,
-
-                  marginRight: 50,
-                  marginTop: 10,
-                  borderWidth: 2,
-                  borderRadius: 30,
-                  borderColor: "black",
-                  backgroundColor: "black",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
                   alignItems: "center",
-                  justifyContent: "center",
+                  width: 150,
+                  //backgroundColor:"red"
                 }}
                 onPress={() => {
-                  this.calculateTapperSchedule();
-                  // this.setState({ generateBtnTxt: "Reset" });
+                  this.addStep();
                 }}
+                disabled={this.state.isAddBtnDisable}
               >
-                <Text style={{ fontWeight: "bold", color: "white" }}>
-                  {this.state.generateBtnTxt}
+                <Ionicons name="add-circle" size={32} color="black" />
+                <Text
+                  style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+                >
+                  Add Step
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  width: 150,
+                  //backgroundColor:"red"
+                }}
+                onPress={() => {
+                  this.removeStep();
+                }}
+                disabled={this.state.isAddBtnDisable}
+              >
+                <Ionicons name="remove-circle" size={32} color="black" />
+                <Text
+                  style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+                >
+                  Remove Step
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
-          <View style={{ marginTop: 20 }}>
             <View
               style={{
                 padding: 20,
@@ -687,7 +811,9 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>Dosage</Text>
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  Target Dosage / Starting Dosage
+                </Text>
               </View>
             </View>
           </View>
@@ -730,9 +856,22 @@ export class Calculator extends React.Component {
                       flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
+                      flexDirection: "row",
                     }}
                   >
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.reduceDuration(item.id);
+                      }}
+                    >
+                      <AntDesign name="caretleft" size={24} color="black" />
+                    </TouchableOpacity>
                     <Text style={{ fontSize: 14 }}>{item.duration} days</Text>
+                    <TouchableOpacity
+                      onPress={() => this.increaseDuration(item.id)}
+                    >
+                      <AntDesign name="caretright" size={24} color="black" />
+                    </TouchableOpacity>
                   </View>
                   <View
                     style={{
@@ -748,9 +887,25 @@ export class Calculator extends React.Component {
                       flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
+                      flexDirection: "row",
                     }}
                   >
-                    <Text style={{ fontSize: 14 }}>{item.dosage}</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.reduceDose(item.id);
+                      }}
+                    >
+                      <AntDesign name="caretleft" size={24} color="black" />
+                    </TouchableOpacity>
+                    <Text style={{ fontSize: 14 }}>
+                      {parseInt(item.dosage)} |{" "}
+                      {parseInt((item.dosage / this.state.startingDose) * 100)}%
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => this.increaseDose(item.id)}
+                    >
+                      <AntDesign name="caretright" size={24} color="black" />
+                    </TouchableOpacity>
                   </View>
                 </View>
               )}
