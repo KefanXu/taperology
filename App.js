@@ -8,6 +8,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Index } from "./index";
 import { Calculator } from "./Calculator";
 import { Resources } from "./Resource";
+import { UserCenter} from "./UserCenter";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ class App extends React.Component {
           <Stack.Screen name="Index" component={Index} />
           <Stack.Screen name="Calculator" component={Calculator} />
           <Stack.Screen name="Resources" component={Resources} />
+          <Stack.Screen name="UserCenter" component={UserCenter} />
         </Stack.Navigator>
       </NavigationContainer>
     );

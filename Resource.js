@@ -172,8 +172,8 @@ export class Resources extends React.Component {
         />
         <View
           style={{
-            flex: 0.8,
-            //backgroundColor: "red",
+            flex: 1500,
+            // backgroundColor: "red",
             margin: 5,
           }}
         >

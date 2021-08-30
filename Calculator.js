@@ -24,10 +24,15 @@ import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
+import {
+  Ionicons,
+  AntDesign,
+  FontAwesome,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { Menu } from "./menu";
+import { getDataModel } from "./DataModel";
+import { GoogleLogin } from "./googleLogin";
 
 import moment, { min } from "moment";
 
@@ -75,6 +80,7 @@ export class Calculator extends React.Component {
       visibleModal: false,
       isAlertVisibleModal: false,
       isConfirmationVisibleModal: false,
+      isLoginVisibleModal: false,
       listOpacity: 0,
       scheduleData: [],
       stepNum: 12,
@@ -82,9 +88,11 @@ export class Calculator extends React.Component {
       alertTxt: "",
       confirmModalTxt: "",
       isAddBtnDisable: true,
+      entry: "menu",
     };
     //this.stepInput = React.createRef();
     this.startDoseInput = React.createRef();
+    this.dataModel = getDataModel();
   }
   navResource = () => {
     this.props.navigation.navigate("Resources", {
@@ -98,6 +106,27 @@ export class Calculator extends React.Component {
   };
   navCal = () => {
     this.props.navigation.navigate("Calculator", {
+      // needsUpdate: this.needsUpdate,
+    });
+  };
+  login = () => {
+    if (this.dataModel.isLogin) {
+      console.log("allow login");
+    }
+  };
+  navUserCenter = async () => {
+    if (this.dataModel.isLogin) {
+      await this.dataModel.loadUserSchedules(this.dataModel.key);
+      this.props.navigation.navigate("UserCenter", {
+        // needsUpdate: this.needsUpdate,
+      });
+    } else {
+      this.setState({ entry: "menu" });
+      this.setState({ isLoginVisibleModal: true });
+    }
+  };
+  navUserCenterDir = () => {
+    this.props.navigation.navigate("UserCenter", {
       // needsUpdate: this.needsUpdate,
     });
   };
@@ -181,6 +210,42 @@ export class Calculator extends React.Component {
       <Ionicons name="checkmark-circle" size={34} color="black" />
     </View>
   );
+  _renderModalLogin = () => (
+    <View
+      style={{
+        backgroundColor: "white",
+        width: "20%",
+        padding: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        borderColor: "rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <FontAwesome name="user-circle-o" size={32} color="black" />
+
+      <View
+        style={{
+          flex: 1,
+          // backgroundColor: "red",
+          marginTop: 15,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <GoogleLogin
+          navUserCenter={this.navUserCenterDir}
+          dismissLoginModal={this.dismissLoginModal}
+          entry={this.state.entry}
+          saveSchedule = {this.saveSchedule}
+        />
+      </View>
+    </View>
+  );
+  dismissLoginModal = () => {
+    this.setState({ isLoginVisibleModal: false });
+  };
 
   _renderModalContentBenzoType = () => (
     <View
@@ -227,18 +292,21 @@ export class Calculator extends React.Component {
       />
     </View>
   );
+  reset = () => {
+    this.setState({ benzoType: "Select the benzo type" });
+    this.setState({ datePickerButtonTxt: "Pick the start date" });
+    this.setState({ stepNum: 12 });
+    this.setState({ startingDose: "" });
+    this.setState({ listOpacity: 0 });
+    this.setState({ generateBtnTxt: "Generate Schedule" });
+    this.setState({ isAddBtnDisable: true });
+    //this.stepInput.current.clear();
+    this.startDoseInput.current.clear();
+  };
 
   calculateTapperSchedule = () => {
     if (this.state.generateBtnTxt === "Reset") {
-      this.setState({ benzoType: "Select the benzo type" });
-      this.setState({ datePickerButtonTxt: "Pick the start date" });
-      this.setState({ stepNum: 12 });
-      this.setState({ startingDose: "" });
-      this.setState({ listOpacity: 0 });
-      this.setState({ generateBtnTxt: "Generate Schedule" });
-      this.setState({ isAddBtnDisable: true });
-      //this.stepInput.current.clear();
-      this.startDoseInput.current.clear();
+      this.reset();
     } else {
       if (
         this.state.benzoType === "" ||
@@ -276,8 +344,9 @@ export class Calculator extends React.Component {
 
       //console.log("initialDate", initialDate);
       let schedule = [];
-      let startingDose = parseInt(this.state.startingDose);
-      let reducedDose = startingDose * 0.05;
+      let startingInputDose = parseInt(this.state.startingDose);
+      let startingDose = startingInputDose;
+      let reducedDose = startingInputDose * 0.25;
       let recurrentDate = initialDate;
       for (let i = 0; i < 2; i++) {
         let id = i + 1;
@@ -295,7 +364,7 @@ export class Calculator extends React.Component {
           .format()
           .slice(0, 10);
       }
-      reducedDose = startingDose * 0.05;
+      reducedDose = startingInputDose * 0.05;
       for (let i = 2; i < this.state.stepNum; i++) {
         let id = i + 1;
         let duration = 14;
@@ -315,7 +384,7 @@ export class Calculator extends React.Component {
       console.log("schedule", schedule);
       this.setState({ scheduleData: schedule });
       this.setState({ listOpacity: 100 });
-      this.setState({ confirmModalTxt: "New tapper schedule created!" });
+      this.setState({ confirmModalTxt: "New taper schedule created!" });
       this.setState({ isConfirmationVisibleModal: true });
       this.setState({ isAddBtnDisable: false });
     }
@@ -383,11 +452,11 @@ export class Calculator extends React.Component {
           return;
         } else {
           step.duration--;
-          step.startDate = moment(
-            moment(new Date(step.startDate)).subtract(0, "d")
-          )
-            .format()
-            .slice(0, 10);
+          // step.startDate = moment(
+          //   moment(new Date(step.startDate)).subtract(0, "d")
+          // )
+          //   .format()
+          //   .slice(0, 10);
         }
       }
       if (step.id > id) {
@@ -405,9 +474,9 @@ export class Calculator extends React.Component {
     for (let step of currentSchedule) {
       if (step.id === id) {
         step.duration++;
-        step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
-          .format()
-          .slice(0, 10);
+        // step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
+        //   .format()
+        //   .slice(0, 10);
       }
       if (step.id > id) {
         step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
@@ -416,6 +485,22 @@ export class Calculator extends React.Component {
       }
     }
     this.setState({ schedule: currentSchedule });
+  };
+  saveSchedule = async() => {
+    let scheduleToSave = this.state.scheduleData;
+    let newSchedule = {
+      startDate: scheduleToSave[0].startDate,
+      bezo: this.state.benzoType,
+      createdDate: moment(new Date()).format(),
+      totalStep: scheduleToSave.length,
+      schedule: scheduleToSave,
+    };
+    await this.dataModel.createNewSchedule(this.dataModel.key, newSchedule);
+    this.reset();
+    this.setState({
+      confirmModalTxt: "New taper schedule saved!",
+    });
+    this.setState({ isConfirmationVisibleModal: true });
   };
 
   render() {
@@ -448,6 +533,13 @@ export class Calculator extends React.Component {
         </Modal>
         <Modal
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isLoginVisibleModal}
+          onBackdropPress={() => this.setState({ isLoginVisibleModal: false })}
+        >
+          {this._renderModalLogin()}
+        </Modal>
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           isVisible={this.state.visibleModal}
           onBackdropPress={() => this.setState({ visibleModal: false })}
         >
@@ -457,8 +549,10 @@ export class Calculator extends React.Component {
           navResource={this.navResource}
           navIndex={this.navIndex}
           navCal={this.navCal}
+          navUserCenter={this.navUserCenter}
+          // login={this.login}
         />
-        <View style={{ flex: 0.8, backgroundColor: "", margin: 5 }}>
+        <View style={{ width: 1500, backgroundColor: "", margin: 5 }}>
           <View
             style={{
               height: 200,
@@ -470,7 +564,7 @@ export class Calculator extends React.Component {
           >
             <View style={{ width: "70%" }}>
               <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-                Tapper Schedular
+                Taper Scheduler
               </Text>
               {/* Input field */}
               <View
@@ -667,7 +761,9 @@ export class Calculator extends React.Component {
                 marginRight: 50,
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Tips</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                Common Dose Strengths
+              </Text>
               <View style={{ flexDirection: "row", marginTop: 10 }}>
                 <View style={{ flex: 1, marginRight: 15 }}>
                   <Text
@@ -759,6 +855,32 @@ export class Calculator extends React.Component {
                   Remove Step
                 </Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  width: 200,
+                  marginLeft: 20,
+                  //backgroundColor:"red"
+                }}
+                onPress={async () => {
+                  if (this.dataModel.isLogin) {
+                    this.saveSchedule();
+                  } else {
+                    this.setState({ isLoginVisibleModal: true });
+                    this.setState({ entry: "save" });
+                  }
+                }}
+                disabled={this.state.isAddBtnDisable}
+              >
+                <MaterialIcons name="note-add" size={32} color="black" />
+                <Text
+                  style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+                >
+                  Save Schedule
+                </Text>
+              </TouchableOpacity>
             </View>
             <View
               style={{
@@ -819,7 +941,7 @@ export class Calculator extends React.Component {
           </View>
           <View
             style={{
-              flex: 0.6,
+              height: 500,
               margin: 10,
               flexDirection: "row",
               justifyContent: "center",
