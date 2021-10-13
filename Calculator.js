@@ -238,7 +238,7 @@ export class Calculator extends React.Component {
           navUserCenter={this.navUserCenterDir}
           dismissLoginModal={this.dismissLoginModal}
           entry={this.state.entry}
-          saveSchedule = {this.saveSchedule}
+          saveSchedule={this.saveSchedule}
         />
       </View>
     </View>
@@ -396,21 +396,26 @@ export class Calculator extends React.Component {
     let duration = 14;
     let currentSchedule = this.state.scheduleData;
     let lastStep = currentSchedule[this.state.scheduleData.length - 1];
-    let recurrentDose =
-      lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
-    let step = {
-      id: lastStep.id + 1,
-      duration: duration,
-      startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
-        .format()
-        .slice(0, 10),
-      dosage: recurrentDose,
-    };
-    currentSchedule.push(step);
-    this.setState({ scheduleData: currentSchedule });
-    this.setState({ confirmModalTxt: "One step added." });
+    if (lastStep) {
+      let recurrentDose =
+        lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
+      let step = {
+        id: lastStep.id + 1,
+        duration: duration,
+        startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
+          .format()
+          .slice(0, 10),
+        dosage: recurrentDose,
+      };
+      currentSchedule.push(step);
+      this.setState({ scheduleData: currentSchedule });
+      this.setState({ confirmModalTxt: "One step added." });
+    } else {
+      this.setState({ confirmModalTxt: "Please create a new schedule" });
+    }
+
     this.setState({ isConfirmationVisibleModal: true });
-    console.log("step", step);
+    //console.log("step", step);
   };
   removeStep = () => {
     let currentSchedule = this.state.scheduleData;
@@ -486,7 +491,7 @@ export class Calculator extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
-  saveSchedule = async() => {
+  saveSchedule = async () => {
     let scheduleToSave = this.state.scheduleData;
     let newSchedule = {
       startDate: scheduleToSave[0].startDate,
@@ -511,8 +516,10 @@ export class Calculator extends React.Component {
           //backgroundColor: "blue",
           margin: 5,
           flexDirection: "row",
-          height: Dimensions.get("window").height,
-          width: Dimensions.get("window").width,
+          height: "100%",
+          width: "100%",
+          justifyContent: "center",
+          // alignItems:"center"
         }}
       >
         <Modal
@@ -552,20 +559,107 @@ export class Calculator extends React.Component {
           navUserCenter={this.navUserCenter}
           // login={this.login}
         />
-        <View style={{ width: 1500, backgroundColor: "", margin: 5 }}>
+        <View style={{ width: 1000, backgroundColor: "", margin: 5 }}>
           <View
             style={{
-              height: 200,
+              height: 280,
               margin: 10,
 
               justifyContent: "space-between",
               flexDirection: "row",
             }}
           >
-            <View style={{ width: "70%" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-                Taper Scheduler
-              </Text>
+            <View style={{ width: "100%" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={{ fontWeight: "bold", fontSize: 65 }}>
+                  Taper Scheduler
+                </Text>
+                <View
+                  style={{
+                    height: "100%",
+                    width: 400,
+                    padding: 10,
+                    backgroundColor: PRIMARY_COLOR,
+                    borderRadius: 20,
+                    marginRight: 50,
+                  }}
+                >
+                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                    Common Dose Strengths
+                  </Text>
+                  <View style={{ flexDirection: "row", marginTop: 10 }}>
+                    <View style={{ flex: 1, marginRight: 15 }}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 12,
+                          marginTop: 5,
+                        }}
+                      >
+                        Alprazolam
+                      </Text>
+                      <Text style={{ fontSize: 11, marginTop: 2 }}>
+                        Strength (mg): 3, 2, 1, 0.5, 0.25
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 12,
+                          marginTop: 5,
+                        }}
+                      >
+                        Lorazepam
+                      </Text>
+                      <Text style={{ fontSize: 11, marginTop: 2 }}>
+                        Strength (mg): 2, 1, 0.5
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 12,
+                          marginTop: 5,
+                        }}
+                      >
+                        Clonazepam
+                      </Text>
+                      <Text style={{ fontSize: 11, marginTop: 2 }}>
+                        Strength (mg): 2, 1, 0.5, 0.25, 0.125
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 12,
+                          marginTop: 5,
+                        }}
+                      >
+                        Diazepam
+                      </Text>
+                      <Text style={{ fontSize: 11, marginTop: 2 }}>
+                        Strength (mg): 10, 5, 2
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 12,
+                          marginTop: 5,
+                        }}
+                      >
+                        Temazepam
+                      </Text>
+                      <Text style={{ fontSize: 11, marginTop: 2 }}>
+                        Strength (mg): 30, 22.5, 15, 7.5
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
               {/* Input field */}
               <View
                 style={{
@@ -650,42 +744,7 @@ export class Calculator extends React.Component {
                     </Text>
                   </TouchableOpacity>
                 </View>
-                {/* <View style={{ flex: 0.2, width: "60%", height: "100%" }}>
-              <Text style={{ fontWeight: "bold" }}>#3 Total Steps</Text>
-              <View
-                style={{
-                  flex: 1,
 
-                  marginRight: 50,
-                  marginTop: 10,
-                  borderWidth: 2,
-                  borderRadius: 30,
-                  borderColor: "black",
-                }}
-              >
-                <TextInput
-                  // secureTextEntry={true}
-                  ref={this.stepInput}
-                  placeholder="i.e., 3,4,5"
-                  style={Platform.select({
-                    web: {
-                      outlineStyle: "none",
-                      flex: 1,
-                      marginLeft: 20,
-                      marginRight: 20,
-                      fontSize: 20,
-                    },
-                  })}
-                  maxLength={35}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  // value={this.state.reason}
-                  onChangeText={(text) => {
-                    this.setState({ stepNum: text });
-                  }}
-                />
-              </View>
-            </View> */}
                 <View style={{ flex: 0.25, height: "80%" }}>
                   <Text style={{ fontWeight: "bold" }}>#3 Starting Dose</Text>
                   <View
@@ -702,14 +761,14 @@ export class Calculator extends React.Component {
                     <TextInput
                       // secureTextEntry={true}
                       ref={this.startDoseInput}
-                      placeholder="i.e., 100, 120"
+                      placeholder="e.g., 100, 120 (mg)"
                       style={Platform.select({
                         web: {
                           outlineStyle: "none",
                           flex: 1,
                           marginLeft: 20,
                           marginRight: 20,
-                          fontSize: 20,
+                          fontSize: 16,
                         },
                       })}
                       maxLength={35}
@@ -748,66 +807,6 @@ export class Calculator extends React.Component {
                       {this.state.generateBtnTxt}
                     </Text>
                   </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                height: "90%",
-                width: 400,
-                padding: 10,
-                backgroundColor: PRIMARY_COLOR,
-                borderRadius: 20,
-                marginRight: 50,
-              }}
-            >
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                Common Dose Strengths
-              </Text>
-              <View style={{ flexDirection: "row", marginTop: 10 }}>
-                <View style={{ flex: 1, marginRight: 15 }}>
-                  <Text
-                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
-                  >
-                    Alprazolam
-                  </Text>
-                  <Text style={{ fontSize: 11, marginTop: 2 }}>
-                    Strength (mg): 3, 2, 1, 0.5, 0.25
-                  </Text>
-                  <Text
-                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
-                  >
-                    Lorazepam
-                  </Text>
-                  <Text style={{ fontSize: 11, marginTop: 2 }}>
-                    Strength (mg): 2, 1, 0.5
-                  </Text>
-                  <Text
-                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
-                  >
-                    Clonazepam
-                  </Text>
-                  <Text style={{ fontSize: 11, marginTop: 2 }}>
-                    Strength (mg): 2, 1, 0.5, 0.25, 0.125
-                  </Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
-                  >
-                    Diazepam
-                  </Text>
-                  <Text style={{ fontSize: 11, marginTop: 2 }}>
-                    Strength (mg): 10, 5, 2
-                  </Text>
-                  <Text
-                    style={{ fontWeight: "bold", fontSize: 12, marginTop: 5 }}
-                  >
-                    Temazepam
-                  </Text>
-                  <Text style={{ fontSize: 11, marginTop: 2 }}>
-                    Strength (mg): 30, 22.5, 15, 7.5
-                  </Text>
                 </View>
               </View>
             </View>

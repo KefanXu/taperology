@@ -45,7 +45,7 @@ export class Menu extends React.Component {
     return (
       <View
         style={{
-          width: 300,
+          width: 250,
           backgroundColor: PRIMARY_COLOR,
           margin: 5,
           borderRadius: 15,
@@ -65,19 +65,21 @@ export class Menu extends React.Component {
             }}
             style={{ margin: 10 }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 40, margin: 5 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 35, margin: 5 }}>
               Taperology
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{ margin: 15 }}
-            onPress={() => {
-              this.props.navUserCenter();
-            }}
-          >
-            <FontAwesome name="user-circle-o" size={32} color="black" />
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            this.props.navResource();
+          }}
+          style={{ margin: 10 }}
+        >
+          <View style={{ flex: 1, margin: 5 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Resources</Text>
+          </View>
+        </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => {
@@ -97,16 +99,6 @@ export class Menu extends React.Component {
             <Text style={{ fontWeight: "bold", fontSize: 20 }}>
               Taper Scheduler
             </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navResource();
-          }}
-          style={{ margin: 10 }}
-        >
-          <View style={{ flex: 1, margin: 5 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Resources</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -134,6 +126,14 @@ export class Menu extends React.Component {
         {/* <View style={{ marginTop: 20, marginLeft: 15 }}>
           <GoogleLogin />
         </View> */}
+        <TouchableOpacity
+          style={{ margin: 15 }}
+          onPress={() => {
+            this.props.navUserCenter();
+          }}
+        >
+          <FontAwesome name="user-circle-o" size={32} color="black" />
+        </TouchableOpacity>
       </View>
     );
   }

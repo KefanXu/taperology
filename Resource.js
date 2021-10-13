@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
-  Modal,
+  // Modal,
   LayoutAnimation,
   SectionList,
   Button,
@@ -23,9 +23,17 @@ import {
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
+import {
+  Ionicons,
+  AntDesign,
+  FontAwesome,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { FlatList } from "react-native-web";
 import { Menu } from "./menu";
-
+import { getDataModel } from "./DataModel";
+import Modal from "modal-enhanced-react-native-web";
+import { GoogleLogin } from "./googleLogin";
 
 const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
@@ -108,6 +116,54 @@ const TAPERING_DATA = [
 ];
 
 export class Resources extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoginVisibleModal: false,
+    };
+    this.dataModel = getDataModel();
+  }
+  _renderModalLogin = () => (
+    <View
+      style={{
+        backgroundColor: "white",
+        width: "20%",
+        padding: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 20,
+        borderColor: "rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <FontAwesome name="user-circle-o" size={32} color="black" />
+
+      <View
+        style={{
+          flex: 1,
+          // backgroundColor: "red",
+          marginTop: 15,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <GoogleLogin
+          navUserCenter={this.navUserCenterDir}
+          dismissLoginModal={this.dismissLoginModal}
+          entry={this.state.entry}
+          saveSchedule={this.saveSchedule}
+        />
+      </View>
+    </View>
+  );
+  navUserCenterDir = () => {
+    this.props.navigation.navigate("UserCenter", {
+      // needsUpdate: this.needsUpdate,
+    });
+  };
+  dismissLoginModal = () => {
+    this.setState({ isLoginVisibleModal: false });
+  };
   navResource = () => {
     this.props.navigation.navigate("Resources", {
       // needsUpdate: this.needsUpdate,
@@ -123,11 +179,23 @@ export class Resources extends React.Component {
       // needsUpdate: this.needsUpdate,
     });
   };
+  navUserCenter = async () => {
+    if (this.dataModel.isLogin) {
+      await this.dataModel.loadUserSchedules(this.dataModel.key);
+      this.props.navigation.navigate("UserCenter", {
+        // needsUpdate: this.needsUpdate,
+      });
+    } else {
+      this.setState({ entry: "menu" });
+      this.setState({ isLoginVisibleModal: true });
+    }
+  };
   _renderListView = (DATA) => (
     <View style={{ marginTop: 20 }}>
       <FlatList
         data={DATA}
         horizontal={true}
+        showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View
             style={{
@@ -162,17 +230,26 @@ export class Resources extends React.Component {
           margin: 5,
           flexDirection: "row",
           height: Dimensions.get("window").height,
-          width: Dimensions.get("window").width,
+          width: "100%",
+          justifyContent: "center",
         }}
       >
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isLoginVisibleModal}
+          onBackdropPress={() => this.setState({ isLoginVisibleModal: false })}
+        >
+          {this._renderModalLogin()}
+        </Modal>
         <Menu
           navResource={this.navResource}
           navIndex={this.navIndex}
           navCal={this.navCal}
+          navUserCenter={this.navUserCenter}
         />
         <View
           style={{
-            flex: 1500,
+            width: 1000,
             // backgroundColor: "red",
             margin: 5,
           }}
@@ -197,12 +274,6 @@ export class Resources extends React.Component {
             </View>
             <View style={{ marginTop: 10 }}>
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Resources on Tapering
-              </Text>
-              {this._renderListView(BENZO_BASIC_DATA)}
-            </View>
-            <View style={{ marginTop: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
                 Resources on Insomnia
               </Text>
               {this._renderListView(INSOMNIA_DATA)}
@@ -212,6 +283,12 @@ export class Resources extends React.Component {
                 Resources on Anxiety
               </Text>
               {this._renderListView(ANXIETY_DATA)}
+            </View>
+            <View style={{ marginTop: 10 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                Resources on Tapering
+              </Text>
+              {this._renderListView(BENZO_BASIC_DATA)}
             </View>
           </View>
         </View>
