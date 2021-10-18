@@ -396,7 +396,7 @@ export class Calculator extends React.Component {
     let duration = 14;
     let currentSchedule = this.state.scheduleData;
     let lastStep = currentSchedule[this.state.scheduleData.length - 1];
-    if (lastStep) {
+    if (lastStep && lastStep.dosage > 0) {
       let recurrentDose =
         lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
       let step = {
@@ -411,7 +411,7 @@ export class Calculator extends React.Component {
       this.setState({ scheduleData: currentSchedule });
       this.setState({ confirmModalTxt: "One step added." });
     } else {
-      this.setState({ confirmModalTxt: "Please create a new schedule" });
+      this.setState({ confirmModalTxt: "Can't add more steps" });
     }
 
     this.setState({ isConfirmationVisibleModal: true });
@@ -434,7 +434,7 @@ export class Calculator extends React.Component {
         }
       }
     }
-    this.setState({ schedule: currentSchedule });
+    this.setState({ scheduleData: currentSchedule });
   };
   increaseDose = (id) => {
     let currentSchedule = this.state.scheduleData;
@@ -447,7 +447,7 @@ export class Calculator extends React.Component {
         }
       }
     }
-    this.setState({ schedule: currentSchedule });
+    this.setState({ scheduleData: currentSchedule });
   };
   reduceDuration = (id) => {
     let currentSchedule = this.state.scheduleData;
@@ -495,6 +495,7 @@ export class Calculator extends React.Component {
     let scheduleToSave = this.state.scheduleData;
     let newSchedule = {
       startDate: scheduleToSave[0].startDate,
+      startDose: this.state.startingDose,
       bezo: this.state.benzoType,
       createdDate: moment(new Date()).format(),
       totalStep: scheduleToSave.length,

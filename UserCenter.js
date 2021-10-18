@@ -34,6 +34,8 @@ import Modal from "modal-enhanced-react-native-web";
 
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
+import { Schedule } from "./schedule";
+
 import moment, { min } from "moment";
 import { DataTable, ProgressBar, Colors } from "react-native-paper";
 import { CircularSlider } from "react-native-elements-universe";
@@ -45,14 +47,20 @@ export class UserCenter extends React.Component {
   constructor(props) {
     super(props);
     this.dataModel = getDataModel();
+    this.schedule = React.createRef();
 
     this.schedules = this.dataModel.plans;
-    console.log("this.schedules", this.schedules.length);
+    //console.log("this.schedules", this.schedules.length);
     this.state = {
       schedules: this.schedules,
+      currentData: "",
       isScheduleVisibleModal: false,
+      currentSchedule: [],
     };
   }
+  refreshSchedule = () => {
+    this.schedule.current.resetSchedule();
+  };
   navResource = () => {
     this.props.navigation.navigate("Resources", {
       // needsUpdate: this.needsUpdate,
@@ -80,37 +88,41 @@ export class UserCenter extends React.Component {
   loginDismiss = () => {
     this.setState({ isLoginVisibleModal: false });
   };
-  _renderModalSchedule = () => (
-    <View
-      style={{
-        backgroundColor: "white",
-        width: "80%",
-        height: "80%",
-        padding: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 20,
-        borderColor: "rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <FontAwesome name="user-circle-o" size={32} color="black" />
-
+  _renderModalSchedule = () => {
+    console.log("_renderModalSchedule");
+    return (
       <View
         style={{
-          flex: 1,
-          // backgroundColor: "red",
-          marginTop: 15,
+          backgroundColor: "white",
           width: "100%",
+          height: 500,
+          padding: 20,
           justifyContent: "center",
           alignItems: "center",
+          borderRadius: 20,
+          borderColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Text style={{ fontWeight: "bold", fontSize: 16, color: "white" }}>
-          Testing
-        </Text>
+        <Schedule
+          ref={this.schedule}
+          scheduleData={this.state.currentSchedule}
+          data = {this.state.currentData}
+        />
+
+        <View
+          style={{
+            flex: 1,
+            // backgroundColor: "red",
+            marginTop: 15,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
   _renderListView = (DATA) => (
     <View style={{ marginTop: 20 }}>
       <FlatList
@@ -202,8 +214,9 @@ export class UserCenter extends React.Component {
           >
             <View style={{ marginTop: 10 }}>
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Tapper Schedules
+                Taper Schedules
               </Text>
+
               <View
                 style={{
                   marginTop: 15,
@@ -237,12 +250,19 @@ export class UserCenter extends React.Component {
                       }
                       return (
                         <TouchableOpacity
-                          onPress={() => {
+                          onPress={async () => {
                             console.log("item", item);
-                            console.log(
-                              "this.state.schedules",
-                              this.state.schedules
-                            );
+                            // console.log(
+                            //   "this.state.schedules",
+                            //   this.state.schedules
+                            // );
+
+                            await this.setState({
+                              currentSchedule: item.schedule,
+                              currentData: item,
+                            });
+                            this.refreshSchedule();
+
                             this.setState({ isScheduleVisibleModal: true });
                           }}
                         >

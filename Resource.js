@@ -119,10 +119,34 @@ export class Resources extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      popupItem: {url: "", title: "", abstract: ""},
       isLoginVisibleModal: false,
+      isPopupModal: false,
     };
     this.dataModel = getDataModel();
   }
+  _renderModalPopup = () => (
+    <View
+      style={{
+        height: 400,
+        width: 400,
+        backgroundColor: PRIMARY_COLOR,
+        borderRadius: 20,
+        marginRight: 10,
+        padding: 10,
+      }}
+    >
+      <Text
+        style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
+        onPress={() => Linking.openURL(this.state.popupItem.url)}
+      >
+        {this.state.popupItem.title}
+      </Text>
+      <ScrollView style={{ margin: 10 }}>
+        <Text style={{ fontSize: 14 }}>{this.state.popupItem.abstract}</Text>
+      </ScrollView>
+    </View>
+  );
   _renderModalLogin = () => (
     <View
       style={{
@@ -197,7 +221,7 @@ export class Resources extends React.Component {
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View
+          <TouchableOpacity
             style={{
               height: 300,
               width: 300,
@@ -206,6 +230,13 @@ export class Resources extends React.Component {
               marginRight: 10,
               padding: 10,
             }}
+            onPress={() => {
+              // console.log("item",item);
+              this.setState({ popupItem: item})
+              // console.log("this.state.popupItem",this.state.popupItem);
+              this.setState({ isPopupModal: true });
+              
+            }}
           >
             <Text
               style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
@@ -213,10 +244,13 @@ export class Resources extends React.Component {
             >
               {item.title}
             </Text>
-            <ScrollView style={{ margin: 10 }}>
+            {/* <ScrollView style={{ margin: 10 }}>
               <Text style={{ fontSize: 14 }}>{item.abstract}</Text>
-            </ScrollView>
-          </View>
+            </ScrollView> */}
+            <View style={{justifyContent:"center", alignContent:"center",}}>
+              <FontAwesome name="book" size={128} color="black" />
+            </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -240,6 +274,13 @@ export class Resources extends React.Component {
           onBackdropPress={() => this.setState({ isLoginVisibleModal: false })}
         >
           {this._renderModalLogin()}
+        </Modal>
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isPopupModal}
+          onBackdropPress={() => this.setState({ isPopupModal: false })}
+        >
+          {this._renderModalPopup()}
         </Modal>
         <Menu
           navResource={this.navResource}
