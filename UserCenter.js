@@ -50,7 +50,7 @@ export class UserCenter extends React.Component {
     this.schedule = React.createRef();
 
     this.schedules = this.dataModel.plans;
-    //console.log("this.schedules", this.schedules.length);
+    console.log("this.dataModel", this.dataModel);
     this.state = {
       schedules: this.schedules,
       currentData: "",
@@ -88,6 +88,9 @@ export class UserCenter extends React.Component {
   loginDismiss = () => {
     this.setState({ isLoginVisibleModal: false });
   };
+  schedulePopUpDismiss = () => {
+    this.setState({ isScheduleVisibleModal: false });
+  }
   _renderModalSchedule = () => {
     console.log("_renderModalSchedule");
     return (
@@ -107,6 +110,8 @@ export class UserCenter extends React.Component {
           ref={this.schedule}
           scheduleData={this.state.currentSchedule}
           data = {this.state.currentData}
+          userKey = {this.dataModel.key}
+          dismiss = {this.schedulePopUpDismiss}
         />
 
         <View
@@ -182,6 +187,7 @@ export class UserCenter extends React.Component {
           navCal={this.navCal}
           navUserCenter={this.navUserCenter}
           loginDismiss={this.loginDismiss}
+          
         />
         <View
           style={{

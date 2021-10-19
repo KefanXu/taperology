@@ -87,6 +87,10 @@ class DataModel {
       .collection("taper_schedules")
       .add(newSchedule);
   };
+  updateSchedule = async (userKey, scheduleKey, newSchedule) => {
+    let scheduleRef = this.usersRef.doc(userKey).collection("taper_schedules").doc(scheduleKey);
+    await scheduleRef.update(newSchedule);
+  };
 
   // googleLogin = async () => {
   //   const [request, response, promptAsync] = Google.useAuthRequest(config);
