@@ -37,6 +37,7 @@ import { GoogleLogin } from "./googleLogin";
 
 import moment, { min } from "moment";
 const PRIMARY_COLOR = "#D8D8D8";
+const WARN_RED = "#FE2E2E";
 export class Schedule extends React.Component {
   constructor(props) {
     super(props);
@@ -52,9 +53,14 @@ export class Schedule extends React.Component {
       userKey: this.props.userKey,
       stepNum: this.props.data.totalStep,
       startingDose: this.props.data.startDose,
+      isDeleteWarningModalVis: false,
     };
   }
+  showDeleteWarningModal = () => {
+    this.setState({ isDeleteWarningModalVis: true });
+  };
   resetSchedule = () => {
+    console.log("resetSchedule", this.props.data);
     this.setState({ scheduleData: this.props.scheduleData });
     this.setState({ data: this.props.data });
     this.setState({ userKey: this.props.userKey });
@@ -181,68 +187,199 @@ export class Schedule extends React.Component {
     this.dismiss();
     this.dataModel.updateSchedule(userKey, scheduleKey, newScheduleProfile);
   };
+  deleteSchedule = async () => {
+    // let scheduleKey = this.props.data.key;
+    // let userKey = this.state.userKey;
+    await this.setState({isDeleteWarningModalVis: true});
+
+    // await this.dataModel.deleteSchedule(userKey, scheduleKey);
+    // await this.dataModel.loadUserSchedules(this.state.userKey);
+    // await this.update();
+    // this.dismiss();
+  };
+  deleteScheduleCancel = async() => {
+    await this.setState({isDeleteWarningModalVis: false});
+  }
+  deleteScheduleConfirmed = async() => {
+    let scheduleKey = this.props.data.key;
+    let userKey = this.state.userKey;
+    // await this.setState({isDeleteWarningModalVis: true});
+
+    await this.dataModel.deleteSchedule(userKey, scheduleKey);
+    await this.dataModel.loadUserSchedules(this.state.userKey);
+    await this.update();
+    await this.setState({isDeleteWarningModalVis: false});
+    this.dismiss();
+  }
   dismiss = () => {
     this.props.dismiss();
-  }
+  };
+  update = () => {
+    this.props.update();
+  };
+  confirmDelete = () => {
+    this.props.confirmDelete();
+  };
   render() {
     return (
       <View style={{ width: "100%" }}>
-        <View style={{ marginLeft: 20, flexDirection: "row" }}>
-          <TouchableOpacity
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isDeleteWarningModalVis}
+          onBackdropPress={() =>
+            this.setState({ isDeleteWarningModalVis: false })
+          }
+        >
+          <View
             style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
+              backgroundColor: "white",
+              width: "20%",
+              padding: 22,
+              justifyContent: "center",
               alignItems: "center",
-              width: 150,
-              //backgroundColor:"red"
+              borderRadius: 20,
+              borderColor: "rgba(0, 0, 0, 0.1)",
             }}
-            onPress={() => {
-              this.addStep();
-            }}
-            disabled={this.state.isAddBtnDisable}
           >
-            <Ionicons name="add-circle" size={32} color="black" />
-            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
-              Add Step
+            <Text
+              style={{
+                flex: 0.5,
+                fontSize: 16,
+                fontWeight: "bold",
+                textAlign: "center",
+                marginBottom: 10,
+              }}
+            >
+              Are you sure?
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              width: 150,
-              //backgroundColor:"red"
-            }}
-            onPress={() => {
-              this.removeStep();
-            }}
-            disabled={this.state.isAddBtnDisable}
-          >
-            <Ionicons name="remove-circle" size={32} color="black" />
-            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
-              Remove Step
+            <View style={{flexDirection:"row", justifyContent:"space-between", alignItems:"center", width:"80%"}}>
+              <TouchableOpacity onPress={() => this.deleteScheduleCancel()}>
+                <AntDesign name="closecircle" size={32} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress ={() => this.deleteScheduleConfirmed()}>
+                <AntDesign name="checkcircle" size={32} color="black" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <View
+          style={{
+            marginLeft: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginRight: 20,
+            // borderBottomColor: PRIMARY_COLOR,
+            // borderBottomWidth: 2,
+          }}
+        >
+          <View style={{ margin: 10 }}>
+            <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+              Created date:
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              marginLeft: 15,
-              width: 200,
-              //backgroundColor:"red"
-            }}
-            onPress={() => {
-              this.updateSchedule();
-            }}
-            disabled={this.state.isAddBtnDisable}
-          >
-            <Entypo name="save" size={32} color="black" />
-            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
-              Save Changes
+            <Text>
+              {this.state.data.createdDate
+                ? this.state.data.createdDate.slice(0, 16)
+                : ""}
             </Text>
-          </TouchableOpacity>
+            <Text style={{ fontSize: 12, marginTop: 5 }}>
+              <Text style={{ fontWeight: "bold" }}>Benzo Type:</Text>
+              {this.state.data.bezo ? this.state.data.bezo : ""}
+            </Text>
+            <Text style={{ fontSize: 12, marginTop: 5 }}>
+              <Text style={{ fontWeight: "bold" }}>Start Date </Text>
+              {this.state.data.startDate ? this.state.data.startDate : ""}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                width: 150,
+                //backgroundColor:"red"
+              }}
+              onPress={() => {
+                this.addStep();
+              }}
+              disabled={this.state.isAddBtnDisable}
+            >
+              <Ionicons name="add-circle" size={32} color="black" />
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+              >
+                Add Step
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                width: 150,
+                //backgroundColor:"red"
+              }}
+              onPress={() => {
+                this.removeStep();
+              }}
+              disabled={this.state.isAddBtnDisable}
+            >
+              <Ionicons name="remove-circle" size={32} color="black" />
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+              >
+                Remove Step
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                marginLeft: 15,
+                width: 200,
+                //backgroundColor:"red"
+              }}
+              onPress={() => {
+                this.updateSchedule();
+              }}
+              disabled={this.state.isAddBtnDisable}
+            >
+              <Entypo name="save" size={32} color="black" />
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+              >
+                Save Changes
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                width: 150,
+                //backgroundColor:"red"
+              }}
+              onPress={() => {
+                this.deleteSchedule();
+              }}
+              disabled={this.state.isAddBtnDisable}
+            >
+              <MaterialIcons name="delete" size={32} color={WARN_RED} />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  marginLeft: 15,
+                  color: WARN_RED,
+                }}
+              >
+                Delete Schedule
+              </Text>
+            </TouchableOpacity>
+          </View>
           {/* <TouchableOpacity
             style={{
               flexDirection: "row",
@@ -288,7 +425,7 @@ export class Schedule extends React.Component {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Step</Text>
+            <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
           </View>
           <View
             style={{
@@ -297,7 +434,7 @@ export class Schedule extends React.Component {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Duration</Text>
+            <Text style={{ fontSize: 12, fontWeight: "bold" }}>Duration</Text>
           </View>
           <View
             style={{
@@ -306,7 +443,7 @@ export class Schedule extends React.Component {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Start Date</Text>
+            <Text style={{ fontSize: 12, fontWeight: "bold" }}>Start Date</Text>
           </View>
           <View
             style={{
@@ -315,7 +452,7 @@ export class Schedule extends React.Component {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 12, fontWeight: "bold" }}>
               Target Dosage / Starting Dosage
             </Text>
           </View>
@@ -439,9 +576,11 @@ export class Schedule extends React.Component {
                     </TouchableOpacity>
                     <Text style={{ fontSize: 14 }}>
                       {parseInt(item.dosage)} |{" "}
-                      {(parseInt(item.dosage) /
-                        parseInt(this.state.data.startDose)) *
-                        100}
+                      {parseInt(
+                        (parseInt(item.dosage) /
+                          parseInt(this.state.data.startDose)) *
+                          100
+                      )}
                       %
                     </Text>
                     <TouchableOpacity

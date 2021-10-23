@@ -88,8 +88,20 @@ class DataModel {
       .add(newSchedule);
   };
   updateSchedule = async (userKey, scheduleKey, newSchedule) => {
-    let scheduleRef = this.usersRef.doc(userKey).collection("taper_schedules").doc(scheduleKey);
+    let scheduleRef = this.usersRef
+      .doc(userKey)
+      .collection("taper_schedules")
+      .doc(scheduleKey);
     await scheduleRef.update(newSchedule);
+  };
+  deleteSchedule = async (userKey, scheduleKey) => {
+    console.log("scheduleKey", scheduleKey);
+    console.log("userKey", userKey);
+    let scheduleRef = this.usersRef
+      .doc(userKey)
+      .collection("taper_schedules")
+      .doc(scheduleKey);
+    await scheduleRef.delete();
   };
 
   // googleLogin = async () => {

@@ -21,6 +21,8 @@ import {
   FlatList,
 } from "react-native";
 import { GoogleLogin } from "./googleLogin";
+import * as Analytics from "expo-firebase-analytics";
+
 
 import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
@@ -36,10 +38,13 @@ import moment, { min } from "moment";
 const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
 export class Menu extends React.Component {
-  // constructor(props) {
+  constructor(props) {
+    super(props)
+    this.dataModel = getDataModel();
   //   // this.loginDismiss = this.props.loginDismiss();
   //   // this.navUserCenter = this.props.navUserCenter();
-  // }
+  }
+  
   navUserCenter = () => this.props.navUserCenter();
   render() {
     return (
@@ -71,8 +76,14 @@ export class Menu extends React.Component {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          onPress={() => {
+          onPress={async() => {
             this.props.navResource();
+            console.log("navResource");
+            await Analytics.logEvent("ButtonTapped", {
+              name: "ChangeScreen",
+              screen: "Menu",
+              purpose: "Opens the internal settings",
+            });
           }}
           style={{ margin: 10 }}
         >

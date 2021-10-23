@@ -56,8 +56,14 @@ export class UserCenter extends React.Component {
       currentData: "",
       isScheduleVisibleModal: false,
       currentSchedule: [],
+      
     };
   }
+
+  updateScheduleView = () => {
+    this.schedules = this.dataModel.plans;
+    this.setState({ schedules: this.schedules });
+  };
   refreshSchedule = () => {
     this.schedule.current.resetSchedule();
   };
@@ -90,7 +96,7 @@ export class UserCenter extends React.Component {
   };
   schedulePopUpDismiss = () => {
     this.setState({ isScheduleVisibleModal: false });
-  }
+  };
   _renderModalSchedule = () => {
     console.log("_renderModalSchedule");
     return (
@@ -109,9 +115,11 @@ export class UserCenter extends React.Component {
         <Schedule
           ref={this.schedule}
           scheduleData={this.state.currentSchedule}
-          data = {this.state.currentData}
-          userKey = {this.dataModel.key}
-          dismiss = {this.schedulePopUpDismiss}
+          data={this.state.currentData}
+          userKey={this.dataModel.key}
+          dismiss={this.schedulePopUpDismiss}
+          update={this.updateScheduleView}
+
         />
 
         <View
@@ -123,41 +131,10 @@ export class UserCenter extends React.Component {
             justifyContent: "center",
             alignItems: "center",
           }}
-        >
-        </View>
+        ></View>
       </View>
     );
   };
-  _renderListView = (DATA) => (
-    <View style={{ marginTop: 20 }}>
-      <FlatList
-        data={DATA}
-        horizontal={true}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              height: 300,
-              width: 300,
-              backgroundColor: PRIMARY_COLOR,
-              borderRadius: 20,
-              marginRight: 10,
-              padding: 10,
-            }}
-          >
-            <Text
-              style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
-              onPress={() => Linking.openURL(item.url)}
-            >
-              {item.title}
-            </Text>
-            <ScrollView style={{ margin: 10 }}>
-              <Text style={{ fontSize: 14 }}>{item.abstract}</Text>
-            </ScrollView>
-          </View>
-        )}
-      />
-    </View>
-  );
   render() {
     return (
       <View
@@ -187,7 +164,6 @@ export class UserCenter extends React.Component {
           navCal={this.navCal}
           navUserCenter={this.navUserCenter}
           loginDismiss={this.loginDismiss}
-          
         />
         <View
           style={{
@@ -227,19 +203,21 @@ export class UserCenter extends React.Component {
                 style={{
                   marginTop: 15,
                   marginRight: 15,
-                  height: "100%",
-                  width: 400,
-                  borderRadius: 20,
-                  borderColor: "black",
-                  borderWidth: 3,
+                  height: 400,
+                  width: 1000,
+                  // borderRadius: 20,
+                  // borderColor: "black",
+                  // borderWidth: 3,
                   justifyContent: "flex-start",
                   alignItems: "center",
                   // backgroundColor:"red"
                 }}
               >
                 <FlatList
-                  style={{ width: 380, marginTop: 7, marginBottom: 7 }}
+                  style={{ width: 1000, marginTop: 7, marginBottom: 7 }}
                   data={this.state.schedules}
+                  horizontal={false}
+                  numColumns={2}
                   renderItem={({ item }) => {
                     if (item.createdDate) {
                       let currentStep = 0;
@@ -274,10 +252,11 @@ export class UserCenter extends React.Component {
                         >
                           <View
                             style={{
-                              width: "100%",
-                              height: 100,
+                              width: 350,
+                              height: 120,
                               flexDirection: "row",
                               marginBottom: 10,
+                              marginRight: 20,
                               borderRadius: 15,
                               backgroundColor: PRIMARY_COLOR,
                             }}
@@ -295,6 +274,18 @@ export class UserCenter extends React.Component {
                                 </Text>
                                 {item.bezo}
                               </Text>
+                              <Text style={{ fontSize: 12, marginTop: 5 }}>
+                                <Text style={{ fontWeight: "bold" }}>
+                                  Start Date{" "}
+                                </Text>
+                                {item.startDate}
+                              </Text>
+                              <Text style={{ fontSize: 12, marginTop: 5 }}>
+                                <Text style={{ fontWeight: "bold" }}>
+                                  Total Steps{" "}
+                                </Text>
+                                {item.totalStep}
+                              </Text>
                             </View>
                             <View style={{ marginTop: 5, marginLeft: 25 }}>
                               <Text>
@@ -309,26 +300,17 @@ export class UserCenter extends React.Component {
                                 progress={currentStep / item.totalStep}
                                 color={"black"}
                               />
-                              <Text>
-                                <Text
-                                  style={{ fontSize: 12, fontWeight: "bold" }}
-                                >
-                                  Current Dosage{" "}
+                              <View style={{ marginTop: 10 }}>
+                                <Text>
+                                  <Text
+                                    style={{ fontSize: 12, fontWeight: "bold" }}
+                                  >
+                                    Current Target Dosage {"\n"}
+                                  </Text>
+                                  {currentDosage}
                                 </Text>
-                                {currentDosage}
-                              </Text>
-                              <Text style={{ fontSize: 12, marginTop: 5 }}>
-                                <Text style={{ fontWeight: "bold" }}>
-                                  Start Date{" "}
-                                </Text>
-                                {item.startDate}
-                              </Text>
-                              <Text style={{ fontSize: 12, marginTop: 5 }}>
-                                <Text style={{ fontWeight: "bold" }}>
-                                  Total Steps{" "}
-                                </Text>
-                                {item.totalStep}
-                              </Text>
+                              </View>
+
                               {/* <CircularSlider maxAngle={90} /> */}
                             </View>
                           </View>

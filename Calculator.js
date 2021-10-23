@@ -24,6 +24,16 @@ import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
+import * as Analytics from "expo-firebase-analytics";
+
+// import firebase from "firebase";
+// import "@firebase/firestore";
+// import "@firebase/storage";
+// import { firebaseConfig } from "./secret";
+// if (firebase.apps.length === 0) {
+//   firebase.initializeApp(firebaseConfig);
+// }
+
 import {
   Ionicons,
   AntDesign,
@@ -94,7 +104,12 @@ export class Calculator extends React.Component {
     this.startDoseInput = React.createRef();
     this.dataModel = getDataModel();
   }
-  navResource = () => {
+  navResource = async () => {
+    await Analytics.logEvent("ButtonTapped", {
+      name: "ChangeScreen",
+      screen: "Menu",
+      purpose: "Opens the internal settings",
+    });
     this.props.navigation.navigate("Resources", {
       // needsUpdate: this.needsUpdate,
     });
@@ -251,7 +266,7 @@ export class Calculator extends React.Component {
     <View
       style={{
         backgroundColor: "white",
-        width: "20%",
+        width: 400,
         padding: 22,
         justifyContent: "center",
         alignItems: "center",
@@ -292,7 +307,12 @@ export class Calculator extends React.Component {
       />
     </View>
   );
-  reset = () => {
+  reset = async () => {
+    await Analytics.logEvent("resetButtonTapped", {
+      name: "ChangeScreen",
+      screen: "Calculator",
+      purpose: "Opens the internal settings",
+    });
     this.setState({ benzoType: "Select the benzo type" });
     this.setState({ datePickerButtonTxt: "Pick the start date" });
     this.setState({ stepNum: 12 });
@@ -304,7 +324,7 @@ export class Calculator extends React.Component {
     this.startDoseInput.current.clear();
   };
 
-  calculateTapperSchedule = () => {
+  calculateTapperSchedule = async () => {
     if (this.state.generateBtnTxt === "Reset") {
       this.reset();
     } else {
@@ -388,6 +408,11 @@ export class Calculator extends React.Component {
       this.setState({ isConfirmationVisibleModal: true });
       this.setState({ isAddBtnDisable: false });
     }
+    await Analytics.logEvent("GenerateSchedule", {
+      name: "ChangeScreen",
+      screen: "Calculator",
+      purpose: "Opens the internal settings",
+    });
   };
   addStep = () => {
     let currentStepNum = this.state.stepNum;
@@ -507,9 +532,172 @@ export class Calculator extends React.Component {
       confirmModalTxt: "New taper schedule saved!",
     });
     this.setState({ isConfirmationVisibleModal: true });
+    await Analytics.logEvent("saveSchedule", {
+      name: "ChangeScreen",
+      screen: "Calculator",
+      purpose: "Opens the internal settings",
+    });
   };
 
   render() {
+    let tipView = (
+      <View
+        style={{
+          height: "100%",
+          width: 400,
+          padding: 10,
+          backgroundColor: PRIMARY_COLOR,
+          borderRadius: 20,
+          marginRight: 50,
+        }}
+      >
+        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+          Common Dose Strengths
+        </Text>
+        <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <View style={{ flex: 1, marginRight: 15 }}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 12,
+                marginTop: 5,
+              }}
+            >
+              Alprazolam
+            </Text>
+            <Text style={{ fontSize: 11, marginTop: 2 }}>
+              Strength (mg): 3, 2, 1, 0.5, 0.25
+            </Text>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 12,
+                marginTop: 5,
+              }}
+            >
+              Lorazepam
+            </Text>
+            <Text style={{ fontSize: 11, marginTop: 2 }}>
+              Strength (mg): 2, 1, 0.5
+            </Text>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 12,
+                marginTop: 5,
+              }}
+            >
+              Clonazepam
+            </Text>
+            <Text style={{ fontSize: 11, marginTop: 2 }}>
+              Strength (mg): 2, 1, 0.5, 0.25, 0.125
+            </Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 12,
+                marginTop: 5,
+              }}
+            >
+              Diazepam
+            </Text>
+            <Text style={{ fontSize: 11, marginTop: 2 }}>
+              Strength (mg): 10, 5, 2
+            </Text>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 12,
+                marginTop: 5,
+              }}
+            >
+              Temazepam
+            </Text>
+            <Text style={{ fontSize: 11, marginTop: 2 }}>
+              Strength (mg): 30, 22.5, 15, 7.5
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+    let scheduleBtnView = (
+      <View
+        style={{
+          marginTop: 20,
+          marginBottom: 5,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "white",
+          borderRadius: 20,
+          width: 500,
+        }}
+      >
+        <View style={{ marginLeft: 30, flexDirection: "row" }}>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              width: 150,
+              //backgroundColor:"red"
+            }}
+            onPress={() => {
+              this.addStep();
+            }}
+            disabled={this.state.isAddBtnDisable}
+          >
+            <Ionicons name="add-circle" size={32} color="black" />
+            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
+              Add Step
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              width: 150,
+              //backgroundColor:"red"
+            }}
+            onPress={() => {
+              this.removeStep();
+            }}
+            disabled={this.state.isAddBtnDisable}
+          >
+            <Ionicons name="remove-circle" size={32} color="black" />
+            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
+              Remove Step
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              width: 200,
+              marginLeft: 20,
+              //backgroundColor:"red"
+            }}
+            onPress={async () => {
+              if (this.dataModel.isLogin) {
+                this.saveSchedule();
+              } else {
+                this.setState({ isLoginVisibleModal: true });
+                this.setState({ entry: "save" });
+              }
+            }}
+            disabled={this.state.isAddBtnDisable}
+          >
+            <MaterialIcons name="note-add" size={32} color="black" />
+            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
+              Save Schedule
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
     return (
       <View
         style={{
@@ -577,89 +765,18 @@ export class Calculator extends React.Component {
                   justifyContent: "space-between",
                 }}
               >
-                <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-                  Taper Scheduler
-                </Text>
-                <View
-                  style={{
-                    height: "100%",
-                    width: 400,
-                    padding: 10,
-                    backgroundColor: PRIMARY_COLOR,
-                    borderRadius: 20,
-                    marginRight: 50,
-                  }}
-                >
-                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                    Common Dose Strengths
+                <View style={{ flexDirection: "column" }}>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 65,
+                      // backgroundColor: "red",
+                    }}
+                  >
+                    Taper Scheduler
                   </Text>
-                  <View style={{ flexDirection: "row", marginTop: 10 }}>
-                    <View style={{ flex: 1, marginRight: 15 }}>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          marginTop: 5,
-                        }}
-                      >
-                        Alprazolam
-                      </Text>
-                      <Text style={{ fontSize: 11, marginTop: 2 }}>
-                        Strength (mg): 3, 2, 1, 0.5, 0.25
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          marginTop: 5,
-                        }}
-                      >
-                        Lorazepam
-                      </Text>
-                      <Text style={{ fontSize: 11, marginTop: 2 }}>
-                        Strength (mg): 2, 1, 0.5
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          marginTop: 5,
-                        }}
-                      >
-                        Clonazepam
-                      </Text>
-                      <Text style={{ fontSize: 11, marginTop: 2 }}>
-                        Strength (mg): 2, 1, 0.5, 0.25, 0.125
-                      </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          marginTop: 5,
-                        }}
-                      >
-                        Diazepam
-                      </Text>
-                      <Text style={{ fontSize: 11, marginTop: 2 }}>
-                        Strength (mg): 10, 5, 2
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          marginTop: 5,
-                        }}
-                      >
-                        Temazepam
-                      </Text>
-                      <Text style={{ fontSize: 11, marginTop: 2 }}>
-                        Strength (mg): 30, 22.5, 15, 7.5
-                      </Text>
-                    </View>
-                  </View>
                 </View>
+                {tipView}
               </View>
               {/* Input field */}
               <View
@@ -812,76 +929,21 @@ export class Calculator extends React.Component {
               </View>
             </View>
           </View>
-
-          <View style={{ marginTop: 20 }}>
-            <View style={{ marginLeft: 20, flexDirection: "row" }}>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  width: 150,
-                  //backgroundColor:"red"
-                }}
-                onPress={() => {
-                  this.addStep();
-                }}
-                disabled={this.state.isAddBtnDisable}
-              >
-                <Ionicons name="add-circle" size={32} color="black" />
-                <Text
-                  style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
-                >
-                  Add Step
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  width: 150,
-                  //backgroundColor:"red"
-                }}
-                onPress={() => {
-                  this.removeStep();
-                }}
-                disabled={this.state.isAddBtnDisable}
-              >
-                <Ionicons name="remove-circle" size={32} color="black" />
-                <Text
-                  style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
-                >
-                  Remove Step
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  width: 200,
-                  marginLeft: 20,
-                  //backgroundColor:"red"
-                }}
-                onPress={async () => {
-                  if (this.dataModel.isLogin) {
-                    this.saveSchedule();
-                  } else {
-                    this.setState({ isLoginVisibleModal: true });
-                    this.setState({ entry: "save" });
-                  }
-                }}
-                disabled={this.state.isAddBtnDisable}
-              >
-                <MaterialIcons name="note-add" size={32} color="black" />
-                <Text
-                  style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
-                >
-                  Save Schedule
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <View
+            style={{
+              height: 400,
+              marginLeft: 10,
+              marginRight:60,
+              marginTop:10,
+              flexDirection: "column",
+              justifyContent: "center",
+              opacity: this.state.listOpacity,
+              backgroundColor: PRIMARY_COLOR,
+              borderRadius: 20,
+              //alignItems: "center",
+            }}
+          >
+            <View style={{justifyContent: "center", alignItems:"center"}}>{scheduleBtnView}</View>
             <View
               style={{
                 padding: 20,
@@ -902,7 +964,7 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>Step</Text>
+                <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
               </View>
               <View
                 style={{
@@ -911,7 +973,7 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 12, fontWeight: "bold" }}>
                   Duration
                 </Text>
               </View>
@@ -922,7 +984,7 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 12, fontWeight: "bold" }}>
                   Start Date
                 </Text>
               </View>
@@ -933,35 +995,25 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 12, fontWeight: "bold" }}>
                   Target Dosage / Starting Dosage
                 </Text>
               </View>
             </View>
-          </View>
-          <View
-            style={{
-              height: 500,
-              margin: 10,
-              flexDirection: "row",
-              justifyContent: "center",
-              opacity: this.state.listOpacity,
-
-              //alignItems: "center",
-            }}
-          >
             <FlatList
               data={this.state.scheduleData}
               renderItem={({ item }) => (
                 <View
                   style={{
-                    padding: 20,
+                    padding: 15,
                     marginVertical: 8,
                     marginHorizontal: 16,
                     flex: 1,
                     flexDirection: "row",
                     borderBottomColor: "black",
                     borderBottomWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   <View

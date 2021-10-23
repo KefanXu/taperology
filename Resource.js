@@ -29,6 +29,8 @@ import {
   FontAwesome,
   MaterialIcons,
 } from "@expo/vector-icons";
+import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
+
 import { FlatList } from "react-native-web";
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
@@ -119,7 +121,7 @@ export class Resources extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      popupItem: {url: "", title: "", abstract: ""},
+      popupItem: { url: "", title: "", abstract: "" },
       isLoginVisibleModal: false,
       isPopupModal: false,
     };
@@ -225,31 +227,48 @@ export class Resources extends React.Component {
             style={{
               height: 300,
               width: 300,
-              backgroundColor: PRIMARY_COLOR,
+              // backgroundColor: PRIMARY_COLOR,
               borderRadius: 20,
               marginRight: 10,
               padding: 10,
             }}
             onPress={() => {
               // console.log("item",item);
-              this.setState({ popupItem: item})
+              this.setState({ popupItem: item });
               // console.log("this.state.popupItem",this.state.popupItem);
               this.setState({ isPopupModal: true });
-              
             }}
           >
-            <Text
+            <Card
+              mode='outlined'>
+              <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+              <Card.Title
+                title={item.title}
+                subtitle="One sentence abstract"
+                // left={LeftContent}
+              />
+              {/* <Card.Content>
+                <Title>Card title</Title>
+                <Paragraph>Card content</Paragraph>
+              </Card.Content> */}
+              
+              {/* <Card.Actions>
+                <Button>Cancel</Button>
+                <Button>Ok</Button>
+              </Card.Actions> */}
+            </Card>
+            {/* <Text
               style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
               onPress={() => Linking.openURL(item.url)}
             >
               {item.title}
-            </Text>
+            </Text> */}
             {/* <ScrollView style={{ margin: 10 }}>
               <Text style={{ fontSize: 14 }}>{item.abstract}</Text>
             </ScrollView> */}
-            <View style={{justifyContent:"center", alignContent:"center",}}>
+            {/* <View style={{ justifyContent: "center", alignContent: "center" }}>
               <FontAwesome name="book" size={128} color="black" />
-            </View>
+            </View> */}
           </TouchableOpacity>
         )}
       />
