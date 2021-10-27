@@ -23,7 +23,6 @@ import {
 import { GoogleLogin } from "./googleLogin";
 import * as Analytics from "expo-firebase-analytics";
 
-
 import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
@@ -39,12 +38,12 @@ const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
 export class Menu extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.dataModel = getDataModel();
-  //   // this.loginDismiss = this.props.loginDismiss();
-  //   // this.navUserCenter = this.props.navUserCenter();
+    //   // this.loginDismiss = this.props.loginDismiss();
+    //   // this.navUserCenter = this.props.navUserCenter();
   }
-  
+
   navUserCenter = () => this.props.navUserCenter();
   render() {
     return (
@@ -64,26 +63,26 @@ export class Menu extends React.Component {
             alignItems: "center",
           }}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               this.props.navIndex();
             }}
             style={{ margin: 10 }}
-          >
-            <Text style={{ fontWeight: "bold", fontSize: 35, margin: 5 }}>
-              Taperology
-            </Text>
-          </TouchableOpacity>
+          > */}
+          <Text style={{ margin: 15, fontWeight: "bold", fontSize: 35 }}>
+            Taperology
+          </Text>
+          {/* </TouchableOpacity> */}
         </View>
         <TouchableOpacity
-          onPress={async() => {
+          onPress={async () => {
             this.props.navResource();
-            console.log("navResource");
-            await Analytics.logEvent("ButtonTapped", {
-              name: "ChangeScreen",
-              screen: "Menu",
-              purpose: "Opens the internal settings",
-            });
+            // console.log("navResource");
+            // await Analytics.logEvent("GoToResource", {
+            //   name: "ChangeScreen",
+            //   screen: "Menu",
+            //   // purpose: "Opens the internal settings",
+            // });
           }}
           style={{ margin: 10 }}
         >
@@ -124,11 +123,16 @@ export class Menu extends React.Component {
           <View style={{ flex: 1, margin: 5 }}>
             <Text
               style={{ fontWeight: "bold", fontSize: 20 }}
-              onPress={() =>
+              onPress={async() => {
                 Linking.openURL(
                   "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
-                )
-              }
+                );
+                await Analytics.logEvent("ClickReferPatient", {
+                  name: "ChangeScreen",
+                  screen: "Menu",
+                  // purpose: "Opens the internal settings",
+                });
+              }}
             >
               Refer Patient
             </Text>

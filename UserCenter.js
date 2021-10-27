@@ -256,7 +256,7 @@ export class UserCenter extends React.Component {
                               height: 120,
                               flexDirection: "row",
                               marginBottom: 10,
-                              marginRight: 20,
+                              marginRight: 10,
                               borderRadius: 15,
                               backgroundColor: PRIMARY_COLOR,
                             }}
@@ -307,7 +307,7 @@ export class UserCenter extends React.Component {
                                   >
                                     Current Target Dosage {"\n"}
                                   </Text>
-                                  {currentDosage}
+                                  {parseInt(currentDosage)}
                                 </Text>
                               </View>
 

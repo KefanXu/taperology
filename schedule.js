@@ -24,6 +24,8 @@ import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
+import * as Analytics from "expo-firebase-analytics";
+
 import {
   Ionicons,
   AntDesign,
@@ -62,8 +64,64 @@ export class Schedule extends React.Component {
   resetSchedule = () => {
     console.log("resetSchedule", this.props.data);
     this.setState({ scheduleData: this.props.scheduleData });
+
     this.setState({ data: this.props.data });
     this.setState({ userKey: this.props.userKey });
+    this.setState({ stepNum: this.props.data.totalStep });
+    this.setState({ startingDose: this.props.data.startDose });
+  };
+  generateSchedule = async () => {
+    let initialDate = this.state.data.startDate;
+    let currentSchedule = this.state.scheduleData;
+    //console.log("initialDate", initialDate);
+    let schedule = [];
+    let startingInputDose = parseInt(this.state.startingDose);
+    let startingDose = startingInputDose;
+    let reducedDose = startingInputDose * 0.25;
+    let recurrentDate = initialDate;
+    for (let i = 0; i < 2; i++) {
+      let id = i + 1;
+      let duration = 14;
+      let recurrentDose = startingDose - reducedDose;
+      startingDose = recurrentDose;
+      let step = {
+        id: id,
+        duration: duration,
+        startDate: recurrentDate,
+        dosage: recurrentDose,
+      };
+      schedule.push(step);
+      recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+        .format()
+        .slice(0, 10);
+    }
+    // reducedDose = startingInputDose * 0.05;
+    let remainingDose = startingDose;
+    reducedDose = remainingDose / (this.state.stepNum - 2);
+    console.log("startingDose", startingDose);
+    console.log("reducedDose", reducedDose);
+    for (let i = 2; i < this.state.stepNum; i++) {
+      let id = i + 1;
+      let duration = 14;
+      let recurrentDose = startingDose - reducedDose;
+      startingDose = recurrentDose;
+      if (recurrentDose < 1) {
+        recurrentDose = 0;
+      }
+      let step = {
+        id: id,
+        duration: duration,
+        startDate: recurrentDate,
+        dosage: recurrentDose,
+      };
+      schedule.push(step);
+      recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+        .format()
+        .slice(0, 10);
+    }
+    console.log("schedule", schedule);
+    currentSchedule = schedule;
+    await this.setState({ scheduleData: currentSchedule });
   };
 
   reduceDose = (id) => {
@@ -134,73 +192,85 @@ export class Schedule extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
-  addStep = () => {
+  addStep = async () => {
     // console.log("this.state.stepNum", this.props.data.stepNum);
     // console.log("this.state.scheduleData", this.state.scheduleData);
-    let currentStepNum = this.props.data.stepNum;
+    let currentStepNum = this.state.stepNum;
     currentStepNum++;
-    this.setState({ stepNum: currentStepNum });
-    let duration = 14;
-    let currentSchedule = this.state.scheduleData;
-    let lastStep = currentSchedule[this.state.scheduleData.length - 1];
-    // console.log("lastStep.dosage", lastStep.dosage);
-    // console.log("this.state.startingDose", this.props.data.startDose);
-    if (lastStep && lastStep.dosage > 0) {
-      let recurrentDose =
-        lastStep.dosage - parseInt(this.props.data.startDose) * 0.05;
-      let step = {
-        id: lastStep.id + 1,
-        duration: duration,
-        startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
-          .format()
-          .slice(0, 10),
-        dosage: recurrentDose,
-      };
-      console.log("recurrentDose", recurrentDose);
+    await this.setState({ stepNum: currentStepNum });
+    this.generateSchedule();
 
-      currentSchedule.push(step);
-      this.setState({ scheduleData: currentSchedule });
-      // this.setState({ confirmModalTxt: "One step added." });
-    } else {
-      // this.setState({ confirmModalTxt: "Can't add more steps" });
-    }
+    // let duration = 14;
+    // let currentSchedule = this.state.scheduleData;
+    // let lastStep = currentSchedule[this.state.scheduleData.length - 1];
+    // // console.log("lastStep.dosage", lastStep.dosage);
+    // // console.log("this.state.startingDose", this.props.data.startDose);
+    // if (lastStep && lastStep.dosage > 0) {
+    //   let recurrentDose =
+    //     lastStep.dosage - parseInt(this.props.data.startDose) * 0.05;
+    //   let step = {
+    //     id: lastStep.id + 1,
+    //     duration: duration,
+    //     startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
+    //       .format()
+    //       .slice(0, 10),
+    //     dosage: recurrentDose,
+    //   };
+    //   console.log("recurrentDose", recurrentDose);
+
+    //   currentSchedule.push(step);
+    //   this.setState({ scheduleData: currentSchedule });
+    //   // this.setState({ confirmModalTxt: "One step added." });
+    // } else {
+    //   // this.setState({ confirmModalTxt: "Can't add more steps" });
+    // }
 
     // this.setState({ isConfirmationVisibleModal: true });
-    //console.log("step", step);
+    // console.log("step", step);
   };
-  removeStep = () => {
+  removeStep = async () => {
     let lastStep = this.state.scheduleData[this.state.scheduleData.length - 1];
-    if (lastStep.id > 1) {
-      let currentSchedule = this.state.scheduleData;
-      currentSchedule.pop();
-      this.setState({ scheduleData: currentSchedule });
+    if (lastStep.id > 2) {
+      // let currentSchedule = this.state.scheduleData;
+      // currentSchedule.pop();
+      // this.setState({ scheduleData: currentSchedule });
+      let currentStepNum = this.state.stepNum;
+      currentStepNum--;
+      await this.setState({ stepNum: currentStepNum });
+      this.generateSchedule();
     }
   };
-  updateSchedule = () => {
+  updateSchedule = async () => {
     // let newSchedule = this.state.scheduleData;
     let newScheduleProfile = this.props.data;
-    newScheduleProfile.totalStep = newScheduleProfile.schedule.length;
+    newScheduleProfile.totalStep = this.state.scheduleData.length;
+    newScheduleProfile.schedule = this.state.scheduleData;
     let userKey = this.state.userKey;
     let scheduleKey = newScheduleProfile.key;
     // console.log("newSchedule", newSchedule);
     console.log("newScheduleProfile", newScheduleProfile);
     this.dismiss();
     this.dataModel.updateSchedule(userKey, scheduleKey, newScheduleProfile);
+    await Analytics.logEvent("saveScheduleChanges", {
+      name: "saveScheduleChanges",
+      screen: "UserCenter",
+      // purpose: "Opens the internal settings",
+    });
   };
   deleteSchedule = async () => {
     // let scheduleKey = this.props.data.key;
     // let userKey = this.state.userKey;
-    await this.setState({isDeleteWarningModalVis: true});
+    await this.setState({ isDeleteWarningModalVis: true });
 
     // await this.dataModel.deleteSchedule(userKey, scheduleKey);
     // await this.dataModel.loadUserSchedules(this.state.userKey);
     // await this.update();
     // this.dismiss();
   };
-  deleteScheduleCancel = async() => {
-    await this.setState({isDeleteWarningModalVis: false});
-  }
-  deleteScheduleConfirmed = async() => {
+  deleteScheduleCancel = async () => {
+    await this.setState({ isDeleteWarningModalVis: false });
+  };
+  deleteScheduleConfirmed = async () => {
     let scheduleKey = this.props.data.key;
     let userKey = this.state.userKey;
     // await this.setState({isDeleteWarningModalVis: true});
@@ -208,9 +278,14 @@ export class Schedule extends React.Component {
     await this.dataModel.deleteSchedule(userKey, scheduleKey);
     await this.dataModel.loadUserSchedules(this.state.userKey);
     await this.update();
-    await this.setState({isDeleteWarningModalVis: false});
+    await this.setState({ isDeleteWarningModalVis: false });
     this.dismiss();
-  }
+    await Analytics.logEvent("deleteSchedule", {
+      name: "deleteSchedule",
+      screen: "UserCenter",
+      // purpose: "Opens the internal settings",
+    });
+  };
   dismiss = () => {
     this.props.dismiss();
   };
@@ -252,11 +327,18 @@ export class Schedule extends React.Component {
             >
               Are you sure?
             </Text>
-            <View style={{flexDirection:"row", justifyContent:"space-between", alignItems:"center", width:"80%"}}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "80%",
+              }}
+            >
               <TouchableOpacity onPress={() => this.deleteScheduleCancel()}>
                 <AntDesign name="closecircle" size={32} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity onPress ={() => this.deleteScheduleConfirmed()}>
+              <TouchableOpacity onPress={() => this.deleteScheduleConfirmed()}>
                 <AntDesign name="checkcircle" size={32} color="black" />
               </TouchableOpacity>
             </View>

@@ -23,6 +23,7 @@ if (firebase.apps.length === 0) {
 const Stack = createStackNavigator();
 // Analytics.setUnavailabilityLogging(false);
 Analytics.setAnalyticsCollectionEnabled(true);
+// Analytics.setUserId("1");
 
 console.log("app init");
 
@@ -40,14 +41,19 @@ export default function App() {
         const previousRouteName = routeNameRef.current;
         const currentRouteName = navigationRef.current.getCurrentRoute().name;
 
+        console.log("previousRouteName",previousRouteName);
+        console.log("currentRouteName",currentRouteName);
+
         if (previousRouteName !== currentRouteName) {
           // The line below uses the expo-firebase-analytics tracker
           // https://docs.expo.io/versions/latest/sdk/firebase-analytics/
           // Change this line to use another Mobile analytics SDK
           // Analytics.setCurrentScreen(currentRouteName, currentRouteName);
           // alert(`The route changed to ${currentRouteName}`);
+          let eventName = "FROM" + previousRouteName + "TO" + currentRouteName;
           await Analytics.setCurrentScreen(currentRouteName);
-          await Analytics.logEvent("ButtonTapped", {
+
+          await Analytics.logEvent(eventName, {
             name: "ChangeScreen",
             screen: "Menu",
             purpose: "Opens the internal settings",

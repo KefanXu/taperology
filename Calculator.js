@@ -105,11 +105,11 @@ export class Calculator extends React.Component {
     this.dataModel = getDataModel();
   }
   navResource = async () => {
-    await Analytics.logEvent("ButtonTapped", {
-      name: "ChangeScreen",
-      screen: "Menu",
-      purpose: "Opens the internal settings",
-    });
+    // await Analytics.logEvent("ButtonTapped", {
+    //   name: "ChangeScreen",
+    //   screen: "Menu",
+    //   purpose: "Opens the internal settings",
+    // });
     this.props.navigation.navigate("Resources", {
       // needsUpdate: this.needsUpdate,
     });
@@ -299,14 +299,67 @@ export class Calculator extends React.Component {
             <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
               {item.title}
             </Text>
-            <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
+            {/* <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
               Strength / mg: {item.strength}
-            </Text>
+            </Text> */}
           </TouchableOpacity>
         )}
       />
     </View>
   );
+  generateSchedule = () => {
+    let initialDate = this.state.datePickerButtonTxt;
+
+    //console.log("initialDate", initialDate);
+    let schedule = [];
+    let startingInputDose = parseInt(this.state.startingDose);
+    let startingDose = startingInputDose;
+    let reducedDose = startingInputDose * 0.25;
+    let recurrentDate = initialDate;
+    for (let i = 0; i < 2; i++) {
+      let id = i + 1;
+      let duration = 14;
+      let recurrentDose = startingDose - reducedDose;
+      startingDose = recurrentDose;
+      let step = {
+        id: id,
+        duration: duration,
+        startDate: recurrentDate,
+        dosage: recurrentDose,
+      };
+      schedule.push(step);
+      recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+        .format()
+        .slice(0, 10);
+    }
+    // reducedDose = startingInputDose * 0.05;
+    let remainingDose = startingDose;
+    reducedDose = remainingDose / (this.state.stepNum - 2);
+    console.log("startingDose", startingDose);
+    console.log("reducedDose", reducedDose);
+    for (let i = 2; i < this.state.stepNum; i++) {
+      let id = i + 1;
+      let duration = 14;
+      let recurrentDose = startingDose - reducedDose;
+      startingDose = recurrentDose;
+      if (recurrentDose < 1) {
+        recurrentDose = 0;
+      }
+      let step = {
+        id: id,
+        duration: duration,
+        startDate: recurrentDate,
+        dosage: recurrentDose,
+      };
+      schedule.push(step);
+      recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+        .format()
+        .slice(0, 10);
+    }
+    console.log("schedule", schedule);
+
+    this.setState({ scheduleData: schedule });
+  };
   reset = async () => {
     await Analytics.logEvent("resetButtonTapped", {
       name: "ChangeScreen",
@@ -357,55 +410,11 @@ export class Calculator extends React.Component {
         this.setState({ alertTxt: "Starting dose has to be a valid number" });
         return;
       }
-
+      this.generateSchedule();
       this.setState({ generateBtnTxt: "Reset" });
-
-      let initialDate = this.state.datePickerButtonTxt;
-
-      //console.log("initialDate", initialDate);
-      let schedule = [];
-      let startingInputDose = parseInt(this.state.startingDose);
-      let startingDose = startingInputDose;
-      let reducedDose = startingInputDose * 0.25;
-      let recurrentDate = initialDate;
-      for (let i = 0; i < 2; i++) {
-        let id = i + 1;
-        let duration = 14;
-        let recurrentDose = startingDose - reducedDose;
-        startingDose = recurrentDose;
-        let step = {
-          id: id,
-          duration: duration,
-          startDate: recurrentDate,
-          dosage: recurrentDose,
-        };
-        schedule.push(step);
-        recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
-          .format()
-          .slice(0, 10);
-      }
-      reducedDose = startingInputDose * 0.05;
-      for (let i = 2; i < this.state.stepNum; i++) {
-        let id = i + 1;
-        let duration = 14;
-        let recurrentDose = startingDose - reducedDose;
-        startingDose = recurrentDose;
-        let step = {
-          id: id,
-          duration: duration,
-          startDate: recurrentDate,
-          dosage: recurrentDose,
-        };
-        schedule.push(step);
-        recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
-          .format()
-          .slice(0, 10);
-      }
-      console.log("schedule", schedule);
-      this.setState({ scheduleData: schedule });
       this.setState({ listOpacity: 100 });
       this.setState({ confirmModalTxt: "New taper schedule created!" });
-      this.setState({ isConfirmationVisibleModal: true });
+      // this.setState({ isConfirmationVisibleModal: true });
       this.setState({ isAddBtnDisable: false });
     }
     await Analytics.logEvent("GenerateSchedule", {
@@ -414,38 +423,42 @@ export class Calculator extends React.Component {
       purpose: "Opens the internal settings",
     });
   };
-  addStep = () => {
+  addStep = async () => {
     let currentStepNum = this.state.stepNum;
     currentStepNum++;
-    this.setState({ stepNum: currentStepNum });
-    let duration = 14;
-    let currentSchedule = this.state.scheduleData;
-    let lastStep = currentSchedule[this.state.scheduleData.length - 1];
-    if (lastStep && lastStep.dosage > 0) {
-      let recurrentDose =
-        lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
-      let step = {
-        id: lastStep.id + 1,
-        duration: duration,
-        startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
-          .format()
-          .slice(0, 10),
-        dosage: recurrentDose,
-      };
-      currentSchedule.push(step);
-      this.setState({ scheduleData: currentSchedule });
-      this.setState({ confirmModalTxt: "One step added." });
-    } else {
-      this.setState({ confirmModalTxt: "Can't add more steps" });
-    }
+    await this.setState({ stepNum: currentStepNum });
+    this.generateSchedule();
+    // let duration = 14;
+    // let currentSchedule = this.state.scheduleData;
+    // let lastStep = currentSchedule[this.state.scheduleData.length - 1];
+    // if (lastStep && lastStep.dosage > 0) {
+    //   let recurrentDose =
+    //     lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
+    //   let step = {
+    //     id: lastStep.id + 1,
+    //     duration: duration,
+    //     startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
+    //       .format()
+    //       .slice(0, 10),
+    //     dosage: recurrentDose,
+    //   };
+    //   currentSchedule.push(step);
+    //   this.setState({ scheduleData: currentSchedule });
+    //   this.setState({ confirmModalTxt: "One step added." });
+    // } else {
+    //   this.setState({ confirmModalTxt: "Can't add more steps" });
+    // }
 
-    this.setState({ isConfirmationVisibleModal: true });
-    //console.log("step", step);
+    // this.setState({ isConfirmationVisibleModal: true });
   };
-  removeStep = () => {
-    let currentSchedule = this.state.scheduleData;
-    currentSchedule.pop();
-    this.setState({ scheduleData: currentSchedule });
+  removeStep = async() => {
+    // let currentSchedule = this.state.scheduleData;
+    // currentSchedule.pop();
+    // this.setState({ scheduleData: currentSchedule });
+    let currentStepNum = this.state.stepNum;
+    currentStepNum--;
+    await this.setState({ stepNum: currentStepNum });
+    this.generateSchedule();
   };
 
   reduceDose = (id) => {
@@ -626,10 +639,11 @@ export class Calculator extends React.Component {
       <View
         style={{
           marginTop: 20,
+          marginBottom:20,
           marginBottom: 5,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "white",
+          backgroundColor: PRIMARY_COLOR,
           borderRadius: 20,
           width: 500,
         }}
@@ -931,30 +945,35 @@ export class Calculator extends React.Component {
           </View>
           <View
             style={{
-              height: 400,
+              height: 1200,
               marginLeft: 10,
-              marginRight:60,
-              marginTop:10,
+              marginRight: 60,
+              marginTop: 10,
               flexDirection: "column",
               justifyContent: "center",
               opacity: this.state.listOpacity,
-              backgroundColor: PRIMARY_COLOR,
+              // backgroundColor: PRIMARY_COLOR,
               borderRadius: 20,
               //alignItems: "center",
             }}
           >
-            <View style={{justifyContent: "center", alignItems:"center"}}>{scheduleBtnView}</View>
+            <View style={{ justifyContent: "center", alignItems: "center",}}>
+              {scheduleBtnView}
+            </View>
             <View
               style={{
-                padding: 20,
-                marginVertical: 8,
-                marginHorizontal: 16,
-                flex: 1,
+                padding: 1,
+                marginVertical: 1,
+                marginHorizontal: 1,
+
+                height:50,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
                 borderBottomColor: "black",
                 borderBottomWidth: 2,
+                marginHorizontal:32
+                // backgroundColor:"red"
               }}
             >
               <View
@@ -962,6 +981,9 @@ export class Calculator extends React.Component {
                   flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
+                  // padding: 15,
+                  // backgroundColor:"red",
+                  
                 }}
               >
                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
@@ -971,6 +993,7 @@ export class Calculator extends React.Component {
                   flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
+                  // padding: 15,
                 }}
               >
                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>
@@ -982,6 +1005,7 @@ export class Calculator extends React.Component {
                   flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
+                  // padding: 15,
                 }}
               >
                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>
@@ -993,6 +1017,7 @@ export class Calculator extends React.Component {
                   flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
+                  // padding: 15,
                 }}
               >
                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>
@@ -1021,6 +1046,7 @@ export class Calculator extends React.Component {
                       flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
+                      // backgroundColor:"blue"
                     }}
                   >
                     <Text style={{ fontSize: 14 }}>Step {item.id}</Text>
@@ -1072,7 +1098,7 @@ export class Calculator extends React.Component {
                       <AntDesign name="caretleft" size={24} color="black" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 14 }}>
-                      {parseInt(item.dosage)} |{" "}
+                      {parseInt(item.dosage)} mg |{" "}
                       {parseInt((item.dosage / this.state.startingDose) * 100)}%
                     </Text>
                     <TouchableOpacity
