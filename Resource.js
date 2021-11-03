@@ -29,7 +29,8 @@ import {
   FontAwesome,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
+import { Avatar, Card, Title, Paragraph } from "react-native-paper";
+import * as Analytics from "expo-firebase-analytics";
 
 import { FlatList } from "react-native-web";
 import { Menu } from "./menu";
@@ -41,74 +42,170 @@ const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
 const BENZO_BASIC_DATA = [
   {
-    title: "Benzodiazepines: How They Work & How to Withdraw",
-    url: "https://drive.google.com/open?id=1UzmrSDUgja3SXrvf-q-_VGLsOZCIggFE&authuser=maustd%40umich.edu&usp=drive_fs",
+    title: "The Ashton Manual",
+    trackID: "BENZO_BASIC_DATA_1",
+    url: "https://drive.google.com/file/d/1UzmrSDUgja3SXrvf-q-_VGLsOZCIggFE/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_Manual.png?token=AJTYIQGFWCRHS3U3LCUJ3FTBRGIA2",
     abstract:
-      "The Ashton Manual (Benzodiazepines: How They Work & How to Withdraw; https://www.benzo.org.uk/manual/) was published about 20 years ago by Dr. Heather Ashton, a physician and Professor of Clinical Psychopharmacology in the U.K. This document includes a wealth of accessible information about benzodiazepines, including basic pharmacology and a guide to helping long-term users withdraw from the medications.",
+      "The Ashton Manual was developed by Dr. Heather Ashton, Professor of Clinical Psychopharmacology in England. In 1999, she published a manual on safely and effectively  tapering off of BZDs, called “Benzodiazepines: How They Work And How To Withdraw,” which is now known as the Ashton Manual.",
+    subtitle: "Tapering Guide for Benzodiazepines",
+    test: <Text></Text>,
   },
   {
-    title: "The EMPOWER brochure",
-    url: "https://drive.google.com/open?id=1-DmaNSdd4QxU4WDG98gJ3PBNT7U5A_-H&authuser=maustd%40umich.edu&usp=drive_fs",
+    title: "Empower Brochure",
+    trackID: "BENZO_BASIC_DATA_2",
+    url: "https://drive.google.com/file/d/1-DmaNSdd4QxU4WDG98gJ3PBNT7U5A_-H/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/EMPOWER_brochure.png?token=AJTYIQG5NFPYDKPAEDH2J73BRLABW",
     abstract:
-      "The EMPOWER brochure was developed by Dr. Cara Tannenbaum, a geriatrician in Montreal. When this information was sent to older adult, long-term benzodiazepine users, 27% discontinued benzodiazepine use by 6 months later",
+      <Text>The EMPOWER brochure was developed by Dr. Cara Tannenbaum, 
+      a geriatrician in Montreal. When this information was sent to older adult, 
+      long-term benzodiazepine users, 27% discontinued benzodiazepine use by 6 months later 
+      (compared to just 5% in the control group; paper 
+      <Text style={{color:"blue"}} onPress={() => {Linking.openURL("https://pubmed.ncbi.nlm.nih.gov/24733354/");}}> here</Text>
+      , brochure <Text style={{color:"blue"}} onPress={() => {Linking.openURL("https://www.deprescribingnetwork.ca/s/Sleeping-pills_anti-anxiety-meds_Sedative-hypnotics-1.pdf");}}>here</Text>).</Text>,
+    subtitle: "Educational Pamphlet",
   },
   {
-    title: "Re-evaluating the Use of Benzodiazepines",
-    url: "https://drive.google.com/open?id=1fAFHaEhaW5bO9E0lOoM6KtSEASEoOJAd&authuser=maustd%40umich.edu&usp=drive_fs",
+    title: "Re-evaluating Use",
+    trackID: "BENZO_BASIC_DATA_3",
+    url: "https://drive.google.com/file/d/1fAFHaEhaW5bO9E0lOoM6KtSEASEoOJAd/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Re-evaluating_Use.png?token=AJTYIQEQ4D5STWTHN7CYM3DBRLAES",
     abstract:
-      "Re-evaluating the Use of Benzodiazepines is a guide developed by the VA’s Academic Detailing Service. It includes background information about prescribing trends in recent years, suggests evidence-based alternatives for those with anxiety disorders or insomnia, and specifically addresses risks among high-risk populations, including those with dementia, PTSD, and older adults. The full catalog of the VA’s Academic Detailing Resources is here, covering additional topics such as alcohol use disorder, chronic obstructive pulmonary disease, and pain/opioid safety.",
+      <Text>Re-evaluating the Use of Benzodiazepines is a guide developed by the VA’s Academic Detailing Service. 
+      {"\n"} 
+      {"\n"}It includes background information about prescribing trends in recent years, 
+      suggests evidence-based alternatives for those with anxiety disorders or insomnia, 
+      and specifically addresses risks among high-risk populations, including those with dementia, 
+      PTSD, and older adults. {"\n"}
+      {"\n"} 
+      The full catalog of the VA’s Academic Detailing Resources is 
+      <Text style={{color:"blue"}} onPress={() => {Linking.openURL("https://www.pbm.va.gov/PBM/AcademicDetailingService/EducationalMaterialCatalog_Publicsite.pdf");}}> here</Text>, 
+      covering additional topics such as alcohol use disorder, 
+      chronic obstructive pulmonary disease, and pain/opioid safety.</Text>,
+    subtitle: "VA Clinician's Guide",
   },
   {
-    title: "VA BZD Patient_Quick Start Guide",
-    url: "https://drive.google.com/open?id=1-MfFm832mP7hcv_ao5dhMQnkGkyecO0a&authuser=maustd%40umich.edu&usp=drive_fs",
+    title: "Quick Start Guide",
+    trackID: "BENZO_BASIC_DATA_4",
+    url: "https://drive.google.com/file/d/1-MfFm832mP7hcv_ao5dhMQnkGkyecO0a/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/QuickStart.png?token=AJTYIQAGE4ZQZBGFGJNFOXLBRLAGS",
     abstract:
       "This is a brief, one-page infographic presenting potentially harms associated with prescription benzodiazepine use that may be useful in discussion with patients and family members.",
+    subtitle: "1-page Infographic",
   },
 ];
 const INSOMNIA_DATA = [
   {
-    title: "BZRA deprescribing pamphlet",
-    url: "https://drive.google.com/open?id=1-YIrbpLY-nsuV_R5WDLOz9emR8FQrs8a&authuser=maustd%40umich.edu&usp=drive_fs",
-    abstract:
-      "This 2-page pamphlet was created by deprescribing.org, a group led by a Canadian pharmacist (Dr. Barbara Farrell) and geriatrician (Dr. Cara Tannenbaum) seeking to promote appropriate deprescribing. (They have a variety of additional patient- and provider-facing resources, for a variety of different medications.)",
-  },
-  {
-    title: "Mysleepwell.ca",
-    url: "http://Mysleepwell.ca",
-    abstract:
-      "Mysleepwell.ca is an excellent website with a wealth of information emphasizing reducing use of sleeping pills, promoting sleep hygiene, and introducing patients to CBT for insomnia. ",
-  },
-  {
-    title: "Insomnia",
+    title: "Insomnia Coach Sleep App",
+    trackID: "INSOMNIA_DATA_1",
     url: "https://mobile.va.gov/app/insomnia-coach",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/InsomniaCoach.png?token=AJTYIQFW7QSJ5AGV5GM3RBDBRQHKW",
+    subtitle: "Downloadable App for Help with Insomnia",
     abstract:
       "This app was developed by the VA to help manage insomnia and is based on CBT for insomnia. It includes a guided weekly training plan with tips for sleeping and person feedback. Available for free for Apple or Android.",
+  },
+  {
+    title: "Sleepwell",
+    trackID: "INSOMNIA_DATA_2",
+    url: "http://Mysleepwell.ca",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Sleepwell.png?token=AJTYIQB7YFE6TFHK6KGLNOLBRLIJY",
+    subtitle: "Website on Sleep Hygiene",
+    abstract:
+      <Text>Mysleepwell.ca is an excellent website with a wealth of information emphasizing reducing use of sleeping pills, promoting sleep hygiene, and introducing patients to CBT for insomnia.{"\n"}
+      {"\n"} 
+      - A printable sleep hygiene checklist is <Text style={{color:"blue"}} onPress={() => {Linking.openURL("https://mysleepwell.ca/cbti/hygiene-of-sleep/");}}>here</Text>.{"\n"} 
+      {"\n"} 
+      - A list of recommended books, websites, and apps is <Text style={{color:"blue"}} onPress={() => {Linking.openURL("https://mysleepwell.ca/cbti/sleepwell-recommends/");}}> here</Text>.{"\n"} 
+      </Text>,
+  },
+  {
+    title: "BZD Deprescribing",
+    trackID: "INSOMNIA_DATA_3",
+    url: "https://drive.google.com/file/d/1-YIrbpLY-nsuV_R5WDLOz9emR8FQrs8a/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_PDF.png?token=AJTYIQEOSAIW24SD62AGXO3BRGIYS",
+    subtitle: "Pamphlet",
+    abstract:
+      <Text>This 2-page pamphlet was created by <Text style={{color:"blue"}} onPress={() => {Linking.openURL("https://deprescribing.org/resources/");}}>deprescribing.org</Text>, 
+      a group led by a Canadian pharmacist (Dr. Barbara Farrell) and geriatrician (Dr. Cara Tannenbaum) seeking to promote appropriate deprescribing. (
+        They have a variety of additional patient- and provider-facing resources, for a variety of different medications.)</Text>,
   },
 ];
 const ANXIETY_DATA = [
   {
     title: "Breathing Retraining",
-    url: "https://drive.google.com/open?id=1-Qg3l8bKq0P8Ouinx8FStjPXzA6E-4EQ&authuser=maustd%40umich.edu&usp=drive_fs",
+    trackID: "ANXIETY_DATA_1",
+    url: "https://drive.google.com/file/d/1-Qg3l8bKq0P8Ouinx8FStjPXzA6E-4EQ/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_Breathing.png?token=AJTYIQGNV3YW7IAC7YDDXPLBRGDGQ",
+    subtitle: "Information Sheet",
     abstract:
-      "An elevated breathing rate may often accompany anxiety; the flip-side is that mindful breathing in a stressful situation may help reduce anxiety and panic. This 1-page information sheet was developed by the Center for Clinical Interventions in Australia; additional resources related to anxiety can be found here.",
+      "This information sheet briefly discusses the role of breathing in anxiety  and guides you through a simple breathing retraining technique that uses breathing patterns to help deal with anxiety.",
   },
   {
     title: "Progressive Muscle Relaxation",
-    url: "https://drive.google.com/open?id=1-TgIQLhkSCxrct_srB_NZLr7Tf5atolC&authuser=maustd%40umich.edu&usp=drive_fs",
+    trackID: "ANXIETY_DATA_2",
+    url: "https://drive.google.com/file/d/1-TgIQLhkSCxrct_srB_NZLr7Tf5atolC/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_Relaxation.png?token=AJTYIQHROWM37XHJOQECLI3BRGDD6",
+    subtitle: "Information Sheet",
     abstract:
-      "Muscle tension is another way that the body can respond to stress. This 1-pager, also developed by the Center for Clinical Interventions,  introduces Progressive Muscle Relaxation, to help guide the body through periods of heightened tension.",
+      "Muscle tension is another way that the body can respond to stress. This 1-pager, also developed by the Center for Clinical Interventions, introduces Progressive Muscle Relaxation, to help guide the body through periods of heightened tension.",
   },
   {
-    title: "Simple Grounding Technique",
-    url: "https://drive.google.com/open?id=102VxfQr2mgQLgi05EpwEZv8MnvzALTrV&authuser=maustd%40umich.edu&usp=drive_fs",
+    title: "5-4-3-2-1",
+    trackID: "ANXIETY_DATA_3",
+    url: "https://drive.google.com/file/d/102VxfQr2mgQLgi05EpwEZv8MnvzALTrV/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_54321.png?token=AJTYIQCFFJRIUH3SZMGTCV3BRGCS4",
+    subtitle: "Infographic",
     abstract:
       "This is a simple infographic that may help patients through a moment of significant distress.",
   },
   {
     title: "Mindfulness Coach",
+    trackID: "ANXIETY_DATA_4",
     url: "https://mobile.va.gov/app/mindfulness-coach",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/mindfulness-coach-app-icon.png?token=AJTYIQGJG2OAJ65HN4LBZGTBRQHHW",
+    subtitle: "Downloadable App",
     abstract:
-      "The VA developed this app, which “The app provides a gradual, self-guided training program designed to help you understand and adopt a simple mindfulness practice. Mindfulness Coach also offers a library of information about mindfulness, 12 audio-guided mindfulness exercises, a growing catalog of additional exercises available for free download, goal-setting and tracking, a mindfulness mastery assessment to help you track your progress over time, customizable reminders, and access to other support and crisis resources.” Available for free for Apple or Android.",
+      <Text>The VA developed this app, which “The app provides a gradual, self-guided training program designed to help you understand and adopt a simple mindfulness practice. Mindfulness Coach also offers{"\n"} 
+      {"\n"} 
+      - A library of information about mindfulness{"\n"} 
+      - 12 audio-guided mindfulness exercises{"\n"} 
+      - A growing catalog of additional exercises available for free download{"\n"} 
+      - Goal-setting and tracking{"\n"} 
+      - A mindfulness mastery assessment to help you track your progress over time {"\n"}
+      - Customizable reminders{"\n"} 
+      - Access to other support and crisis resources.</Text>,
+  },
+];
+const TAPER_RESOURCE = [
+  {
+    title: "The Ashton Manual",
+    trackID: "BENZO_BASIC_DATA_1",
+    url: "https://drive.google.com/file/d/1UzmrSDUgja3SXrvf-q-_VGLsOZCIggFE/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_Manual.png?token=AJTYIQGFWCRHS3U3LCUJ3FTBRGIA2",
+    abstract: "The Ashton Manual was developed by Dr. Heather Ashton, Professor of Clinical Psychopharmacology in England. In 1999, she published a manual on safely and effectively  tapering off of BZDs, called “Benzodiazepines: How They Work And How To Withdraw,” which is now known as the Ashton Manual.",
+    subtitle: "Tapering Guide for Benzodiazepines",
+  },
+  {
+    title: "Quick Start Guide",
+    trackID: "BENZO_BASIC_DATA_4",
+    url: "https://drive.google.com/file/d/1-MfFm832mP7hcv_ao5dhMQnkGkyecO0a/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/QuickStart.png?token=AJTYIQAGE4ZQZBGFGJNFOXLBRLAGS",
+    abstract:
+      "This is a brief, one-page infographic presenting potentially harms associated with prescription benzodiazepine use that may be useful in discussion with patients and family members.",
+    subtitle: "1-page Infographic",
   },
 ];
 const TAPERING_DATA = [
@@ -132,28 +229,46 @@ export class Resources extends React.Component {
       style={{
         height: 400,
         width: 400,
-        backgroundColor: PRIMARY_COLOR,
+        backgroundColor: "white",
         borderRadius: 20,
         marginRight: 10,
         padding: 10,
+        justifyContent: "space-between",
       }}
     >
-      <Text
-        style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
-        onPress={() => Linking.openURL(this.state.popupItem.url)}
+      <View>
+        <Text style={{ fontSize: 32, fontWeight: "bold", margin: 10 }}>
+          {this.state.popupItem.title}
+        </Text>
+        <ScrollView style={{ margin: 10 }}>
+          <Text style={{ fontSize: 14 }}>{this.state.popupItem.abstract}</Text>
+        </ScrollView>
+      </View>
+      <TouchableOpacity
+        onPress={async () => {
+          let eventName = this.state.popupItem.trackID;
+          await Analytics.logEvent(eventName, {
+            name: "ResourceClicked",
+            screen: "Resource",
+          });
+          Linking.openURL(this.state.popupItem.url);
+        }}
       >
-        {this.state.popupItem.title}
-      </Text>
-      <ScrollView style={{ margin: 10 }}>
-        <Text style={{ fontSize: 14 }}>{this.state.popupItem.abstract}</Text>
-      </ScrollView>
+        <View
+          style={{ backgroundColor: "black", borderRadius: 20, margin: 10, width:150, justifyContent:"center", alignItems:"center" }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold", margin: 10, }}>
+            Go to resource
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
   _renderModalLogin = () => (
     <View
       style={{
         backgroundColor: "white",
-        width: "20%",
+        width: 300,
         padding: 20,
         justifyContent: "center",
         alignItems: "center",
@@ -227,7 +342,6 @@ export class Resources extends React.Component {
             style={{
               height: 300,
               width: 300,
-              // backgroundColor: PRIMARY_COLOR,
               borderRadius: 20,
               marginRight: 10,
               padding: 10,
@@ -239,19 +353,35 @@ export class Resources extends React.Component {
               this.setState({ isPopupModal: true });
             }}
           >
-            <Card
-              mode='outlined'>
-              <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+            <Card mode="elevated" style={{ borderRadius: 20 }}>
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 10,
+                }}
+              >
+                <Image
+                  style={{
+                    flex: 1,
+                    width: 200,
+                    height: 200,
+                    resizeMode: "stretch",
+                    borderRadius: 20,
+                  }}
+                  source={{ uri: item.imgURL }}
+                />
+              </View>
               <Card.Title
                 title={item.title}
-                subtitle="One sentence abstract"
+                subtitle={item.subtitle}
                 // left={LeftContent}
               />
               {/* <Card.Content>
                 <Title>Card title</Title>
                 <Paragraph>Card content</Paragraph>
               </Card.Content> */}
-              
+
               {/* <Card.Actions>
                 <Button>Cancel</Button>
                 <Button>Ok</Button>
@@ -348,7 +478,7 @@ export class Resources extends React.Component {
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
                 Resources on Tapering
               </Text>
-              {this._renderListView(BENZO_BASIC_DATA)}
+              {this._renderListView(TAPER_RESOURCE)}
             </View>
           </View>
         </View>

@@ -229,7 +229,7 @@ export class Calculator extends React.Component {
     <View
       style={{
         backgroundColor: "white",
-        width: "20%",
+        width: 300,
         padding: 20,
         justifyContent: "center",
         alignItems: "center",
