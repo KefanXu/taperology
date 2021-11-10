@@ -46,7 +46,7 @@ const BENZO_BASIC_DATA = [
     trackID: "BENZO_BASIC_DATA_1",
     url: "https://drive.google.com/file/d/1UzmrSDUgja3SXrvf-q-_VGLsOZCIggFE/view?usp=sharing",
     imgURL:
-      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_Manual.png?token=AJTYIQGFWCRHS3U3LCUJ3FTBRGIA2",
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_Manual.png?token=AJTYIQGAGUI6BY2FHI5SO5TBSLI4W",
     abstract:
       "The Ashton Manual was developed by Dr. Heather Ashton, Professor of Clinical Psychopharmacology in England. In 1999, she published a manual on safely and effectively  tapering off of BZDs, called “Benzodiazepines: How They Work And How To Withdraw,” which is now known as the Ashton Manual.",
     subtitle: "Tapering Guide for Benzodiazepines",

@@ -47,7 +47,7 @@ export class Schedule extends React.Component {
     //   "scheduleData: this.props.scheduleData",
     //   this.props.scheduleData
     // );
-
+    // console.log("height",Dimensions.get("window").height);
     this.dataModel = getDataModel();
     this.state = {
       scheduleData: this.props.scheduleData,
@@ -56,13 +56,14 @@ export class Schedule extends React.Component {
       stepNum: this.props.data.totalStep,
       startingDose: this.props.data.startDose,
       isDeleteWarningModalVis: false,
+      // height: Dimensions.get("window").height
     };
   }
   showDeleteWarningModal = () => {
     this.setState({ isDeleteWarningModalVis: true });
   };
   resetSchedule = () => {
-    console.log("resetSchedule", this.props.data);
+    // console.log("resetSchedule", this.props.data);
     this.setState({ scheduleData: this.props.scheduleData });
 
     this.setState({ data: this.props.data });
@@ -344,12 +345,16 @@ export class Schedule extends React.Component {
             </View>
           </View>
         </Modal>
+
+
         <View
           style={{
             marginLeft: 20,
+            marginTop: 0,
             flexDirection: "row",
             justifyContent: "space-between",
             marginRight: 20,
+            // backgroundColor:"blue"
             // borderBottomColor: PRIMARY_COLOR,
             // borderBottomWidth: 2,
           }}
@@ -370,6 +375,10 @@ export class Schedule extends React.Component {
             <Text style={{ fontSize: 12, marginTop: 5 }}>
               <Text style={{ fontWeight: "bold" }}>Start Date </Text>
               {this.state.data.startDate ? this.state.data.startDate : ""}
+            </Text>
+            <Text style={{ fontSize: 12, marginTop: 5 }}>
+              <Text style={{ fontWeight: "bold" }}>Starting Dose </Text>
+              {this.state.data.startDose ? this.state.data.startDose : ""}
             </Text>
           </View>
           <View style={{ flexDirection: "row" }}>
@@ -490,6 +499,7 @@ export class Schedule extends React.Component {
         <View
           style={{
             padding: 20,
+            marginTop: 20,
             marginVertical: 8,
             marginHorizontal: 16,
             flex: 1,
@@ -541,7 +551,7 @@ export class Schedule extends React.Component {
         </View>
         <View
           style={{
-            height: 300,
+            height: 500,
             margin: 10,
             flexDirection: "row",
             justifyContent: "center",
@@ -657,7 +667,7 @@ export class Schedule extends React.Component {
                       <AntDesign name="caretleft" size={24} color="black" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 14 }}>
-                      {parseInt(item.dosage)} |{" "}
+                      {item.dosage} |{" "}
                       {parseInt(
                         (parseInt(item.dosage) /
                           parseInt(this.state.data.startDose)) *

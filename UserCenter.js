@@ -56,7 +56,6 @@ export class UserCenter extends React.Component {
       currentData: "",
       isScheduleVisibleModal: false,
       currentSchedule: [],
-      
     };
   }
 
@@ -103,15 +102,37 @@ export class UserCenter extends React.Component {
       <View
         style={{
           backgroundColor: "white",
-          width: "100%",
-          height: 500,
-          padding: 20,
-          justifyContent: "center",
+          width: 1000,
+          height: 800,
+          padding: 5,
+          justifyContent: "flex-start",
           alignItems: "center",
-          borderRadius: 20,
+          borderRadius: 10,
           borderColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
+        <View
+          style={{
+            width: "100%",
+            height: 34,
+            marginTop: 0,
+            justifyContent: "center",
+            alignItems: "flex-end",
+            // backgroundColor: "red",
+          }}
+        >
+          <Ionicons
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "flex-end",
+            }}
+            name="md-close-circle"
+            size={32}
+            color="black"
+            onPress={() => this.schedulePopUpDismiss()}
+          />
+        </View>
         <Schedule
           ref={this.schedule}
           scheduleData={this.state.currentSchedule}
@@ -119,10 +140,9 @@ export class UserCenter extends React.Component {
           userKey={this.dataModel.key}
           dismiss={this.schedulePopUpDismiss}
           update={this.updateScheduleView}
-
         />
 
-        <View
+        {/* <View
           style={{
             flex: 1,
             // backgroundColor: "red",
@@ -131,7 +151,7 @@ export class UserCenter extends React.Component {
             justifyContent: "center",
             alignItems: "center",
           }}
-        ></View>
+        ></View> */}
       </View>
     );
   };
@@ -301,6 +321,14 @@ export class UserCenter extends React.Component {
                                 color={"black"}
                               />
                               <View style={{ marginTop: 10 }}>
+                                <Text>
+                                  <Text
+                                    style={{ fontSize: 12, fontWeight: "bold" }}
+                                  >
+                                    Starting Dosage {"\n"}
+                                  </Text>
+                                  {parseInt(item.startDose)}
+                                </Text>
                                 <Text>
                                   <Text
                                     style={{ fontSize: 12, fontWeight: "bold" }}

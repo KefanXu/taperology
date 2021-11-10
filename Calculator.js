@@ -55,6 +55,13 @@ const BENZO_TYPE_DATA = [
   { title: "Diazepam", id: "Diazepam", strength: "10, 5, 2" },
   { title: "Temazepam", id: "Temazepam", strength: "30, 22.5, 15, 7.5" },
 ];
+const STRENGTHS = {
+  "Alprazolam": 0.125,
+  "Lorazepam": 0.25,
+  "Clonazepam": 0.0625,
+  "Diazepam": 1,
+  "Temazepam": 3.75,
+};
 // const Item = ({ title }) => (
 //   <View style={styles.item}>
 //     <Text style={styles.title}>{title}</Text>
@@ -99,11 +106,22 @@ export class Calculator extends React.Component {
       confirmModalTxt: "",
       isAddBtnDisable: true,
       entry: "menu",
+      currentStd: "",
     };
     //this.stepInput = React.createRef();
     this.startDoseInput = React.createRef();
     this.dataModel = getDataModel();
   }
+  alertSignIn = () => {
+    this.setState({ alertTxt: "Please Sign Up First" });
+
+    this.setState({ isAlertVisibleModal: true });
+  };
+  // alertAllSet = () => {
+  //   this.setState({ alertTxt: "Welcome to Taperology" });
+
+  //   this.setState({ isAlertVisibleModal: true });
+  // };
   navResource = async () => {
     // await Analytics.logEvent("ButtonTapped", {
     //   name: "ChangeScreen",
@@ -254,6 +272,7 @@ export class Calculator extends React.Component {
           dismissLoginModal={this.dismissLoginModal}
           entry={this.state.entry}
           saveSchedule={this.saveSchedule}
+          alertSignIn={this.alertSignIn}
         />
       </View>
     </View>
@@ -291,9 +310,11 @@ export class Calculator extends React.Component {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onPress={() => {
-              this.setState({ benzoType: item.title });
+            onPress={async() => {
+              await this.setState({ benzoType: item.title });
+              await this.setState({ currentStd: STRENGTHS[item.title]});
               this.setState({ visibleModal: false });
+              this.generateSchedule();
             }}
           >
             <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
@@ -307,6 +328,21 @@ export class Calculator extends React.Component {
       />
     </View>
   );
+  roundTo = (val, std) => {
+    let init = 0;
+    // for (let i = 1; )
+    do {
+      init = init + std;
+    } while (init < val);
+    let roundResult = init - std;
+    let result;
+    if (init === val) {
+      result = init;
+    } else {
+      result = roundResult;
+    }
+    return result;
+  };
   generateSchedule = () => {
     let initialDate = this.state.datePickerButtonTxt;
 
@@ -321,11 +357,13 @@ export class Calculator extends React.Component {
       let duration = 14;
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
+      let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
+
       let step = {
         id: id,
         duration: duration,
         startDate: recurrentDate,
-        dosage: recurrentDose,
+        dosage: roundedDose,
       };
       schedule.push(step);
       recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
@@ -335,8 +373,8 @@ export class Calculator extends React.Component {
     // reducedDose = startingInputDose * 0.05;
     let remainingDose = startingDose;
     reducedDose = remainingDose / (this.state.stepNum - 2);
-    console.log("startingDose", startingDose);
-    console.log("reducedDose", reducedDose);
+    // console.log("startingDose", startingDose);
+    // console.log("reducedDose", reducedDose);
     for (let i = 2; i < this.state.stepNum; i++) {
       let id = i + 1;
       let duration = 14;
@@ -345,11 +383,13 @@ export class Calculator extends React.Component {
       if (recurrentDose < 1) {
         recurrentDose = 0;
       }
+      let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
+
       let step = {
         id: id,
         duration: duration,
         startDate: recurrentDate,
-        dosage: recurrentDose,
+        dosage: roundedDose,
       };
       schedule.push(step);
       recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
@@ -361,11 +401,6 @@ export class Calculator extends React.Component {
     this.setState({ scheduleData: schedule });
   };
   reset = async () => {
-    await Analytics.logEvent("resetButtonTapped", {
-      name: "ChangeScreen",
-      screen: "Calculator",
-      purpose: "Opens the internal settings",
-    });
     this.setState({ benzoType: "Select the benzo type" });
     this.setState({ datePickerButtonTxt: "Pick the start date" });
     this.setState({ stepNum: 12 });
@@ -379,6 +414,11 @@ export class Calculator extends React.Component {
 
   calculateTapperSchedule = async () => {
     if (this.state.generateBtnTxt === "Reset") {
+      await Analytics.logEvent("resetButtonTapped", {
+        name: "ChangeScreen",
+        screen: "Calculator",
+        purpose: "Opens the internal settings",
+      });
       this.reset();
     } else {
       if (
@@ -451,7 +491,7 @@ export class Calculator extends React.Component {
 
     // this.setState({ isConfirmationVisibleModal: true });
   };
-  removeStep = async() => {
+  removeStep = async () => {
     // let currentSchedule = this.state.scheduleData;
     // currentSchedule.pop();
     // this.setState({ scheduleData: currentSchedule });
@@ -468,7 +508,7 @@ export class Calculator extends React.Component {
         if (step.dosage === 0) {
           return;
         } else {
-          step.dosage--;
+          step.dosage = step.dosage - this.state.currentStd;
         }
       }
     }
@@ -481,7 +521,7 @@ export class Calculator extends React.Component {
         if (step.dosage >= this.state.startingDose) {
           return;
         } else {
-          step.dosage++;
+          step.dosage = step.dosage + this.state.currentStd;
         }
       }
     }
@@ -639,7 +679,7 @@ export class Calculator extends React.Component {
       <View
         style={{
           marginTop: 20,
-          marginBottom:20,
+          marginBottom: 20,
           marginBottom: 5,
           alignItems: "center",
           justifyContent: "center",
@@ -806,7 +846,7 @@ export class Calculator extends React.Component {
                 }}
               >
                 <View style={{ flex: 0.25, height: "80%" }}>
-                  <Text style={{ fontWeight: "bold" }}>#1 Benzodiazeoines</Text>
+                  <Text style={{ fontWeight: "bold" }}>#1 Benzodiazepine</Text>
                   <TouchableOpacity
                     style={{
                       flex: 1,
@@ -839,12 +879,15 @@ export class Calculator extends React.Component {
                     visible={this.state.isDatePickerVis}
                     onDismiss={this.closeDatePicker}
                     date={new Date()}
-                    onConfirm={(date) => {
+                    onConfirm={async (date) => {
                       let selectedDate = moment(new Date(date.date))
                         .format()
                         .slice(0, 10);
-                      console.log("selectedDate", selectedDate);
-                      this.setState({ datePickerButtonTxt: selectedDate });
+                      //console.log("selectedDate", selectedDate);
+                      await this.setState({
+                        datePickerButtonTxt: selectedDate,
+                      });
+                      this.generateSchedule();
                       this.closeDatePicker();
                     }}
                     // validRange={{
@@ -885,7 +928,7 @@ export class Calculator extends React.Component {
 
                       marginRight: 50,
                       marginTop: 10,
-                      borderWidth: 2,
+                      borderWidth: 3,
                       borderRadius: 30,
                       borderColor: "black",
                     }}
@@ -907,8 +950,9 @@ export class Calculator extends React.Component {
                       autoCapitalize="none"
                       autoCorrect={false}
                       // value={this.state.reason}
-                      onChangeText={(text) => {
-                        this.setState({ startingDose: text });
+                      onChangeText={async (text) => {
+                        await this.setState({ startingDose: text });
+                        this.generateSchedule();
                       }}
                     />
                   </View>
@@ -957,7 +1001,7 @@ export class Calculator extends React.Component {
               //alignItems: "center",
             }}
           >
-            <View style={{ justifyContent: "center", alignItems: "center",}}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
               {scheduleBtnView}
             </View>
             <View
@@ -966,13 +1010,13 @@ export class Calculator extends React.Component {
                 marginVertical: 1,
                 marginHorizontal: 1,
 
-                height:50,
+                height: 50,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
                 borderBottomColor: "black",
                 borderBottomWidth: 2,
-                marginHorizontal:32
+                marginHorizontal: 32,
                 // backgroundColor:"red"
               }}
             >
@@ -983,7 +1027,6 @@ export class Calculator extends React.Component {
                   justifyContent: "center",
                   // padding: 15,
                   // backgroundColor:"red",
-                  
                 }}
               >
                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
@@ -1098,7 +1141,7 @@ export class Calculator extends React.Component {
                       <AntDesign name="caretleft" size={24} color="black" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 14 }}>
-                      {parseInt(item.dosage)} mg |{" "}
+                      {item.dosage} mg |{" "}
                       {parseInt((item.dosage / this.state.startingDose) * 100)}%
                     </Text>
                     <TouchableOpacity
