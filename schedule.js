@@ -36,10 +36,19 @@ import {
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
 import { GoogleLogin } from "./googleLogin";
+// import { DatePickerModal } from "react-native-paper-dates";
 
 import moment, { min } from "moment";
 const PRIMARY_COLOR = "#D8D8D8";
 const WARN_RED = "#FE2E2E";
+const STRENGTHS = {
+  Alprazolam: 0.125,
+  Lorazepam: 0.25,
+  Clonazepam: 0.0625,
+  Diazepam: 1,
+  Temazepam: 3.75,
+};
+
 export class Schedule extends React.Component {
   constructor(props) {
     super(props);
@@ -56,8 +65,13 @@ export class Schedule extends React.Component {
       stepNum: this.props.data.totalStep,
       startingDose: this.props.data.startDose,
       isDeleteWarningModalVis: false,
+      currentStd: "",
+      isDatePickerVis: false,
+      datePickerDate: "",
       // height: Dimensions.get("window").height
     };
+    // console.log("STRENGTHS[this.props.data.bezo]",STRENGTHS[this.props.data.bezo]);
+    // console.log("this.state.currentStd",this.state.currentStd);
   }
   showDeleteWarningModal = () => {
     this.setState({ isDeleteWarningModalVis: true });
@@ -70,9 +84,32 @@ export class Schedule extends React.Component {
     this.setState({ userKey: this.props.userKey });
     this.setState({ stepNum: this.props.data.totalStep });
     this.setState({ startingDose: this.props.data.startDose });
+    this.setState({ currentStd: STRENGTHS[this.props.data.bezo] });
+    //  console.log("this.state.currentStd",this.state.currentStd);
+  };
+  roundTo = (val, std) => {
+    let init = 0;
+    // for (let i = 1; )
+    do {
+      init = init + std;
+    } while (init < val);
+    let roundResult = init - std;
+    let result;
+    if (init === val) {
+      result = init;
+    } else {
+      result = roundResult;
+    }
+    return result;
   };
   generateSchedule = async () => {
-    let initialDate = this.state.data.startDate;
+    let initialDate;
+    if (this.state.isDatePickerVis) {
+      initialDate = this.state.datePickerDate;
+    } else {
+      initialDate = this.state.data.startDate;
+    }
+
     let currentSchedule = this.state.scheduleData;
     //console.log("initialDate", initialDate);
     let schedule = [];
@@ -85,11 +122,13 @@ export class Schedule extends React.Component {
       let duration = 14;
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
+      let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
+
       let step = {
         id: id,
         duration: duration,
         startDate: recurrentDate,
-        dosage: recurrentDose,
+        dosage: roundedDose,
       };
       schedule.push(step);
       recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
@@ -109,11 +148,13 @@ export class Schedule extends React.Component {
       if (recurrentDose < 1) {
         recurrentDose = 0;
       }
+      let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
+
       let step = {
         id: id,
         duration: duration,
         startDate: recurrentDate,
-        dosage: recurrentDose,
+        dosage: roundedDose,
       };
       schedule.push(step);
       recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
@@ -122,7 +163,41 @@ export class Schedule extends React.Component {
     }
     console.log("schedule", schedule);
     currentSchedule = schedule;
-    await this.setState({ scheduleData: currentSchedule });
+    if (this.state.isDatePickerVis) {
+      await this.saveSchedule(currentSchedule);
+    } else {
+      await this.setState({ scheduleData: currentSchedule });
+    }
+  };
+  saveSchedule = async (scheduleToSave) => {
+    let newScheduleProfile = Object.assign({}, this.props.data);
+    newScheduleProfile.startDate = this.state.datePickerDate;
+    newScheduleProfile.createdDate = moment(new Date()).format();
+    newScheduleProfile.schedule = scheduleToSave;
+    // let scheduleToSave = this.state.scheduleData;
+    // let newSchedule = {
+    //   startDate: this.state.datePickerDate,
+    //   startDose: this.state.startingDose,
+    //   bezo: this.state.benzoType,
+    //   createdDate: moment(new Date()).format(),
+    //   totalStep: scheduleToSave.length,
+    //   schedule: scheduleToSave,
+    // };
+    await this.dataModel.createNewSchedule(
+      this.dataModel.key,
+      newScheduleProfile
+    );
+    // this.reset();
+    // this.setState({
+    //   confirmModalTxt: "New taper schedule saved!",
+    // });
+    // this.setState({ isConfirmationVisibleModal: true });
+    await this.update();
+    await Analytics.logEvent("saveAsNewSchedule", {
+      // name: "ChangeScreen",
+      screen: "UserCenter",
+      purpose: "Opens the internal settings",
+    });
   };
 
   reduceDose = (id) => {
@@ -132,7 +207,7 @@ export class Schedule extends React.Component {
         if (step.dosage === 0) {
           return;
         } else {
-          step.dosage--;
+          step.dosage = step.dosage - this.state.currentStd;
         }
       }
     }
@@ -145,7 +220,7 @@ export class Schedule extends React.Component {
         if (step.dosage >= this.state.startingDose) {
           return;
         } else {
-          step.dosage++;
+          step.dosage = step.dosage + this.state.currentStd;
         }
       }
     }
@@ -296,9 +371,43 @@ export class Schedule extends React.Component {
   confirmDelete = () => {
     this.props.confirmDelete();
   };
+  closeDatePicker = () => {
+    this.setState({ isDatePickerVis: false });
+  };
+  saveAsNew = () => {
+    this.generateSchedule();
+  };
   render() {
     return (
       <View style={{ width: "100%" }}>
+        <DatePickerModal
+          // locale={'en'} optional, default: automatic
+          label="Select Start Date"
+          mode="single"
+          visible={this.state.isDatePickerVis}
+          onDismiss={this.closeDatePicker}
+          date={new Date()}
+          onConfirm={async (date) => {
+            let selectedDate = moment(new Date(date.date))
+              .format()
+              .slice(0, 10);
+            //console.log("selectedDate", selectedDate);
+            await this.setState({
+              datePickerDate: selectedDate,
+            });
+            // this.generateSchedule();
+            this.saveAsNew();
+            this.closeDatePicker();
+          }}
+          // validRange={{
+          //   startDate: new Date(2021, 1, 2),  // optional
+          //   endDate: new Date(), // optional
+          // }}
+          // onChange={} // same props as onConfirm but triggered without confirmed by user
+          // saveLabel="Save" // optional
+          // label="Select date" // optional
+          // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
+        />
         <Modal
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           isVisible={this.state.isDeleteWarningModalVis}
@@ -313,7 +422,7 @@ export class Schedule extends React.Component {
               padding: 22,
               justifyContent: "center",
               alignItems: "center",
-              borderRadius: 20,
+              borderRadius: 80,
               borderColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
@@ -346,7 +455,6 @@ export class Schedule extends React.Component {
           </View>
         </Modal>
 
-
         <View
           style={{
             marginLeft: 20,
@@ -378,16 +486,23 @@ export class Schedule extends React.Component {
             </Text>
             <Text style={{ fontSize: 12, marginTop: 5 }}>
               <Text style={{ fontWeight: "bold" }}>Starting Dose </Text>
-              {this.state.data.startDose ? this.state.data.startDose : ""}
+              {this.state.data.startDose ? this.state.data.startDose : ""} mg
             </Text>
           </View>
-          <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <TouchableOpacity
               style={{
                 flexDirection: "row",
-                justifyContent: "flex-start",
+                justifyContent: "center",
                 alignItems: "center",
                 width: 150,
+                flex: 1,
                 //backgroundColor:"red"
               }}
               onPress={() => {
@@ -405,9 +520,10 @@ export class Schedule extends React.Component {
             <TouchableOpacity
               style={{
                 flexDirection: "row",
-                justifyContent: "flex-start",
+                justifyContent: "center",
                 alignItems: "center",
                 width: 150,
+                flex: 1,
                 //backgroundColor:"red"
               }}
               onPress={() => {
@@ -425,11 +541,12 @@ export class Schedule extends React.Component {
             <TouchableOpacity
               style={{
                 flexDirection: "row",
-                justifyContent: "flex-start",
+                justifyContent: "center",
                 alignItems: "center",
                 marginLeft: 15,
-                width: 200,
-                //backgroundColor:"red"
+                width: 180,
+                flex: 1,
+                // backgroundColor:"blue"
               }}
               onPress={() => {
                 this.updateSchedule();
@@ -443,6 +560,29 @@ export class Schedule extends React.Component {
                 Save Changes
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginLeft: 0,
+                width: 150,
+                flex: 1,
+              }}
+              onPress={() => {
+                console.log("this.props.data", this.props.data);
+                this.setState({ isDatePickerVis: true });
+                this.dismiss();
+              }}
+              disabled={this.state.isAddBtnDisable}
+            >
+              <Ionicons name="duplicate" size={32} color="black" />
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}
+              >
+                Save as
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
@@ -451,7 +591,7 @@ export class Schedule extends React.Component {
                 justifyContent: "center",
                 alignItems: "center",
                 width: 150,
-                //backgroundColor:"red"
+                // backgroundColor:"red"
               }}
               onPress={() => {
                 this.deleteSchedule();
@@ -667,7 +807,7 @@ export class Schedule extends React.Component {
                       <AntDesign name="caretleft" size={24} color="black" />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 14 }}>
-                      {item.dosage} |{" "}
+                      {item.dosage} mg |{" "}
                       {parseInt(
                         (parseInt(item.dosage) /
                           parseInt(this.state.data.startDose)) *

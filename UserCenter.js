@@ -35,6 +35,8 @@ import Modal from "modal-enhanced-react-native-web";
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
 import { Schedule } from "./schedule";
+import * as Analytics from "expo-firebase-analytics";
+
 
 import moment, { min } from "moment";
 import { DataTable, ProgressBar, Colors } from "react-native-paper";
@@ -42,6 +44,58 @@ import { CircularSlider } from "react-native-elements-universe";
 
 const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
+const REFER_PATIENT_TXT = (
+  <Text style={{ margin: 10 }}>
+    <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+      Refer a Patient using the Behavioral Health Treatment Services Locator
+    </Text>
+    {"\n"}
+    {"\n"}
+    <Text style={{ fontSize: 14 }}>
+      This locator is provided by SAMHSA (the Substance Abuse and Mental Health
+      Services Administration).
+    </Text>
+    {"\n"}
+    {"\n"}
+    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+      Eligible mental health treatment facilities include:
+    </Text>
+    {"\n"}
+    <Text style={{ fontSize: 14 }}>
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Facilities that provide
+      mental health treatment services and are funded by the state mental health
+      agency (SMHA) or other state agency or department{"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Mental health treatment
+      facilities administered by the U.S. Department of Veterans Affairs{"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Private for-profit and
+      non-profit facilities that are licensed by a state agency to provide
+      mental health treatment services, or that are accredited by a national
+      treatment accreditation organization (e.g., The Joint Commission, NCQA,
+      etc.){"\n"}
+    </Text>
+    {"\n"}
+    {"\n"}
+    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+      Eligible substance use and addiction treatment facilities must meet at
+      least one of the criteria below:
+    </Text>
+    {"\n"}
+    <Text style={{ fontSize: 14 }}>
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>
+      Licensure/accreditation/approval to provide substance use treatment from
+      the state substance use agency (SSA) or a national treatment accreditation
+      organization (e.g., The Joint Commission, CARF, NCQA, etc.)
+      {"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Staff who hold specialized
+      credentials to provide substance use treatment services
+      {"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Authorization to bill
+      third-party payers for substance use treatment services using an alcohol
+      or drug client diagnosis
+      {"\n"}
+    </Text>
+  </Text>
+);
 
 export class UserCenter extends React.Component {
   constructor(props) {
@@ -56,12 +110,17 @@ export class UserCenter extends React.Component {
       currentData: "",
       isScheduleVisibleModal: false,
       currentSchedule: [],
+      isReferPopupModal: false,
     };
   }
 
-  updateScheduleView = () => {
+  updateScheduleView = async () => {
+    console.log("update schedule");
+    // this.dataModel = getDataModel();
+    let userKey = this.dataModel.key;
+    await this.dataModel.loadUserSchedules(userKey);
     this.schedules = this.dataModel.plans;
-    this.setState({ schedules: this.schedules });
+    await this.setState({ schedules: this.schedules });
   };
   refreshSchedule = () => {
     this.schedule.current.resetSchedule();
@@ -107,7 +166,7 @@ export class UserCenter extends React.Component {
           padding: 5,
           justifyContent: "flex-start",
           alignItems: "center",
-          borderRadius: 10,
+          borderRadius: 20,
           borderColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -155,6 +214,53 @@ export class UserCenter extends React.Component {
       </View>
     );
   };
+  showReferPatientModal = () => {
+    this.setState({ isReferPopupModal: true });
+  };
+  _renderReferModalPopup = () => (
+    <View
+      style={{
+        height: 600,
+        width: 600,
+        backgroundColor: "white",
+        borderRadius: 20,
+        marginRight: 10,
+        padding: 10,
+        justifyContent: "space-between",
+      }}
+    >
+      <View>{REFER_PATIENT_TXT}</View>
+      <TouchableOpacity
+        onPress={async () => {
+          // let eventName = this.state.popupItem.trackID;
+          await Analytics.logEvent("ReferPatient", {
+            name: "ReferPatient",
+            screen: "Calculator",
+          });
+          Linking.openURL(
+            "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
+          );
+          this.setState({ isReferPopupModal: false });
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "black",
+            borderRadius: 20,
+            margin: 10,
+            width: 150,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
+            Go to the site
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+
   render() {
     return (
       <View
@@ -171,6 +277,13 @@ export class UserCenter extends React.Component {
       >
         <Modal
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isReferPopupModal}
+          onBackdropPress={() => this.setState({ isReferPopupModal: false })}
+        >
+          {this._renderReferModalPopup()}
+        </Modal>
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           isVisible={this.state.isScheduleVisibleModal}
           onBackdropPress={() =>
             this.setState({ isScheduleVisibleModal: false })
@@ -183,6 +296,7 @@ export class UserCenter extends React.Component {
           navIndex={this.navIndex}
           navCal={this.navCal}
           navUserCenter={this.navUserCenter}
+          showReferPatientModal={this.showReferPatientModal}
           loginDismiss={this.loginDismiss}
         />
         <View
@@ -327,7 +441,7 @@ export class UserCenter extends React.Component {
                                   >
                                     Starting Dosage {"\n"}
                                   </Text>
-                                  {parseInt(item.startDose)}
+                                  {item.startDose} mg
                                 </Text>
                                 <Text>
                                   <Text
@@ -335,7 +449,7 @@ export class UserCenter extends React.Component {
                                   >
                                     Current Target Dosage {"\n"}
                                   </Text>
-                                  {parseInt(currentDosage)}
+                                  {currentDosage} mg
                                 </Text>
                               </View>
 

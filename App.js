@@ -65,7 +65,7 @@ export default function App() {
       }}
     >
       <Stack.Navigator
-        initialRouteName="Calculator"
+        initialRouteName="Index"
         screenOptions={{
           headerShown: false,
           headerLeft: null,

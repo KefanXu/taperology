@@ -82,7 +82,7 @@ export function GoogleLogin(props) {
       if (!isUserExist) {
         if (requestFrom === "1") {
           dataModel.createNewUser(userEmail);
-          Analytics.setUserId(userEmail);
+          // Analytics.setUserId(userEmail);
         } else {
           alertSignIn();
           dismissLoginModal();

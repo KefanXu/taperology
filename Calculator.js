@@ -18,9 +18,10 @@ import {
   Platform,
   Picker,
   FlatList,
+  Linking,
 } from "react-native";
 
-import { Button, DataTable } from "react-native-paper";
+import { Button, DataTable, Card } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
@@ -56,12 +57,134 @@ const BENZO_TYPE_DATA = [
   { title: "Temazepam", id: "Temazepam", strength: "30, 22.5, 15, 7.5" },
 ];
 const STRENGTHS = {
-  "Alprazolam": 0.125,
-  "Lorazepam": 0.25,
-  "Clonazepam": 0.0625,
-  "Diazepam": 1,
-  "Temazepam": 3.75,
+  Alprazolam: 0.125,
+  Lorazepam: 0.25,
+  Clonazepam: 0.0625,
+  Diazepam: 1,
+  Temazepam: 3.75,
 };
+const TIP_DATA = [
+  {
+    num: "❶",
+    title:
+      "During the taper, the patient is relearning that they can function without this medication. Appeal to patients’ wish for MASTERY and CONTROL over their situation.",
+    subtitle: (
+      <Text>
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>This means{" "}
+        <Text style={{ fontWeight: "bold" }}>no rescue (prn)</Text> benzo doses!
+      </Text>
+    ),
+  },
+  {
+    num: "❷",
+    title: "Stick with the patient’s current benzo:",
+    subtitle: (
+      <Text>
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>The simplest option is
+        to taper using the currently-prescribed benzo rather than switching to a
+        long-acting benzo.
+      </Text>
+    ),
+  },
+  {
+    num: "❸",
+    title: "Go slowly!",
+    subtitle: (
+      <Text>
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>No faster than 4 months
+        {"\n"}
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Might take over a
+        year--and that’s fine!
+      </Text>
+    ),
+  },
+  {
+    num: "❹",
+    title: "Skip the add-ons:",
+    subtitle: (
+      <Text>
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>There is minimal
+        evidence to suggest that adding another medication will help with the
+        taper.
+      </Text>
+    ),
+  },
+  {
+    num: "❺",
+    title: "Hold off on adding medications to replace the benzo:",
+    subtitle: (
+      <Text>
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Your patient may have
+        been on their benzo for decade and it may not be clear if the symptoms
+        that led to starting the benzo are even present anymore. {"\n"}
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Have a look at the other
+        resources for anxiety and insomnia.
+      </Text>
+    ),
+  },
+  {
+    num: "❻",
+    title:
+      "The taper may lead to a lower dose as opposed to a complete stop--and that’s okay!",
+    subtitle: (
+      <Text>
+        <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Lower dose = lower risk.
+      </Text>
+    ),
+  },
+];
+const REFER_PATIENT_TXT = (
+  <Text style={{ margin: 10 }}>
+    <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+      Refer a Patient using the Behavioral Health Treatment Services Locator
+    </Text>
+    {"\n"}
+    {"\n"}
+    <Text style={{ fontSize: 14 }}>
+      This locator is provided by SAMHSA (the Substance Abuse and Mental Health
+      Services Administration).
+    </Text>
+    {"\n"}
+    {"\n"}
+    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+      Eligible mental health treatment facilities include:
+    </Text>
+    {"\n"}
+    <Text style={{ fontSize: 14 }}>
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Facilities that provide
+      mental health treatment services and are funded by the state mental health
+      agency (SMHA) or other state agency or department{"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Mental health treatment
+      facilities administered by the U.S. Department of Veterans Affairs{"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Private for-profit and
+      non-profit facilities that are licensed by a state agency to provide
+      mental health treatment services, or that are accredited by a national
+      treatment accreditation organization (e.g., The Joint Commission, NCQA,
+      etc.){"\n"}
+    </Text>
+    {"\n"}
+    {"\n"}
+    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+      Eligible substance use and addiction treatment facilities must meet at
+      least one of the criteria below:
+    </Text>
+    {"\n"}
+    <Text style={{ fontSize: 14 }}>
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>
+      Licensure/accreditation/approval to provide substance use treatment from
+      the state substance use agency (SSA) or a national treatment accreditation
+      organization (e.g., The Joint Commission, CARF, NCQA, etc.)
+      {"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Staff who hold specialized
+      credentials to provide substance use treatment services
+      {"\n"}
+      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Authorization to bill
+      third-party payers for substance use treatment services using an alcohol
+      or drug client diagnosis
+      {"\n"}
+    </Text>
+  </Text>
+);
 // const Item = ({ title }) => (
 //   <View style={styles.item}>
 //     <Text style={styles.title}>{title}</Text>
@@ -98,6 +221,7 @@ export class Calculator extends React.Component {
       isAlertVisibleModal: false,
       isConfirmationVisibleModal: false,
       isLoginVisibleModal: false,
+      isReferPopupModal: false,
       listOpacity: 0,
       scheduleData: [],
       stepNum: 12,
@@ -170,6 +294,7 @@ export class Calculator extends React.Component {
   showDatePicker = () => {
     this.setState({ isDatePickerVis: true });
   };
+
   _renderButton = (text, onPress) => (
     <TouchableOpacity style={{ flex: 0.5 }} onPress={onPress}>
       <View
@@ -188,6 +313,52 @@ export class Calculator extends React.Component {
         </Text>
       </View>
     </TouchableOpacity>
+  );
+  showReferPatientModal = () => {
+    this.setState({ isReferPopupModal: true });
+  };
+  _renderReferModalPopup = () => (
+    <View
+      style={{
+        height: 600,
+        width: 600,
+        backgroundColor: "white",
+        borderRadius: 20,
+        marginRight: 10,
+        padding: 10,
+        justifyContent: "space-between",
+      }}
+    >
+      <View>{REFER_PATIENT_TXT}</View>
+      <TouchableOpacity
+        onPress={async () => {
+          // let eventName = this.state.popupItem.trackID;
+          await Analytics.logEvent("ReferPatient", {
+            name: "ReferPatient",
+            screen: "Calculator",
+          });
+          Linking.openURL(
+            "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
+          );
+          this.setState({ isReferPopupModal: false });
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "black",
+            borderRadius: 20,
+            margin: 10,
+            width: 150,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
+            Go to the site
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 
   _renderModalContent = () => (
@@ -310,9 +481,9 @@ export class Calculator extends React.Component {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onPress={async() => {
+            onPress={async () => {
               await this.setState({ benzoType: item.title });
-              await this.setState({ currentStd: STRENGTHS[item.title]});
+              await this.setState({ currentStd: STRENGTHS[item.title] });
               this.setState({ visibleModal: false });
               this.generateSchedule();
             }}
@@ -591,6 +762,36 @@ export class Calculator extends React.Component {
       purpose: "Opens the internal settings",
     });
   };
+  _renderListView = (DATA) => (
+    <View style={{ marginTop: 20, marginLeft: 10 }}>
+      <FlatList
+        data={DATA}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <ScrollView
+            style={{
+              height: 200,
+              width: 300,
+              borderRadius: 20,
+              marginRight: 10,
+              padding: 15,
+              backgroundColor: "white",
+            }}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 27, marginBottom: 5 }}>
+              {item.num}
+            </Text>
+            <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+              {item.title}
+            </Text>
+            <Text style={{ marginLeft: 10 }}>{item.subtitle}</Text>
+          </ScrollView>
+        )}
+      />
+    </View>
+  );
 
   render() {
     let tipView = (
@@ -767,6 +968,13 @@ export class Calculator extends React.Component {
       >
         <Modal
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          isVisible={this.state.isReferPopupModal}
+          onBackdropPress={() => this.setState({ isReferPopupModal: false })}
+        >
+          {this._renderReferModalPopup()}
+        </Modal>
+        <Modal
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           isVisible={this.state.isAlertVisibleModal}
           onBackdropPress={() => this.setState({ isAlertVisibleModal: false })}
         >
@@ -800,6 +1008,7 @@ export class Calculator extends React.Component {
           navIndex={this.navIndex}
           navCal={this.navCal}
           navUserCenter={this.navUserCenter}
+          showReferPatientModal={this.showReferPatientModal}
           // login={this.login}
         />
         <View style={{ width: 1000, backgroundColor: "", margin: 5 }}>
@@ -808,15 +1017,16 @@ export class Calculator extends React.Component {
               height: 280,
               margin: 10,
 
-              justifyContent: "space-between",
+              // justifyContent: "space-between",
               flexDirection: "row",
             }}
           >
-            <View style={{ width: "100%" }}>
+            <View style={{ width: 1000 }}>
               <View
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  // backgroundColor: "red",
                 }}
               >
                 <View style={{ flexDirection: "column" }}>
@@ -832,14 +1042,18 @@ export class Calculator extends React.Component {
                 </View>
                 {tipView}
               </View>
+              {/* <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                Generate the taper schedule
+              </Text> */}
+
               {/* Input field */}
               <View
                 style={{
                   // flex: 0.06,
-                  height: 60,
-                  flex: 1,
-                  marginTop: 30,
-                  //backgroundColor: "red",
+                  height: 80,
+                  // flex: 1,
+                  marginTop: 10,
+                  // backgroundColor: "red",
                   flexDirection: "row",
                   justifyContent: "flex-start",
                   alignItems: "center",
@@ -860,6 +1074,7 @@ export class Calculator extends React.Component {
                       justifyContent: "center",
                       backgroundColor: "black",
                     }}
+                    // disabled={false}
                     onPress={() => {
                       this.setState({ visibleModal: true });
                     }}
@@ -987,6 +1202,14 @@ export class Calculator extends React.Component {
               </View>
             </View>
           </View>
+          <Text style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}>
+            Tips for tapering
+          </Text>
+          <Text style={{ fontSize: 12, marginLeft: 10, marginTop:5 }}>
+            Adapted from the Ashton Manual
+          </Text>
+
+          {this._renderListView(TIP_DATA)}
           <View
             style={{
               height: 1200,
