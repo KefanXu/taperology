@@ -17,6 +17,7 @@ import {
   StyleSheet,
   Linking,
 } from "react-native";
+import { Modal as NativeModal } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -29,7 +30,7 @@ import {
   FontAwesome,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Avatar, Card, Title, Paragraph } from "react-native-paper";
+import { Avatar, Card, Title, Paragraph, Appbar } from "react-native-paper";
 import * as Analytics from "expo-firebase-analytics";
 
 import { FlatList } from "react-native-web";
@@ -125,48 +126,6 @@ const BENZO_BASIC_CLINICIANS_DATA = [
       </Text>
     ),
     test: <Text></Text>,
-  },
-  {
-    title: "Empower Taper Schematic",
-    trackID: "BENZO_BASIC_CLINICIANS_DATA_3",
-    url: "https://drive.google.com/file/d/1NTLL5ZZYztivDkg5by5LpHtQ4nFoL7Lr/view?usp=sharing",
-    imgURL:
-      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/EMPOWER_Taper.png",
-    abstract: (
-      <Text>
-        The EMPOWER brochure was developed by Dr. Cara Tannenbaum, a
-        geriatrician in Montreal. When this information was sent to older adult,
-        long-term benzodiazepine users, 27% discontinued benzodiazepine use by 6
-        months later (compared to just 5% in the control group; paper
-        <Text
-          style={{ color: "blue" }}
-          onPress={() => {
-            Linking.openURL("https://pubmed.ncbi.nlm.nih.gov/24733354/");
-          }}
-        >
-          {" "}
-          here
-        </Text>
-        , brochure{" "}
-        <Text
-          style={{ color: "blue" }}
-          onPress={() => {
-            Linking.openURL(
-              "https://www.deprescribingnetwork.ca/s/Sleeping-pills_anti-anxiety-meds_Sedative-hypnotics-1.pdf"
-            );
-          }}
-        >
-          here
-        </Text>
-        ).
-      </Text>
-    ),
-    subtitle: (
-      <Text>
-        Educational Pamphlet {"\n"}
-        <Text style={{ fontWeight: "bold" }}>PDF | 1 page</Text>
-      </Text>
-    ),
   },
 
   {
@@ -535,6 +494,48 @@ const TAPER_RESOURCE = [
       </Text>
     ),
   },
+  {
+    title: "Empower Taper Schematic",
+    trackID: "BENZO_BASIC_CLINICIANS_DATA_3",
+    url: "https://drive.google.com/file/d/1NTLL5ZZYztivDkg5by5LpHtQ4nFoL7Lr/view?usp=sharing",
+    imgURL:
+      "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/EMPOWER_Taper.png",
+    abstract: (
+      <Text>
+        The EMPOWER brochure was developed by Dr. Cara Tannenbaum, a
+        geriatrician in Montreal. When this information was sent to older adult,
+        long-term benzodiazepine users, 27% discontinued benzodiazepine use by 6
+        months later (compared to just 5% in the control group; paper
+        <Text
+          style={{ color: "blue" }}
+          onPress={() => {
+            Linking.openURL("https://pubmed.ncbi.nlm.nih.gov/24733354/");
+          }}
+        >
+          {" "}
+          here
+        </Text>
+        , brochure{" "}
+        <Text
+          style={{ color: "blue" }}
+          onPress={() => {
+            Linking.openURL(
+              "https://www.deprescribingnetwork.ca/s/Sleeping-pills_anti-anxiety-meds_Sedative-hypnotics-1.pdf"
+            );
+          }}
+        >
+          here
+        </Text>
+        ).
+      </Text>
+    ),
+    subtitle: (
+      <Text>
+        Educational Pamphlet {"\n"}
+        <Text style={{ fontWeight: "bold" }}>PDF | 1 page</Text>
+      </Text>
+    ),
+  },
   // {
   //   title: "Quick Start Guide",
   //   trackID: "BENZO_BASIC_DATA_4",
@@ -801,93 +802,111 @@ export class Resources extends React.Component {
   );
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          //backgroundColor: "blue",
-          margin: 5,
-          flexDirection: "row",
-          height: Dimensions.get("window").height,
-          width: "100%",
-          justifyContent: "center",
-        }}
-      >
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isReferPopupModal}
-          onBackdropPress={() => this.setState({ isReferPopupModal: false })}
-        >
-          {this._renderReferModalPopup()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isLoginVisibleModal}
-          onBackdropPress={() => this.setState({ isLoginVisibleModal: false })}
-        >
-          {this._renderModalLogin()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isPopupModal}
-          onBackdropPress={() => this.setState({ isPopupModal: false })}
-        >
-          {this._renderModalPopup()}
-        </Modal>
-        <Menu
-          navResource={this.navResource}
-          navIndex={this.navIndex}
-          navCal={this.navCal}
-          navUserCenter={this.navUserCenter}
-          showReferPatientModal={this.showReferPatientModal}
-        />
+      <View style={{ width: Dimensions.get("window").width }}>
         <View
           style={{
-            width: 1000,
-            // backgroundColor: "red",
+            flex: 1,
+            //backgroundColor: "blue",
             margin: 5,
+            flexDirection: "row",
+            height: Dimensions.get("window").height,
+            width: "100%",
+            justifyContent: "center",
           }}
         >
+          <Modal
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            isVisible={this.state.isReferPopupModal}
+            onBackdropPress={() => this.setState({ isReferPopupModal: false })}
+          >
+            {this._renderReferModalPopup()}
+          </Modal>
+          <Modal
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            isVisible={this.state.isLoginVisibleModal}
+            onBackdropPress={() =>
+              this.setState({ isLoginVisibleModal: false })
+            }
+          >
+            {this._renderModalLogin()}
+          </Modal>
+          <Modal
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            isVisible={this.state.isPopupModal}
+            onBackdropPress={() => this.setState({ isPopupModal: false })}
+          >
+            {this._renderModalPopup()}
+          </Modal>
+            <Menu
+              navResource={this.navResource}
+              navIndex={this.navIndex}
+              navCal={this.navCal}
+              navUserCenter={this.navUserCenter}
+              showReferPatientModal={this.showReferPatientModal}
+            />
           <View
             style={{
-              height: 100,
-              margin: 10,
-              // backgroundColor:"red",
-              justifyContent: "space-between",
-              flexDirection: "row",
+              width: 1000,
+              // backgroundColor: "red",
+              margin: 5,
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 65 }}>Resources</Text>
-          </View>
-          <View style={{ margin: 10 }}>
-            <View style={{ marginTop: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Benzo Basics for Clinicians
+            <View
+              style={{
+                height: 100,
+                margin: 10,
+                // backgroundColor:"red",
+                justifyContent: "space-between",
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 65 }}>
+                Resources
               </Text>
-              {this._renderListView(BENZO_BASIC_CLINICIANS_DATA)}
             </View>
-            <View style={{ marginTop: 30 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Benzo Basics for Patients
-              </Text>
-              {this._renderListView(BENZO_BASIC_PATIENT_DATA)}
-            </View>
-            <View style={{ marginTop: 30 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Resources on Insomnia
-              </Text>
-              {this._renderListView(INSOMNIA_DATA)}
-            </View>
-            <View style={{ marginTop: 30 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Resources on Anxiety
-              </Text>
-              {this._renderListView(ANXIETY_DATA)}
-            </View>
-            <View style={{ marginTop: 30 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Resources on Tapering
-              </Text>
-              {this._renderListView(TAPER_RESOURCE)}
+            <View style={{ margin: 10 }}>
+              <View style={{ marginTop: 10 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                  Benzo Basics for Clinicians
+                </Text>
+                {this._renderListView(BENZO_BASIC_CLINICIANS_DATA)}
+              </View>
+              <View style={{ marginTop: 30 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                  Benzo Basics for Patients
+                </Text>
+                {this._renderListView(BENZO_BASIC_PATIENT_DATA)}
+              </View>
+              <View style={{ marginTop: 30 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                  Resources on Insomnia
+                </Text>
+                {this._renderListView(INSOMNIA_DATA)}
+              </View>
+              <View style={{ marginTop: 30 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                  Resources on Anxiety
+                </Text>
+                {this._renderListView(ANXIETY_DATA)}
+              </View>
+              <View style={{ marginTop: 30 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                  Resources on Tapering
+                </Text>
+                {this._renderListView(TAPER_RESOURCE)}
+              </View>
             </View>
           </View>
         </View>

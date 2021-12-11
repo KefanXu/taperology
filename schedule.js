@@ -140,12 +140,14 @@ export class Schedule extends React.Component {
     reducedDose = remainingDose / (this.state.stepNum - 2);
     console.log("startingDose", startingDose);
     console.log("reducedDose", reducedDose);
+    let ifAdd = true;
+
     for (let i = 2; i < this.state.stepNum; i++) {
       let id = i + 1;
       let duration = 14;
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
-      if (recurrentDose < 1) {
+      if (recurrentDose < this.state.currentStd) {
         recurrentDose = 0;
       }
       let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
@@ -156,7 +158,14 @@ export class Schedule extends React.Component {
         startDate: recurrentDate,
         dosage: roundedDose,
       };
-      schedule.push(step);
+      if (ifAdd) {
+        schedule.push(step);
+      }
+
+      if (roundedDose === 0) {
+        ifAdd = false;
+      }
+      // schedule.push(step);
       recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
         .format()
         .slice(0, 10);

@@ -19,6 +19,7 @@ import {
   Linking,
   Picker,
   FlatList,
+  Modal,
 } from "react-native";
 import { GoogleLogin } from "./googleLogin";
 import * as Analytics from "expo-firebase-analytics";
@@ -26,7 +27,9 @@ import * as Analytics from "expo-firebase-analytics";
 import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 // import AwesomeAlert from "react-native-awesome-alerts";
-import Modal from "modal-enhanced-react-native-web";
+// import Modal from "modal-enhanced-react-native-web";
+import { Overlay } from "react-native-elements";
+
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -47,6 +50,7 @@ export class Menu extends React.Component {
   navUserCenter = () => this.props.navUserCenter();
   render() {
     return (
+      // <Overlay>
       <View
         style={{
           width: 250,
@@ -54,7 +58,7 @@ export class Menu extends React.Component {
           margin: 5,
           borderRadius: 15,
           justifyContent: "space-between",
-          // height: Dimensions.get("window").height,
+          height: 900,
         }}
       >
         <View>
@@ -66,14 +70,14 @@ export class Menu extends React.Component {
             }}
           >
             <TouchableOpacity
-            onPress={() => {
-              this.props.navIndex();
-            }}
-            style={{ margin: 10 }}
-          >
-            <Text style={{ margin: 15, fontWeight: "bold", fontSize: 35 }}>
-              Taperology
-            </Text>
+              onPress={() => {
+                this.props.navIndex();
+              }}
+              style={{ margin: 0 }}
+            >
+              <Text style={{ margin: 15, fontWeight: "bold", fontSize: 35 }}>
+                Taperology
+              </Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity
@@ -167,6 +171,7 @@ export class Menu extends React.Component {
           </Text>
         </View>
       </View>
+      // </Overlay>
     );
   }
 }

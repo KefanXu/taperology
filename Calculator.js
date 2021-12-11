@@ -544,16 +544,19 @@ export class Calculator extends React.Component {
     // reducedDose = startingInputDose * 0.05;
     let remainingDose = startingDose;
     reducedDose = remainingDose / (this.state.stepNum - 2);
+    console.log("reducedDose", reducedDose);
     // console.log("startingDose", startingDose);
     // console.log("reducedDose", reducedDose);
+    let ifAdd = true;
     for (let i = 2; i < this.state.stepNum; i++) {
       let id = i + 1;
       let duration = 14;
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
-      if (recurrentDose < 1) {
+      if (recurrentDose < this.state.currentStd) {
         recurrentDose = 0;
       }
+
       let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
 
       let step = {
@@ -562,7 +565,13 @@ export class Calculator extends React.Component {
         startDate: recurrentDate,
         dosage: roundedDose,
       };
-      schedule.push(step);
+      if (ifAdd) {
+        schedule.push(step);
+      }
+
+      if (roundedDose === 0) {
+        ifAdd = false;
+      }
       recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
         .format()
         .slice(0, 10);
@@ -954,428 +963,439 @@ export class Calculator extends React.Component {
       </View>
     );
     return (
-      <View
-        style={{
-          flex: 1,
-          //backgroundColor: "blue",
-          margin: 5,
-          flexDirection: "row",
-          height: "100%",
-          width: "100%",
-          justifyContent: "center",
-          // alignItems:"center"
-        }}
-      >
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isReferPopupModal}
-          onBackdropPress={() => this.setState({ isReferPopupModal: false })}
+      <View style={{ width: Dimensions.get("window").width }}>
+        <View
+          style={{
+            flex: 1,
+            //backgroundColor: "blue",
+            margin: 5,
+            flexDirection: "row",
+            height: "100%",
+            width: "100%",
+            justifyContent: "center",
+            // alignItems:"center"
+          }}
         >
-          {this._renderReferModalPopup()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isAlertVisibleModal}
-          onBackdropPress={() => this.setState({ isAlertVisibleModal: false })}
-        >
-          {this._renderModalContent()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isConfirmationVisibleModal}
-          onBackdropPress={() =>
-            this.setState({ isConfirmationVisibleModal: false })
-          }
-        >
-          {this._renderModalContentConfirmation()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isLoginVisibleModal}
-          onBackdropPress={() => this.setState({ isLoginVisibleModal: false })}
-        >
-          {this._renderModalLogin()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.visibleModal}
-          onBackdropPress={() => this.setState({ visibleModal: false })}
-        >
-          {this._renderModalContentBenzoType()}
-        </Modal>
-        <Menu
-          navResource={this.navResource}
-          navIndex={this.navIndex}
-          navCal={this.navCal}
-          navUserCenter={this.navUserCenter}
-          showReferPatientModal={this.showReferPatientModal}
-          // login={this.login}
-        />
-        <View style={{ width: 1000, backgroundColor: "", margin: 5 }}>
-          <View
-            style={{
-              height: 280,
-              margin: 10,
-
-              // justifyContent: "space-between",
-              flexDirection: "row",
-            }}
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.isReferPopupModal}
+            onBackdropPress={() => this.setState({ isReferPopupModal: false })}
           >
-            <View style={{ width: 1000 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // backgroundColor: "red",
-                }}
-              >
-                <View style={{ flexDirection: "column" }}>
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 65,
-                      // backgroundColor: "red",
-                    }}
-                  >
-                    Taper Scheduler
-                  </Text>
+            {this._renderReferModalPopup()}
+          </Modal>
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.isAlertVisibleModal}
+            onBackdropPress={() =>
+              this.setState({ isAlertVisibleModal: false })
+            }
+          >
+            {this._renderModalContent()}
+          </Modal>
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.isConfirmationVisibleModal}
+            onBackdropPress={() =>
+              this.setState({ isConfirmationVisibleModal: false })
+            }
+          >
+            {this._renderModalContentConfirmation()}
+          </Modal>
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.isLoginVisibleModal}
+            onBackdropPress={() =>
+              this.setState({ isLoginVisibleModal: false })
+            }
+          >
+            {this._renderModalLogin()}
+          </Modal>
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.visibleModal}
+            onBackdropPress={() => this.setState({ visibleModal: false })}
+          >
+            {this._renderModalContentBenzoType()}
+          </Modal>
+          <Menu
+            navResource={this.navResource}
+            navIndex={this.navIndex}
+            navCal={this.navCal}
+            navUserCenter={this.navUserCenter}
+            showReferPatientModal={this.showReferPatientModal}
+            // login={this.login}
+          />
+          <View style={{ width: 1000, backgroundColor: "", margin: 5 }}>
+            <View
+              style={{
+                height: 280,
+                margin: 10,
+
+                // justifyContent: "space-between",
+                flexDirection: "row",
+              }}
+            >
+              <View style={{ width: 1000 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    // backgroundColor: "red",
+                  }}
+                >
+                  <View style={{ flexDirection: "column" }}>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 65,
+                        // backgroundColor: "red",
+                      }}
+                    >
+                      Taper Scheduler
+                    </Text>
+                  </View>
+                  {tipView}
                 </View>
-                {tipView}
-              </View>
-              {/* <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                {/* <Text style={{ fontWeight: "bold", fontSize: 16 }}>
                 Generate the taper schedule
               </Text> */}
 
-              {/* Input field */}
-              <View
-                style={{
-                  // flex: 0.06,
-                  height: 80,
-                  // flex: 1,
-                  marginTop: 10,
-                  // backgroundColor: "red",
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <View style={{ flex: 0.25, height: "80%" }}>
-                  <Text style={{ fontWeight: "bold" }}>#1 Benzodiazepine</Text>
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-
-                      marginRight: 50,
-                      marginTop: 10,
-                      borderWidth: 2,
-                      borderRadius: 30,
-                      borderColor: "black",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "black",
-                    }}
-                    // disabled={false}
-                    onPress={() => {
-                      this.setState({ visibleModal: true });
-                    }}
-                  >
-                    <Text style={{ fontWeight: "bold", color: "white" }}>
-                      {this.state.benzoType}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                {/* Pick the start date */}
-                <View style={{ flex: 0.25, height: "80%" }}>
-                  <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
-
-                  <DatePickerModal
-                    // locale={'en'} optional, default: automatic
-                    mode="single"
-                    visible={this.state.isDatePickerVis}
-                    onDismiss={this.closeDatePicker}
-                    date={new Date()}
-                    onConfirm={async (date) => {
-                      let selectedDate = moment(new Date(date.date))
-                        .format()
-                        .slice(0, 10);
-                      //console.log("selectedDate", selectedDate);
-                      await this.setState({
-                        datePickerButtonTxt: selectedDate,
-                      });
-                      this.generateSchedule();
-                      this.closeDatePicker();
-                    }}
-                    // validRange={{
-                    //   startDate: new Date(2021, 1, 2),  // optional
-                    //   endDate: new Date(), // optional
-                    // }}
-                    // onChange={} // same props as onConfirm but triggered without confirmed by user
-                    // saveLabel="Save" // optional
-                    // label="Select date" // optional
-                    // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
-                  />
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-
-                      marginRight: 50,
-                      marginTop: 10,
-                      borderWidth: 2,
-                      borderRadius: 30,
-                      borderColor: "black",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "black",
-                    }}
-                    onPress={this.showDatePicker}
-                  >
-                    <Text style={{ fontWeight: "bold", color: "white" }}>
-                      {this.state.datePickerButtonTxt}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={{ flex: 0.25, height: "80%" }}>
-                  <Text style={{ fontWeight: "bold" }}>#3 Starting Dose</Text>
-                  <View
-                    style={{
-                      flex: 1,
-
-                      marginRight: 50,
-                      marginTop: 10,
-                      borderWidth: 3,
-                      borderRadius: 30,
-                      borderColor: "black",
-                    }}
-                  >
-                    <TextInput
-                      // secureTextEntry={true}
-                      ref={this.startDoseInput}
-                      placeholder="e.g., 100, 120 (mg)"
-                      style={Platform.select({
-                        web: {
-                          outlineStyle: "none",
-                          flex: 1,
-                          marginLeft: 20,
-                          marginRight: 20,
-                          fontSize: 16,
-                        },
-                      })}
-                      maxLength={35}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      // value={this.state.reason}
-                      onChangeText={async (text) => {
-                        await this.setState({ startingDose: text });
-                        this.generateSchedule();
-                      }}
-                    />
-                  </View>
-                </View>
-                <View style={{ flex: 0.25, height: "80%" }}>
-                  <Text style={{ color: "white", opacity: 0 }}>
-                    {this.state.generateBtnTxt}
-                  </Text>
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-
-                      marginRight: 50,
-                      marginTop: 10,
-                      borderWidth: 2,
-                      borderRadius: 30,
-                      borderColor: "black",
-                      backgroundColor: "black",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                    onPress={() => {
-                      this.calculateTapperSchedule();
-                      // this.setState({ generateBtnTxt: "Reset" });
-                    }}
-                  >
-                    <Text style={{ fontWeight: "bold", color: "white" }}>
-                      {this.state.generateBtnTxt}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-          <Text style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}>
-            Tips for tapering
-          </Text>
-          <Text style={{ fontSize: 12, marginLeft: 10, marginTop:5 }}>
-            Adapted from the Ashton Manual
-          </Text>
-
-          {this._renderListView(TIP_DATA)}
-          <View
-            style={{
-              height: 1200,
-              marginLeft: 10,
-              marginRight: 60,
-              marginTop: 10,
-              flexDirection: "column",
-              justifyContent: "center",
-              opacity: this.state.listOpacity,
-              // backgroundColor: PRIMARY_COLOR,
-              borderRadius: 20,
-              //alignItems: "center",
-            }}
-          >
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              {scheduleBtnView}
-            </View>
-            <View
-              style={{
-                padding: 1,
-                marginVertical: 1,
-                marginHorizontal: 1,
-
-                height: 50,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                borderBottomColor: "black",
-                borderBottomWidth: 2,
-                marginHorizontal: 32,
-                // backgroundColor:"red"
-              }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // padding: 15,
-                  // backgroundColor:"red",
-                }}
-              >
-                <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // padding: 15,
-                }}
-              >
-                <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-                  Duration
-                </Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // padding: 15,
-                }}
-              >
-                <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-                  Start Date
-                </Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // padding: 15,
-                }}
-              >
-                <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-                  Target Dosage / Starting Dosage
-                </Text>
-              </View>
-            </View>
-            <FlatList
-              data={this.state.scheduleData}
-              renderItem={({ item }) => (
+                {/* Input field */}
                 <View
                   style={{
-                    padding: 15,
-                    marginVertical: 8,
-                    marginHorizontal: 16,
-                    flex: 1,
+                    // flex: 0.06,
+                    height: 80,
+                    // flex: 1,
+                    marginTop: 10,
+                    // backgroundColor: "red",
                     flexDirection: "row",
-                    borderBottomColor: "black",
-                    borderBottomWidth: 1,
+                    justifyContent: "flex-start",
                     alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
-                  <View
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      // backgroundColor:"blue"
-                    }}
-                  >
-                    <Text style={{ fontSize: 14 }}>Step {item.id}</Text>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.reduceDuration(item.id);
-                      }}
-                    >
-                      <AntDesign name="caretleft" size={24} color="black" />
-                    </TouchableOpacity>
-                    <Text style={{ fontSize: 14 }}>{item.duration} days</Text>
-                    <TouchableOpacity
-                      onPress={() => this.increaseDuration(item.id)}
-                    >
-                      <AntDesign name="caretright" size={24} color="black" />
-                    </TouchableOpacity>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text style={{ fontSize: 14 }}>{item.startDate}</Text>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.reduceDose(item.id);
-                      }}
-                    >
-                      <AntDesign name="caretleft" size={24} color="black" />
-                    </TouchableOpacity>
-                    <Text style={{ fontSize: 14 }}>
-                      {item.dosage} mg |{" "}
-                      {parseInt((item.dosage / this.state.startingDose) * 100)}%
+                  <View style={{ flex: 0.25, height: "80%" }}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      #1 Benzodiazepine
                     </Text>
                     <TouchableOpacity
-                      onPress={() => this.increaseDose(item.id)}
+                      style={{
+                        flex: 1,
+
+                        marginRight: 50,
+                        marginTop: 10,
+                        borderWidth: 2,
+                        borderRadius: 30,
+                        borderColor: "black",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "black",
+                      }}
+                      // disabled={false}
+                      onPress={() => {
+                        this.setState({ visibleModal: true });
+                      }}
                     >
-                      <AntDesign name="caretright" size={24} color="black" />
+                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                        {this.state.benzoType}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {/* Pick the start date */}
+                  <View style={{ flex: 0.25, height: "80%" }}>
+                    <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
+
+                    <DatePickerModal
+                      // locale={'en'} optional, default: automatic
+                      mode="single"
+                      visible={this.state.isDatePickerVis}
+                      onDismiss={this.closeDatePicker}
+                      date={new Date()}
+                      onConfirm={async (date) => {
+                        let selectedDate = moment(new Date(date.date))
+                          .format()
+                          .slice(0, 10);
+                        //console.log("selectedDate", selectedDate);
+                        await this.setState({
+                          datePickerButtonTxt: selectedDate,
+                        });
+                        this.generateSchedule();
+                        this.closeDatePicker();
+                      }}
+                      // validRange={{
+                      //   startDate: new Date(2021, 1, 2),  // optional
+                      //   endDate: new Date(), // optional
+                      // }}
+                      // onChange={} // same props as onConfirm but triggered without confirmed by user
+                      // saveLabel="Save" // optional
+                      // label="Select date" // optional
+                      // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
+                    />
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+
+                        marginRight: 50,
+                        marginTop: 10,
+                        borderWidth: 2,
+                        borderRadius: 30,
+                        borderColor: "black",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "black",
+                      }}
+                      onPress={this.showDatePicker}
+                    >
+                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                        {this.state.datePickerButtonTxt}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={{ flex: 0.25, height: "80%" }}>
+                    <Text style={{ fontWeight: "bold" }}>#3 Starting Dose</Text>
+                    <View
+                      style={{
+                        flex: 1,
+
+                        marginRight: 50,
+                        marginTop: 10,
+                        borderWidth: 3,
+                        borderRadius: 30,
+                        borderColor: "black",
+                      }}
+                    >
+                      <TextInput
+                        // secureTextEntry={true}
+                        ref={this.startDoseInput}
+                        placeholder="e.g., 100, 120 (mg)"
+                        style={Platform.select({
+                          web: {
+                            outlineStyle: "none",
+                            flex: 1,
+                            marginLeft: 20,
+                            marginRight: 20,
+                            fontSize: 16,
+                          },
+                        })}
+                        maxLength={35}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        // value={this.state.reason}
+                        onChangeText={async (text) => {
+                          await this.setState({ startingDose: text });
+                          this.generateSchedule();
+                        }}
+                      />
+                    </View>
+                  </View>
+                  <View style={{ flex: 0.25, height: "80%" }}>
+                    <Text style={{ color: "white", opacity: 0 }}>
+                      {this.state.generateBtnTxt}
+                    </Text>
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+
+                        marginRight: 50,
+                        marginTop: 10,
+                        borderWidth: 2,
+                        borderRadius: 30,
+                        borderColor: "black",
+                        backgroundColor: "black",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onPress={() => {
+                        this.calculateTapperSchedule();
+                        // this.setState({ generateBtnTxt: "Reset" });
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                        {this.state.generateBtnTxt}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-              )}
-            />
+              </View>
+            </View>
+            <Text style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}>
+              Tips for tapering
+            </Text>
+            <Text style={{ fontSize: 12, marginLeft: 10, marginTop: 5 }}>
+              Adapted from the Ashton Manual
+            </Text>
+
+            {this._renderListView(TIP_DATA)}
+            <View
+              style={{
+                height: 1200,
+                marginLeft: 10,
+                marginRight: 60,
+                marginTop: 10,
+                flexDirection: "column",
+                justifyContent: "center",
+                opacity: this.state.listOpacity,
+                // backgroundColor: PRIMARY_COLOR,
+                borderRadius: 20,
+                //alignItems: "center",
+              }}
+            >
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                {scheduleBtnView}
+              </View>
+              <View
+                style={{
+                  padding: 1,
+                  marginVertical: 1,
+                  marginHorizontal: 1,
+
+                  height: 50,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderBottomColor: "black",
+                  borderBottomWidth: 2,
+                  marginHorizontal: 32,
+                  // backgroundColor:"red"
+                }}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    // padding: 15,
+                    // backgroundColor:"red",
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    // padding: 15,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                    Duration
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    // padding: 15,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                    Start Date
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    // padding: 15,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                    Target Dosage / Starting Dosage
+                  </Text>
+                </View>
+              </View>
+              <FlatList
+                data={this.state.scheduleData}
+                renderItem={({ item }) => (
+                  <View
+                    style={{
+                      padding: 15,
+                      marginVertical: 8,
+                      marginHorizontal: 16,
+                      flex: 1,
+                      flexDirection: "row",
+                      borderBottomColor: "black",
+                      borderBottomWidth: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        // backgroundColor:"blue"
+                      }}
+                    >
+                      <Text style={{ fontSize: 14 }}>Step {item.id}</Text>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.reduceDuration(item.id);
+                        }}
+                      >
+                        <AntDesign name="caretleft" size={24} color="black" />
+                      </TouchableOpacity>
+                      <Text style={{ fontSize: 14 }}>{item.duration} days</Text>
+                      <TouchableOpacity
+                        onPress={() => this.increaseDuration(item.id)}
+                      >
+                        <AntDesign name="caretright" size={24} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text style={{ fontSize: 14 }}>{item.startDate}</Text>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.reduceDose(item.id);
+                        }}
+                      >
+                        <AntDesign name="caretleft" size={24} color="black" />
+                      </TouchableOpacity>
+                      <Text style={{ fontSize: 14 }}>
+                        {item.dosage} mg |{" "}
+                        {parseInt(
+                          (item.dosage / this.state.startingDose) * 100
+                        )}
+                        %
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => this.increaseDose(item.id)}
+                      >
+                        <AntDesign name="caretright" size={24} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              />
+            </View>
           </View>
         </View>
       </View>

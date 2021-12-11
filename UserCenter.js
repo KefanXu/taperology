@@ -263,6 +263,8 @@ export class UserCenter extends React.Component {
 
   render() {
     return (
+            <View style={{width:Dimensions.get("window").width}}>
+
       <View
         style={{
           flex: 1,
@@ -481,6 +483,7 @@ export class UserCenter extends React.Component {
             </View> */}
           </View>
         </View>
+      </View>
       </View>
     );
   }
