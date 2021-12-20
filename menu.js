@@ -53,15 +53,24 @@ export class Menu extends React.Component {
       // <Overlay>
       <View
         style={{
-          width: 250,
+          width: 1000,
           backgroundColor: PRIMARY_COLOR,
           margin: 5,
           borderRadius: 15,
           justifyContent: "space-between",
-          height: 900,
+          justifyContent:"center",
+          height: 80,
+          marginBottom:50,
+
         }}
       >
-        <View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <View
             style={{
               flexDirection: "row",
@@ -80,86 +89,99 @@ export class Menu extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={async () => {
-              this.props.navResource();
-              // console.log("navResource");
-              // await Analytics.logEvent("GoToResource", {
-              //   name: "ChangeScreen",
-              //   screen: "Menu",
-              //   // purpose: "Opens the internal settings",
-              // });
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "50%",
+              // backgroundColor: "red",
             }}
-            style={{ margin: 10 }}
           >
-            <View style={{ flex: 1, margin: 5 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-                Resources
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navCal();
-            }}
-            style={{ margin: 10 }}
-          >
-            <View
-              style={{
-                flex: 1,
-                // backgroundColor: SEC_COLOR,
-                margin: 5,
-                borderRadius: 5,
-                // padding: 10,
+            <TouchableOpacity
+              onPress={async () => {
+                this.props.navResource();
+                // console.log("navResource");
+                // await Analytics.logEvent("GoToResource", {
+                //   name: "ChangeScreen",
+                //   screen: "Menu",
+                //   // purpose: "Opens the internal settings",
+                // });
               }}
+              style={{ margin: 10 }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-                Taper Scheduler
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // this.props.navigation.navigate("Calculator", {
-              //   // needsUpdate: this.needsUpdate,
-              // });
-            }}
-            style={{ margin: 10 }}
-            disabled={true}
-          >
-            <View style={{ flex: 1, margin: 5 }}>
-              <Text
-                style={{ fontWeight: "bold", fontSize: 20 }}
-                onPress={async () => {
-                  // Linking.openURL(
-                  //   "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
-                  // );
-                  // await Analytics.logEvent("ClickReferPatient", {
-                  //   name: "ChangeScreen",
-                  //   screen: "Menu",
-                  //   // purpose: "Opens the internal settings",
-                  // });
-                  this.props.showReferPatientModal();
+              <View style={{ flex: 1, margin: 5 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  Resources
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navCal();
+              }}
+              style={{ margin: 10 }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  // backgroundColor: SEC_COLOR,
+                  margin: 5,
+                  borderRadius: 5,
+                  // padding: 10,
                 }}
               >
-                Refer Patient
-              </Text>
-            </View>
-          </TouchableOpacity>
+                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  Taper Scheduler
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                // this.props.navigation.navigate("Calculator", {
+                //   // needsUpdate: this.needsUpdate,
+                // });
+              }}
+              style={{ margin: 10 }}
+              disabled={true}
+            >
+              <View style={{ flex: 1, margin: 5 }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 20 }}
+                  onPress={async () => {
+                    // Linking.openURL(
+                    //   "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
+                    // );
+                    // await Analytics.logEvent("ClickReferPatient", {
+                    //   name: "ChangeScreen",
+                    //   screen: "Menu",
+                    //   // purpose: "Opens the internal settings",
+                    // });
+                    this.props.showReferPatientModal();
+                  }}
+                >
+                  Refer Patient
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
           {/* <View style={{ marginTop: 20, marginLeft: 15 }}>
           <GoogleLogin />
         </View> */}
           <TouchableOpacity
-            style={{ margin: 15 }}
+            style={{ margin: 15, flexDirection:"row", alignItems:"center" }}
             onPress={() => {
               this.props.navUserCenter();
             }}
           >
             <FontAwesome name="user-circle-o" size={32} color="black" />
+            <Text style={{ fontWeight: "bold", fontSize: 15, marginLeft:15 }}>
+              User Center
+            </Text>
           </TouchableOpacity>
         </View>
-        <View>
+        {/* <View>
           <Text style={{ margin: 15, fontSize: 10 }}>
             This website was created as part of a project funded by the National
             Institute on Drug Abuse (R01DA045705) to Donovan Maust, MD. {"\n"}
@@ -169,7 +191,7 @@ export class Menu extends React.Component {
             </Text>
             {"\n"}(project coordinator; charityh@med.umich.edu).
           </Text>
-        </View>
+        </View> */}
       </View>
       // </Overlay>
     );

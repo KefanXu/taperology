@@ -30,7 +30,14 @@ import {
   FontAwesome,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Avatar, Card, Title, Paragraph, Appbar } from "react-native-paper";
+import {
+  Avatar,
+  Card,
+  Title,
+  Paragraph,
+  Appbar,
+  FAB,
+} from "react-native-paper";
 import * as Analytics from "expo-firebase-analytics";
 
 import { FlatList } from "react-native-web";
@@ -802,21 +809,19 @@ export class Resources extends React.Component {
   );
   render() {
     return (
-      <View style={{ width: Dimensions.get("window").width }}>
+      <View style={{ justifyContent: "center" }}>
         <View
           style={{
             flex: 1,
-            //backgroundColor: "blue",
             margin: 5,
-            flexDirection: "row",
-            height: Dimensions.get("window").height,
+            flexDirection: "column",
             width: "100%",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Modal
             style={{
-              flex: 1,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -827,7 +832,6 @@ export class Resources extends React.Component {
           </Modal>
           <Modal
             style={{
-              flex: 1,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -840,7 +844,6 @@ export class Resources extends React.Component {
           </Modal>
           <Modal
             style={{
-              flex: 1,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -849,17 +852,17 @@ export class Resources extends React.Component {
           >
             {this._renderModalPopup()}
           </Modal>
-            <Menu
-              navResource={this.navResource}
-              navIndex={this.navIndex}
-              navCal={this.navCal}
-              navUserCenter={this.navUserCenter}
-              showReferPatientModal={this.showReferPatientModal}
-            />
+          <Menu
+            navResource={this.navResource}
+            navIndex={this.navIndex}
+            navCal={this.navCal}
+            navUserCenter={this.navUserCenter}
+            showReferPatientModal={this.showReferPatientModal}
+          />
+
           <View
             style={{
               width: 1000,
-              // backgroundColor: "red",
               margin: 5,
             }}
           >

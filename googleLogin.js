@@ -102,7 +102,7 @@ export function GoogleLogin(props) {
 
   return (
     <View>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         disabled={!request}
         style={{
           backgroundColor: "black",
@@ -122,7 +122,7 @@ export function GoogleLogin(props) {
         <Text style={{ color: "white", fontWeight: "bold" }}>
           Login with Google
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         disabled={!request}
         style={{
@@ -144,7 +144,7 @@ export function GoogleLogin(props) {
         }}
       >
         <Text style={{ color: "white", fontWeight: "bold" }}>
-          Sign up with Google
+          Sign in with Google
         </Text>
       </TouchableOpacity>{" "}
       {/* <TouchableOpacity

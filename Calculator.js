@@ -762,7 +762,7 @@ export class Calculator extends React.Component {
     await this.dataModel.createNewSchedule(this.dataModel.key, newSchedule);
     this.reset();
     this.setState({
-      confirmModalTxt: "New taper schedule saved!",
+      confirmModalTxt: "New taper schedule saved to user center!",
     });
     this.setState({ isConfirmationVisibleModal: true });
     await Analytics.logEvent("saveSchedule", {
@@ -963,28 +963,28 @@ export class Calculator extends React.Component {
       </View>
     );
     return (
-      <View style={{ width: Dimensions.get("window").width }}>
+      <View style={{ justifyContent: "center" }}>
         <View
           style={{
             flex: 1,
             //backgroundColor: "blue",
             margin: 5,
-            flexDirection: "row",
+            flexDirection: "column",
             height: "100%",
             width: "100%",
             justifyContent: "center",
-            // alignItems:"center"
+            alignItems: "center",
           }}
         >
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isReferPopupModal}
             onBackdropPress={() => this.setState({ isReferPopupModal: false })}
           >
             {this._renderReferModalPopup()}
           </Modal>
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isAlertVisibleModal}
             onBackdropPress={() =>
               this.setState({ isAlertVisibleModal: false })
@@ -993,7 +993,7 @@ export class Calculator extends React.Component {
             {this._renderModalContent()}
           </Modal>
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isConfirmationVisibleModal}
             onBackdropPress={() =>
               this.setState({ isConfirmationVisibleModal: false })
@@ -1002,7 +1002,7 @@ export class Calculator extends React.Component {
             {this._renderModalContentConfirmation()}
           </Modal>
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isLoginVisibleModal}
             onBackdropPress={() =>
               this.setState({ isLoginVisibleModal: false })
@@ -1011,7 +1011,7 @@ export class Calculator extends React.Component {
             {this._renderModalLogin()}
           </Modal>
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.visibleModal}
             onBackdropPress={() => this.setState({ visibleModal: false })}
           >

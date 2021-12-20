@@ -349,27 +349,27 @@ export class Index extends React.Component {
   );
   render() {
     return (
-      <View style={{ width: Dimensions.get("window").width }}>
+      <View style={{ justifyContent: "center" }}>
         <View
           style={{
             flex: 1,
             //backgroundColor: "blue",
             margin: 5,
-            flexDirection: "row",
-            height: Dimensions.get("window").height,
+            flexDirection: "column",
             width: "100%",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isReferPopupModal}
             onBackdropPress={() => this.setState({ isReferPopupModal: false })}
           >
             {this._renderReferModalPopup()}
           </Modal>
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isLoginVisibleModal}
             onBackdropPress={() =>
               this.setState({ isLoginVisibleModal: false })
@@ -378,7 +378,7 @@ export class Index extends React.Component {
             {this._renderModalLogin()}
           </Modal>
           <Modal
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isPopupModal}
             onBackdropPress={() => this.setState({ isPopupModal: false })}
           >
@@ -401,7 +401,7 @@ export class Index extends React.Component {
             <View
               style={{
                 height: 160,
-                margin: 30,
+                margin: 10,
                 // backgroundColor:"red",
                 justifyContent: "space-between",
                 flexDirection: "column",
@@ -421,7 +421,7 @@ export class Index extends React.Component {
                 the four following sections:
               </Text>
             </View>
-            <View style={{ margin: 10, flexDirection: "row" }}>
+            <View style={{ margin: 0, flexDirection: "row" }}>
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
@@ -429,6 +429,7 @@ export class Index extends React.Component {
                       height: 200,
                       width: 500,
                       marginTop: 10,
+                      marginLeft: -10,
                       padding: 20,
                       borderRadius: 20,
                       backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
@@ -469,8 +470,7 @@ export class Index extends React.Component {
                       backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
                     }}
                     onPress={() => {
-                      this.props.navigation.navigate("Calculator", {
-                      });
+                      this.props.navigation.navigate("Calculator", {});
                     }}
                   >
                     <Text style={{ fontWeight: "bold", fontSize: 24 }}>
@@ -494,7 +494,7 @@ export class Index extends React.Component {
                 )}
               </Hoverable>
             </View>
-            <View style={{ margin: 10, flexDirection: "row" }}>
+            <View style={{ margin: 0, flexDirection: "row" }}>
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
@@ -502,11 +502,12 @@ export class Index extends React.Component {
                       height: 200,
                       width: 500,
                       marginTop: 10,
+                      marginLeft: -10,
                       padding: 20,
                       borderRadius: 20,
                       backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
                     }}
-                    onPress = {() => this.showReferPatientModal()}
+                    onPress={() => this.showReferPatientModal()}
                   >
                     <Text style={{ fontWeight: "bold", fontSize: 24 }}>
                       Refer Patient
@@ -538,11 +539,18 @@ export class Index extends React.Component {
                       borderRadius: 20,
                       backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
                     }}
-                    onPress = {() => this.navUserCenter()}
+                    onPress={() => this.navUserCenter()}
                   >
-                    <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                      User Center
-                    </Text>
+                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                      <FontAwesome
+                        name="user-circle-o"
+                        size={24}
+                        color="black"
+                      />
+                      <Text style={{ fontWeight: "bold", fontSize: 24, marginLeft:10 }}>
+                        User Center
+                      </Text>
+                    </View>
                     <View
                       style={{
                         height: 10,

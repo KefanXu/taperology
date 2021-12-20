@@ -37,7 +37,6 @@ import { getDataModel } from "./DataModel";
 import { Schedule } from "./schedule";
 import * as Analytics from "expo-firebase-analytics";
 
-
 import moment, { min } from "moment";
 import { DataTable, ProgressBar, Colors } from "react-native-paper";
 import { CircularSlider } from "react-native-elements-universe";
@@ -263,209 +262,215 @@ export class UserCenter extends React.Component {
 
   render() {
     return (
-            <View style={{width:Dimensions.get("window").width}}>
-
-      <View
-        style={{
-          flex: 1,
-
-          //backgroundColor: "blue",
-          margin: 5,
-          flexDirection: "row",
-          height: Dimensions.get("window").height,
-          width: "100%",
-          justifyContent: "center",
-        }}
-      >
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isReferPopupModal}
-          onBackdropPress={() => this.setState({ isReferPopupModal: false })}
-        >
-          {this._renderReferModalPopup()}
-        </Modal>
-        <Modal
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          isVisible={this.state.isScheduleVisibleModal}
-          onBackdropPress={() =>
-            this.setState({ isScheduleVisibleModal: false })
-          }
-        >
-          {this._renderModalSchedule()}
-        </Modal>
-        <Menu
-          navResource={this.navResource}
-          navIndex={this.navIndex}
-          navCal={this.navCal}
-          navUserCenter={this.navUserCenter}
-          showReferPatientModal={this.showReferPatientModal}
-          loginDismiss={this.loginDismiss}
-        />
+      <View style={{ justifyContent:"center" }}>
         <View
           style={{
-            width: 1000,
-            //backgroundColor: "red",
+            flex: 1,
 
+            //backgroundColor: "blue",
             margin: 5,
+            flexDirection: "column",
+            width: "100%",
+            justifyContent: "center",
+            alignItems:"center"
           }}
         >
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.isReferPopupModal}
+            onBackdropPress={() => this.setState({ isReferPopupModal: false })}
+          >
+            {this._renderReferModalPopup()}
+          </Modal>
+          <Modal
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            isVisible={this.state.isScheduleVisibleModal}
+            onBackdropPress={() =>
+              this.setState({ isScheduleVisibleModal: false })
+            }
+          >
+            {this._renderModalSchedule()}
+          </Modal>
+          <Menu
+            navResource={this.navResource}
+            navIndex={this.navIndex}
+            navCal={this.navCal}
+            navUserCenter={this.navUserCenter}
+            showReferPatientModal={this.showReferPatientModal}
+            loginDismiss={this.loginDismiss}
+          />
           <View
             style={{
-              height: 100,
-              margin: 10,
-              // backgroundColor:"red",
-              justifyContent: "space-between",
-              flexDirection: "row",
+              width: 1000,
+              //backgroundColor: "red",
+
+              margin: 5,
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-              User Center
-            </Text>
-          </View>
-          <View
-            style={{
-              margin: 10,
-              flexDirection: "row",
-              // backgroundColor: "red",
-              height: 500,
-            }}
-          >
-            <View style={{ marginTop: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Taper Schedules
+            <View
+              style={{
+                height: 100,
+                margin: 10,
+                // backgroundColor:"red",
+                justifyContent: "space-between",
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 65 }}>
+                User Center
               </Text>
+            </View>
+            <View
+              style={{
+                margin: 10,
+                flexDirection: "row",
+                // backgroundColor: "red",
+                height: 500,
+              }}
+            >
+              <View style={{ marginTop: 10 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                  Taper Schedules
+                </Text>
 
-              <View
-                style={{
-                  marginTop: 15,
-                  marginRight: 15,
-                  height: 400,
-                  width: 1000,
-                  // borderRadius: 20,
-                  // borderColor: "black",
-                  // borderWidth: 3,
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  // backgroundColor:"red"
-                }}
-              >
-                <FlatList
-                  style={{ width: 1000, marginTop: 7, marginBottom: 7 }}
-                  data={this.state.schedules}
-                  horizontal={false}
-                  numColumns={2}
-                  renderItem={({ item }) => {
-                    if (item.createdDate) {
-                      let currentStep = 0;
-                      let currentDosage;
-                      for (let step of item.schedule) {
-                        let startDate = new Date(step.startDate);
-                        let today = new Date(
-                          moment(new Date()).format("YYYY-MM-DD")
-                        );
-                        if (startDate <= today) {
-                          currentStep++;
-                          currentDosage = step.dosage;
+                <View
+                  style={{
+                    marginTop: 15,
+                    marginRight: 15,
+                    height: 400,
+                    width: 1000,
+                    // borderRadius: 20,
+                    // borderColor: "black",
+                    // borderWidth: 3,
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    // backgroundColor:"red"
+                  }}
+                >
+                  <FlatList
+                    style={{ width: 1000, marginTop: 7, marginBottom: 7 }}
+                    data={this.state.schedules}
+                    showsVerticalScrollIndicator={false}
+                    horizontal={false}
+                    numColumns={2}
+                    renderItem={({ item }) => {
+                      if (item.createdDate) {
+                        let currentStep = 0;
+                        let currentDosage;
+                        for (let step of item.schedule) {
+                          let startDate = new Date(step.startDate);
+                          let today = new Date(
+                            moment(new Date()).format("YYYY-MM-DD")
+                          );
+                          if (startDate <= today) {
+                            currentStep++;
+                            currentDosage = step.dosage;
+                          }
                         }
-                      }
-                      return (
-                        <TouchableOpacity
-                          onPress={async () => {
-                            console.log("item", item);
-                            // console.log(
-                            //   "this.state.schedules",
-                            //   this.state.schedules
-                            // );
+                        return (
+                          <TouchableOpacity
+                            onPress={async () => {
+                              console.log("item", item);
+                              // console.log(
+                              //   "this.state.schedules",
+                              //   this.state.schedules
+                              // );
 
-                            await this.setState({
-                              currentSchedule: item.schedule,
-                              currentData: item,
-                            });
-                            this.refreshSchedule();
+                              await this.setState({
+                                currentSchedule: item.schedule,
+                                currentData: item,
+                              });
+                              this.refreshSchedule();
 
-                            this.setState({ isScheduleVisibleModal: true });
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: 350,
-                              height: 120,
-                              flexDirection: "row",
-                              marginBottom: 10,
-                              marginRight: 10,
-                              borderRadius: 15,
-                              backgroundColor: PRIMARY_COLOR,
+                              this.setState({ isScheduleVisibleModal: true });
                             }}
                           >
-                            <View style={{ margin: 10 }}>
-                              <Text
-                                style={{ fontSize: 15, fontWeight: "bold" }}
-                              >
-                                Created date:
-                              </Text>
-                              <Text>{item.createdDate.slice(0, 16)}</Text>
-                              <Text style={{ fontSize: 12, marginTop: 5 }}>
-                                <Text style={{ fontWeight: "bold" }}>
-                                  Benzo Type:
-                                </Text>
-                                {item.bezo}
-                              </Text>
-                              <Text style={{ fontSize: 12, marginTop: 5 }}>
-                                <Text style={{ fontWeight: "bold" }}>
-                                  Start Date{" "}
-                                </Text>
-                                {item.startDate}
-                              </Text>
-                              <Text style={{ fontSize: 12, marginTop: 5 }}>
-                                <Text style={{ fontWeight: "bold" }}>
-                                  Total Steps{" "}
-                                </Text>
-                                {item.totalStep}
-                              </Text>
-                            </View>
-                            <View style={{ marginTop: 5, marginLeft: 25 }}>
-                              <Text>
+                            <View
+                              style={{
+                                width: 350,
+                                height: 120,
+                                flexDirection: "row",
+                                marginBottom: 10,
+                                marginRight: 10,
+                                borderRadius: 15,
+                                backgroundColor: PRIMARY_COLOR,
+                              }}
+                            >
+                              <View style={{ margin: 10 }}>
                                 <Text
-                                  style={{ fontSize: 12, fontWeight: "bold" }}
+                                  style={{ fontSize: 15, fontWeight: "bold" }}
                                 >
-                                  Current Step{" "}
+                                  Created date:
                                 </Text>
-                                {currentStep}
-                              </Text>
-                              <ProgressBar
-                                progress={currentStep / item.totalStep}
-                                color={"black"}
-                              />
-                              <View style={{ marginTop: 10 }}>
-                                <Text>
-                                  <Text
-                                    style={{ fontSize: 12, fontWeight: "bold" }}
-                                  >
-                                    Starting Dosage {"\n"}
+                                <Text>{item.createdDate.slice(0, 16)}</Text>
+                                <Text style={{ fontSize: 12, marginTop: 5 }}>
+                                  <Text style={{ fontWeight: "bold" }}>
+                                    Benzo Type:
                                   </Text>
-                                  {item.startDose} mg
+                                  {item.bezo}
                                 </Text>
-                                <Text>
-                                  <Text
-                                    style={{ fontSize: 12, fontWeight: "bold" }}
-                                  >
-                                    Current Target Dosage {"\n"}
+                                <Text style={{ fontSize: 12, marginTop: 5 }}>
+                                  <Text style={{ fontWeight: "bold" }}>
+                                    Start Date{" "}
                                   </Text>
-                                  {currentDosage} mg
+                                  {item.startDate}
+                                </Text>
+                                <Text style={{ fontSize: 12, marginTop: 5 }}>
+                                  <Text style={{ fontWeight: "bold" }}>
+                                    Total Steps{" "}
+                                  </Text>
+                                  {item.totalStep}
                                 </Text>
                               </View>
+                              <View style={{ marginTop: 5, marginLeft: 25 }}>
+                                <Text>
+                                  <Text
+                                    style={{ fontSize: 12, fontWeight: "bold" }}
+                                  >
+                                    Current Step{" "}
+                                  </Text>
+                                  {currentStep}
+                                </Text>
+                                <ProgressBar
+                                  progress={currentStep / item.totalStep}
+                                  color={"black"}
+                                />
+                                <View style={{ marginTop: 10 }}>
+                                  <Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 12,
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      Starting Dosage {"\n"}
+                                    </Text>
+                                    {item.startDose} mg
+                                  </Text>
+                                  <Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 12,
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      Current Target Dosage {"\n"}
+                                    </Text>
+                                    {currentDosage} mg
+                                  </Text>
+                                </View>
 
-                              {/* <CircularSlider maxAngle={90} /> */}
+                                {/* <CircularSlider maxAngle={90} /> */}
+                              </View>
                             </View>
-                          </View>
-                        </TouchableOpacity>
-                      );
-                    }
-                  }}
-                />
+                          </TouchableOpacity>
+                        );
+                      }
+                    }}
+                  />
+                </View>
               </View>
-            </View>
-            {/* <View style={{ marginTop: 10 }}>
+              {/* <View style={{ marginTop: 10 }}>
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
                 Saved Resource
               </Text>
@@ -481,9 +486,9 @@ export class UserCenter extends React.Component {
                 }}
               ></View>
             </View> */}
+            </View>
           </View>
         </View>
-      </View>
       </View>
     );
   }
