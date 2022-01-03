@@ -108,6 +108,7 @@ export class Index extends React.Component {
       isLoginVisibleModal: false,
       isPopupModal: false,
       isReferPopupModal: false,
+      windowWidth: Dimensions.get("window").width
     };
     this.dataModel = getDataModel();
   }
@@ -317,7 +318,7 @@ export class Index extends React.Component {
                 style={{ margin: 10, fontSize: 15 }}
                 title={item.title}
                 subtitle={item.subtitle}
-                // left={LeftContent}
+              // left={LeftContent}
               />
 
               {/* <Card.Content>
@@ -349,7 +350,7 @@ export class Index extends React.Component {
   );
   render() {
     return (
-      <View style={{ justifyContent: "center" }}>
+      <View style={{ justifyContent: "center"}}>
         <View
           style={{
             flex: 1,
@@ -393,25 +394,25 @@ export class Index extends React.Component {
           />
           <View
             style={{
-              width: 1000,
+              width: this.state.windowWidth * 0.8,
               // backgroundColor: "red",
               margin: 5,
+
             }}
           >
             <View
               style={{
-                height: 160,
+                height: Dimensions.get("window").width > 1000 ? 160 : 320,
                 margin: 10,
-                // backgroundColor:"red",
                 justifyContent: "space-between",
                 flexDirection: "column",
               }}
             >
               <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-                About Taperology
+                Welcome to Taperology!
               </Text>
               <Text style={{}}>
-                Welcome to Taperology! Clinicians may wish to reduce and or stop
+                Clinicians may wish to reduce and or stop
                 prescribing benzodiazepines (BZD) for some of their patients.
                 However, especially for patients who have been prescribed a BZD
                 for years, this can seem a daunting task for both clinicians and
@@ -421,13 +422,13 @@ export class Index extends React.Component {
                 the four following sections:
               </Text>
             </View>
-            <View style={{ margin: 0, flexDirection: "row" }}>
+            <View style={{ margin: 0, flexDirection: Dimensions.get("window").width > 1000 ? "row": "column" }}>
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
                     style={{
                       height: 200,
-                      width: 500,
+                      width: Dimensions.get("window").width > 1000 ? 500 : 400,
                       marginTop: 10,
                       marginLeft: -10,
                       padding: 20,
@@ -463,8 +464,9 @@ export class Index extends React.Component {
                   <TouchableOpacity
                     style={{
                       height: 200,
-                      width: 500,
+                      width: Dimensions.get("window").width > 1000 ? 500 : 400,
                       marginTop: 10,
+                      marginLeft: Dimensions.get("window").width > 1000 ? 0 : -10,
                       padding: 20,
                       borderRadius: 20,
                       backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
@@ -500,7 +502,7 @@ export class Index extends React.Component {
                   <TouchableOpacity
                     style={{
                       height: 200,
-                      width: 500,
+                      width: Dimensions.get("window").width > 1000 ? 500 : 400,
                       marginTop: 10,
                       marginLeft: -10,
                       padding: 20,
@@ -528,7 +530,7 @@ export class Index extends React.Component {
                   </TouchableOpacity>
                 )}
               </Hoverable>
-              <Hoverable>
+              {/* <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
                     style={{
@@ -541,13 +543,13 @@ export class Index extends React.Component {
                     }}
                     onPress={() => this.navUserCenter()}
                   >
-                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
                       <FontAwesome
                         name="user-circle-o"
                         size={24}
                         color="black"
                       />
-                      <Text style={{ fontWeight: "bold", fontSize: 24, marginLeft:10 }}>
+                      <Text style={{ fontWeight: "bold", fontSize: 24, marginLeft: 10 }}>
                         User Center
                       </Text>
                     </View>
@@ -566,7 +568,7 @@ export class Index extends React.Component {
                     </Text>
                   </TouchableOpacity>
                 )}
-              </Hoverable>
+              </Hoverable> */}
             </View>
           </View>
         </View>

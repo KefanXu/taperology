@@ -19,6 +19,7 @@ import {
   Picker,
   FlatList,
   Linking,
+  Clipboard,
 } from "react-native";
 
 import { Button, DataTable, Card } from "react-native-paper";
@@ -46,6 +47,7 @@ import { getDataModel } from "./DataModel";
 import { GoogleLogin } from "./googleLogin";
 
 import moment, { min } from "moment";
+import stringTable from "string-table";
 
 const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
@@ -231,6 +233,7 @@ export class Calculator extends React.Component {
       isAddBtnDisable: true,
       entry: "menu",
       currentStd: "",
+      isTipVis: "flex",
     };
     //this.stepInput = React.createRef();
     this.startDoseInput = React.createRef();
@@ -642,6 +645,7 @@ export class Calculator extends React.Component {
       screen: "Calculator",
       purpose: "Opens the internal settings",
     });
+    this.setState({ isTipVis: "none" });
   };
   addStep = async () => {
     let currentStepNum = this.state.stepNum;
@@ -771,8 +775,73 @@ export class Calculator extends React.Component {
       purpose: "Opens the internal settings",
     });
   };
+  copyTo = () => {
+    console.log("this.state.scheduleData", this.state.scheduleData);
+    let scheduleToSave = this.state.scheduleData;
+    let scheduleBasicInfo =
+      "startDate: " +
+      scheduleToSave[0].startDate +
+      "\n" +
+      "startDose: " +
+      this.state.startingDose +
+      "\n" +
+      "bezo type: " +
+      this.state.benzoType +
+      "\n" +
+      "createdDate: " +
+      moment(new Date()).format() +
+      "\n" +
+      "totalStep: " +
+      scheduleToSave.length +
+      "\n" +
+      "\n" +
+      "\n" +
+      "Step" +
+      "          " +
+      "Duration" +
+      "          " +
+      "Start Date" +
+      "          " +
+      "Target Dosage / Starting Dosage" +
+      "\n" +
+      "========================================================" +
+      "\n";
+    let scheduleDetail = "";
+    for (let step of scheduleToSave) {
+      let space;
+      if (step.id >= 10) {
+        space = "        ";
+      } else {
+        space = "          ";
+      }
+
+      scheduleDetail +=
+        "Step" +
+        step.id +
+        space +
+        step.duration +
+        " days" +
+        "          " +
+        step.startDate +
+        "          " +
+        step.dosage +
+        "mg | " +
+        parseInt((step.dosage / this.state.startingDose) * 100) +
+        "%" +
+        "\n";
+    }
+    let scheduleToCopy = scheduleBasicInfo + scheduleDetail;
+    console.log(stringTable.create(this.state.scheduleData));
+    Clipboard.setString(scheduleToCopy);
+    this.setState({
+      confirmModalTxt: "New taper schedule saved to clipboard!",
+    });
+    this.setState({ isConfirmationVisibleModal: true });
+  };
   _renderListView = (DATA) => (
-    <View style={{ marginTop: 20, marginLeft: 10 }}>
+    <View
+      style={{ marginTop: 20, marginLeft: 10, display: this.state.isTipVis }}
+    >
       <FlatList
         data={DATA}
         horizontal={true}
@@ -806,12 +875,13 @@ export class Calculator extends React.Component {
     let tipView = (
       <View
         style={{
-          height: "100%",
+          height: Dimensions.get("window").width > 1000 ? "100%" : 200,
           width: 400,
           padding: 10,
           backgroundColor: PRIMARY_COLOR,
           borderRadius: 20,
-          marginRight: 50,
+          marginRight: Dimensions.get("window").width > 1000 ? 50 : 0,
+          marginTop: Dimensions.get("window").width > 1000 ? 0 : 50,
         }}
       >
         <Text style={{ fontWeight: "bold", fontSize: 16 }}>
@@ -945,12 +1015,13 @@ export class Calculator extends React.Component {
               //backgroundColor:"red"
             }}
             onPress={async () => {
-              if (this.dataModel.isLogin) {
-                this.saveSchedule();
-              } else {
-                this.setState({ isLoginVisibleModal: true });
-                this.setState({ entry: "save" });
-              }
+              // if (this.dataModel.isLogin) {
+              //   this.saveSchedule();
+              // } else {
+              //   this.setState({ isLoginVisibleModal: true });
+              //   this.setState({ entry: "save" });
+              // }
+              this.copyTo();
             }}
             disabled={this.state.isAddBtnDisable}
           >
@@ -1025,21 +1096,29 @@ export class Calculator extends React.Component {
             showReferPatientModal={this.showReferPatientModal}
             // login={this.login}
           />
-          <View style={{ width: 1000, backgroundColor: "", margin: 5 }}>
+          <View
+            style={{
+              width: Dimensions.get("window").width * 0.8,
+              backgroundColor: "",
+              margin: 5,
+            }}
+          >
             <View
               style={{
-                height: 280,
+                height: Dimensions.get("window").width > 1000 ? 280 : 600,
                 margin: 10,
 
                 // justifyContent: "space-between",
                 flexDirection: "row",
               }}
             >
-              <View style={{ width: 1000 }}>
+              <View style={{ width: "100%" }}>
                 <View
                   style={{
-                    flexDirection: "row",
+                    flexDirection:
+                      Dimensions.get("window").width > 1000 ? "row" : "column",
                     justifyContent: "space-between",
+                    // alignItems:"center"
                     // backgroundColor: "red",
                   }}
                 >
@@ -1048,7 +1127,6 @@ export class Calculator extends React.Component {
                       style={{
                         fontWeight: "bold",
                         fontSize: 65,
-                        // backgroundColor: "red",
                       }}
                     >
                       Taper Scheduler
@@ -1064,16 +1142,20 @@ export class Calculator extends React.Component {
                 <View
                   style={{
                     // flex: 0.06,
-                    height: 80,
+                    height: Dimensions.get("window").width > 1000 ? 80 : 250,
                     // flex: 1,
-                    marginTop: 10,
+                    marginTop: Dimensions.get("window").width > 1000 ? 10 : 40,
                     // backgroundColor: "red",
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
+                    flexDirection:
+                      Dimensions.get("window").width > 1000 ? "row" : "column",
+                    justifyContent:
+                      Dimensions.get("window").width > 1000
+                        ? "flex-start"
+                        : "space-between",
                     alignItems: "center",
                   }}
                 >
-                  <View style={{ flex: 0.25, height: "80%" }}>
+                  <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ fontWeight: "bold" }}>
                       #1 Benzodiazepine
                     </Text>
@@ -1095,13 +1177,18 @@ export class Calculator extends React.Component {
                         this.setState({ visibleModal: true });
                       }}
                     >
-                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
+                      >
                         {this.state.benzoType}
                       </Text>
                     </TouchableOpacity>
                   </View>
                   {/* Pick the start date */}
-                  <View style={{ flex: 0.25, height: "80%" }}>
+                  <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
 
                     <DatePickerModal
@@ -1145,13 +1232,18 @@ export class Calculator extends React.Component {
                       }}
                       onPress={this.showDatePicker}
                     >
-                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
+                      >
                         {this.state.datePickerButtonTxt}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style={{ flex: 0.25, height: "80%" }}>
+                  <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ fontWeight: "bold" }}>#3 Starting Dose</Text>
                     <View
                       style={{
@@ -1188,7 +1280,7 @@ export class Calculator extends React.Component {
                       />
                     </View>
                   </View>
-                  <View style={{ flex: 0.25, height: "80%" }}>
+                  <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ color: "white", opacity: 0 }}>
                       {this.state.generateBtnTxt}
                     </Text>
@@ -1210,7 +1302,12 @@ export class Calculator extends React.Component {
                         // this.setState({ generateBtnTxt: "Reset" });
                       }}
                     >
-                      <Text style={{ fontWeight: "bold", color: "white" }}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
+                      >
                         {this.state.generateBtnTxt}
                       </Text>
                     </TouchableOpacity>
@@ -1218,12 +1315,36 @@ export class Calculator extends React.Component {
                 </View>
               </View>
             </View>
-            <Text style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}>
-              Tips for tapering
-            </Text>
-            <Text style={{ fontSize: 12, marginLeft: 10, marginTop: 5 }}>
-              Adapted from the Ashton Manual
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: Dimensions.get("window").width > 1000 ? 0: 100 }}>
+              <View style={{ marginRight: 50 }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}
+                >
+                  Tips for tapering
+                </Text>
+                <Text style={{ fontSize: 12, marginLeft: 10, marginTop: 5 }}>
+                  Adapted from the Ashton Manual
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  display: this.state.isTipVis === "flex" ? "none" : "flex",
+                }}
+                disabled={this.state.isTipVis === "flex" ? true : false}
+                onPress={() => this.setState({ isTipVis: "flex" })}
+              >
+                <AntDesign name="downcircle" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  display: this.state.isTipVis === "flex" ? "flex" : "none",
+                }}
+                disabled={this.state.isTipVis === "flex" ? false : true}
+                onPress={() => this.setState({ isTipVis: "none" })}
+              >
+                <AntDesign name="upcircle" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
 
             {this._renderListView(TIP_DATA)}
             <View
@@ -1268,7 +1389,14 @@ export class Calculator extends React.Component {
                     // backgroundColor:"red",
                   }}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>Step</Text>
+                  <Text
+                    style={{
+                      fontSize: Dimensions.get("window").width > 1000 ? 12 : 10,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Step
+                  </Text>
                 </View>
                 <View
                   style={{
@@ -1278,7 +1406,12 @@ export class Calculator extends React.Component {
                     // padding: 15,
                   }}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                  <Text
+                    style={{
+                      fontSize: Dimensions.get("window").width > 1000 ? 12 : 10,
+                      fontWeight: "bold",
+                    }}
+                  >
                     Duration
                   </Text>
                 </View>
@@ -1290,7 +1423,12 @@ export class Calculator extends React.Component {
                     // padding: 15,
                   }}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                  <Text
+                    style={{
+                      fontSize: Dimensions.get("window").width > 1000 ? 12 : 10,
+                      fontWeight: "bold",
+                    }}
+                  >
                     Start Date
                   </Text>
                 </View>
@@ -1302,7 +1440,12 @@ export class Calculator extends React.Component {
                     // padding: 15,
                   }}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                  <Text
+                    style={{
+                      fontSize: Dimensions.get("window").width > 1000 ? 12 : 10,
+                      fontWeight: "bold",
+                    }}
+                  >
                     Target Dosage / Starting Dosage
                   </Text>
                 </View>
@@ -1331,7 +1474,14 @@ export class Calculator extends React.Component {
                         // backgroundColor:"blue"
                       }}
                     >
-                      <Text style={{ fontSize: 14 }}>Step {item.id}</Text>
+                      <Text
+                        style={{
+                          fontSize:
+                            Dimensions.get("window").width > 1000 ? 12 : 10,
+                        }}
+                      >
+                        Step {item.id}
+                      </Text>
                     </View>
                     <View
                       style={{
@@ -1348,7 +1498,14 @@ export class Calculator extends React.Component {
                       >
                         <AntDesign name="caretleft" size={24} color="black" />
                       </TouchableOpacity>
-                      <Text style={{ fontSize: 14 }}>{item.duration} days</Text>
+                      <Text
+                        style={{
+                          fontSize:
+                            Dimensions.get("window").width > 1000 ? 12 : 10,
+                        }}
+                      >
+                        {item.duration} days
+                      </Text>
                       <TouchableOpacity
                         onPress={() => this.increaseDuration(item.id)}
                       >
@@ -1362,7 +1519,14 @@ export class Calculator extends React.Component {
                         justifyContent: "center",
                       }}
                     >
-                      <Text style={{ fontSize: 14 }}>{item.startDate}</Text>
+                      <Text
+                        style={{
+                          fontSize:
+                            Dimensions.get("window").width > 1000 ? 12 : 10,
+                        }}
+                      >
+                        {item.startDate}
+                      </Text>
                     </View>
                     <View
                       style={{
@@ -1379,7 +1543,12 @@ export class Calculator extends React.Component {
                       >
                         <AntDesign name="caretleft" size={24} color="black" />
                       </TouchableOpacity>
-                      <Text style={{ fontSize: 14 }}>
+                      <Text
+                        style={{
+                          fontSize:
+                            Dimensions.get("window").width > 1000 ? 12 : 10,
+                        }}
+                      >
                         {item.dosage} mg |{" "}
                         {parseInt(
                           (item.dosage / this.state.startingDose) * 100

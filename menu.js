@@ -34,11 +34,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { getDataModel } from "./DataModel";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import moment, { min } from "moment";
 
 const PRIMARY_COLOR = "#D8D8D8";
 const SEC_COLOR = "#848484";
+
 export class Menu extends React.Component {
   constructor(props) {
     super(props);
@@ -53,28 +55,27 @@ export class Menu extends React.Component {
       // <Overlay>
       <View
         style={{
-          width: 1000,
-          backgroundColor: PRIMARY_COLOR,
+          width: Dimensions.get("window").width * 0.8,
+          backgroundColor:PRIMARY_COLOR,
           margin: 5,
           borderRadius: 15,
-          justifyContent: "space-between",
-          justifyContent:"center",
-          height: 80,
-          marginBottom:50,
-
+          justifyContent: "center",
+          height: Dimensions.get("window").width > 1000 ? 80 : 150,
+          marginBottom: 50,
         }}
       >
         <View
           style={{
-            flexDirection: "row",
+            flexDirection:"row",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "flex-start",
+            padding: Dimensions.get("window").width > 1000 ? 50 : 5,
           }}
         >
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: Dimensions.get("window").width > 1000 ? "space-between" : "center",
+              flex: Dimensions.get("window").width > 1000 ? 0.3 : 0.7,
               alignItems: "center",
             }}
           >
@@ -84,18 +85,34 @@ export class Menu extends React.Component {
               }}
               style={{ margin: 0 }}
             >
-              <Text style={{ margin: 15, fontWeight: "bold", fontSize: 35 }}>
+              <Text
+                style={{
+                  margin: Dimensions.get("window").width > 1000 ? 15 : 2,
+                  fontWeight: "bold",
+                  fontSize: Dimensions.get("window").width > 1000 ? 35 : 35,
+                }}
+              >
                 Taperology
               </Text>
             </TouchableOpacity>
           </View>
-          <View
+          {/* <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
               width: "50%",
               // backgroundColor: "red",
+            }}
+          > */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems:"flex-end",
+              flex: 0.7,
+              flexDirection:
+                Dimensions.get("window").width > 1000 ? "row" : "column",
             }}
           >
             <TouchableOpacity
@@ -110,8 +127,13 @@ export class Menu extends React.Component {
               }}
               style={{ margin: 10 }}
             >
-              <View style={{ flex: 1, margin: 5 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+              <View style={{ flex: 1, margin: 5, }}>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: Dimensions.get("window").width > 1000 ? 20 : 15,
+                  }}
+                >
                   Resources
                 </Text>
               </View>
@@ -132,7 +154,7 @@ export class Menu extends React.Component {
                   // padding: 10,
                 }}
               >
-                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                <Text style={{ fontWeight: "bold", fontSize: Dimensions.get("window").width > 1000 ? 20 : 15, }}>
                   Taper Scheduler
                 </Text>
               </View>
@@ -148,7 +170,7 @@ export class Menu extends React.Component {
             >
               <View style={{ flex: 1, margin: 5 }}>
                 <Text
-                  style={{ fontWeight: "bold", fontSize: 20 }}
+                  style={{ fontWeight: "bold", fontSize: Dimensions.get("window").width > 1000 ? 20 : 15, }}
                   onPress={async () => {
                     // Linking.openURL(
                     //   "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
@@ -166,10 +188,11 @@ export class Menu extends React.Component {
               </View>
             </TouchableOpacity>
           </View>
+          {/* </View> */}
           {/* <View style={{ marginTop: 20, marginLeft: 15 }}>
           <GoogleLogin />
         </View> */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{ margin: 15, flexDirection:"row", alignItems:"center" }}
             onPress={() => {
               this.props.navUserCenter();
@@ -179,7 +202,7 @@ export class Menu extends React.Component {
             <Text style={{ fontWeight: "bold", fontSize: 15, marginLeft:15 }}>
               User Center
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         {/* <View>
           <Text style={{ margin: 15, fontSize: 10 }}>

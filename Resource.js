@@ -862,7 +862,7 @@ export class Resources extends React.Component {
 
           <View
             style={{
-              width: 1000,
+              width: Dimensions.get("window").width * 0.8,
               margin: 5,
             }}
           >
