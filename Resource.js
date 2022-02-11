@@ -56,10 +56,14 @@ const REFER_PATIENT_TXT = (
     {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14 }}>
+      Just enter the patient's address or zip code to find mental health or
+      substance use treatment facilities in their area.
+      {"\n"}
+      {"\n"}
       This locator is provided by SAMHSA (the Substance Abuse and Mental Health
       Services Administration).
     </Text>
-    {"\n"}
+    {/* {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14, fontWeight: "bold" }}>
       Eligible mental health treatment facilities include:
@@ -97,7 +101,7 @@ const REFER_PATIENT_TXT = (
       third-party payers for substance use treatment services using an alcohol
       or drug client diagnosis
       {"\n"}
-    </Text>
+    </Text> */}
   </Text>
 );
 
@@ -574,8 +578,8 @@ export class Resources extends React.Component {
   _renderReferModalPopup = () => (
     <View
       style={{
-        height: 600,
-        width: 600,
+        height: Dimensions.get("window").width > 1000 ? 300 : 350,
+        width: 400,
         backgroundColor: "white",
         borderRadius: 20,
         marginRight: 10,
@@ -882,35 +886,47 @@ export class Resources extends React.Component {
             <View style={{ margin: 10 }}>
               <View style={{ marginTop: 10 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Benzo Basics for Clinicians
+                  Benzo Basics for Clinicians ❹
                 </Text>
                 {this._renderListView(BENZO_BASIC_CLINICIANS_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Benzo Basics for Patients
+                  Benzo Basics for Patients ❸
                 </Text>
                 {this._renderListView(BENZO_BASIC_PATIENT_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Resources on Insomnia
+                  Resources on Insomnia ❹
                 </Text>
                 {this._renderListView(INSOMNIA_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Resources on Anxiety
+                  Resources on Anxiety ❺
                 </Text>
                 {this._renderListView(ANXIETY_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
                 <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Resources on Tapering
+                  Resources on Tapering ❸
                 </Text>
                 {this._renderListView(TAPER_RESOURCE)}
               </View>
             </View>
+          </View>
+          <View>
+            <Text style={{ margin: 15, fontSize: 10, textAlign: "center" }}>
+              This website was created as part of a project funded by the
+              National Institute on Drug Abuse (R01DA045705) to Donovan Maust,
+              MD. {"\n"}
+              {"\n"}For questions or comments, please contact{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                Charity Hoffman, PhD, MSW
+              </Text>
+              {"\n"}(project coordinator; charityh@med.umich.edu).
+            </Text>
           </View>
         </View>
       </View>

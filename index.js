@@ -49,10 +49,14 @@ const REFER_PATIENT_TXT = (
     {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14 }}>
+      Just enter the patient's address or zip code to find mental health or
+      substance use treatment facilities in their area.
+      {"\n"}
+      {"\n"}
       This locator is provided by SAMHSA (the Substance Abuse and Mental Health
       Services Administration).
     </Text>
-    {"\n"}
+    {/* {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14, fontWeight: "bold" }}>
       Eligible mental health treatment facilities include:
@@ -90,7 +94,7 @@ const REFER_PATIENT_TXT = (
       third-party payers for substance use treatment services using an alcohol
       or drug client diagnosis
       {"\n"}
-    </Text>
+    </Text> */}
   </Text>
 );
 
@@ -108,15 +112,15 @@ export class Index extends React.Component {
       isLoginVisibleModal: false,
       isPopupModal: false,
       isReferPopupModal: false,
-      windowWidth: Dimensions.get("window").width
+      windowWidth: Dimensions.get("window").width,
     };
     this.dataModel = getDataModel();
   }
   _renderReferModalPopup = () => (
     <View
       style={{
-        height: 600,
-        width: 600,
+        height: Dimensions.get("window").width > 1000 ? 300 : 350,
+        width: 400,
         backgroundColor: "white",
         borderRadius: 20,
         marginRight: 10,
@@ -318,7 +322,7 @@ export class Index extends React.Component {
                 style={{ margin: 10, fontSize: 15 }}
                 title={item.title}
                 subtitle={item.subtitle}
-              // left={LeftContent}
+                // left={LeftContent}
               />
 
               {/* <Card.Content>
@@ -350,7 +354,7 @@ export class Index extends React.Component {
   );
   render() {
     return (
-      <View style={{ justifyContent: "center"}}>
+      <View style={{ justifyContent: "center" }}>
         <View
           style={{
             flex: 1,
@@ -397,7 +401,6 @@ export class Index extends React.Component {
               width: this.state.windowWidth * 0.8,
               // backgroundColor: "red",
               margin: 5,
-
             }}
           >
             <View
@@ -412,17 +415,23 @@ export class Index extends React.Component {
                 Welcome to Taperology!
               </Text>
               <Text style={{}}>
-                Clinicians may wish to reduce and or stop
-                prescribing benzodiazepines (BZD) for some of their patients.
-                However, especially for patients who have been prescribed a BZD
-                for years, this can seem a daunting task for both clinicians and
+                Clinicians may wish to reduce and or stop prescribing
+                benzodiazepines (BZD) for some of their patients. However,
+                especially for patients who have been prescribed a BZD for
+                years, this can seem a daunting task for both clinicians and
                 patients. Think of this resource as a BZD resource clearinghouse
                 that pulls together information from a variety of sources to
                 help make these conversations slightly easier, organized into
                 the four following sections:
               </Text>
             </View>
-            <View style={{ margin: 0, flexDirection: Dimensions.get("window").width > 1000 ? "row": "column" }}>
+            <View
+              style={{
+                margin: 0,
+                flexDirection:
+                  Dimensions.get("window").width > 1000 ? "row" : "column",
+              }}
+            >
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
@@ -466,7 +475,8 @@ export class Index extends React.Component {
                       height: 200,
                       width: Dimensions.get("window").width > 1000 ? 500 : 400,
                       marginTop: 10,
-                      marginLeft: Dimensions.get("window").width > 1000 ? 0 : -10,
+                      marginLeft:
+                        Dimensions.get("window").width > 1000 ? 0 : -10,
                       padding: 20,
                       borderRadius: 20,
                       backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
@@ -570,6 +580,18 @@ export class Index extends React.Component {
                 )}
               </Hoverable> */}
             </View>
+          </View>
+          <View>
+            <Text style={{ margin: 15, fontSize: 10, textAlign: "center" }}>
+              This website was created as part of a project funded by the
+              National Institute on Drug Abuse (R01DA045705) to Donovan Maust,
+              MD. {"\n"}
+              {"\n"}For questions or comments, please contact{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                Charity Hoffman, PhD, MSW
+              </Text>
+              {"\n"}(project coordinator; charityh@med.umich.edu).
+            </Text>
           </View>
         </View>
       </View>

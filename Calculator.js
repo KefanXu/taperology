@@ -143,10 +143,14 @@ const REFER_PATIENT_TXT = (
     {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14 }}>
-      This locator is provided by SAMHSA (the Substance Abuse and Mental Health
-      Services Administration).
+      {/* This locator is provided by SAMHSA (the Substance Abuse and Mental Health
+      Services Administration). */}
+      Just enter the patient's address or zip code to find mental health or
+      substance use treatment facilities in their area. {"\n"}
+      {"\n"}This locator is provided by SAMHSA (the Substance Abuse and Mental
+      Health Services Administration).
     </Text>
-    {"\n"}
+    {/* {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14, fontWeight: "bold" }}>
       Eligible mental health treatment facilities include:
@@ -184,7 +188,7 @@ const REFER_PATIENT_TXT = (
       third-party payers for substance use treatment services using an alcohol
       or drug client diagnosis
       {"\n"}
-    </Text>
+    </Text> */}
   </Text>
 );
 // const Item = ({ title }) => (
@@ -224,7 +228,7 @@ export class Calculator extends React.Component {
       isConfirmationVisibleModal: false,
       isLoginVisibleModal: false,
       isReferPopupModal: false,
-      listOpacity: 0,
+      listOpacity: "none",
       scheduleData: [],
       stepNum: 12,
       startingDose: "",
@@ -323,8 +327,8 @@ export class Calculator extends React.Component {
   _renderReferModalPopup = () => (
     <View
       style={{
-        height: 600,
-        width: 600,
+        height: Dimensions.get("window").width > 1000 ? 300 : 350,
+        width: 400,
         backgroundColor: "white",
         borderRadius: 20,
         marginRight: 10,
@@ -588,7 +592,7 @@ export class Calculator extends React.Component {
     this.setState({ datePickerButtonTxt: "Pick the start date" });
     this.setState({ stepNum: 12 });
     this.setState({ startingDose: "" });
-    this.setState({ listOpacity: 0 });
+    this.setState({ listOpacity: "none" });
     this.setState({ generateBtnTxt: "Generate Schedule" });
     this.setState({ isAddBtnDisable: true });
     //this.stepInput.current.clear();
@@ -635,7 +639,7 @@ export class Calculator extends React.Component {
       }
       this.generateSchedule();
       this.setState({ generateBtnTxt: "Reset" });
-      this.setState({ listOpacity: 100 });
+      this.setState({ listOpacity: "flex" });
       this.setState({ confirmModalTxt: "New taper schedule created!" });
       // this.setState({ isConfirmationVisibleModal: true });
       this.setState({ isAddBtnDisable: false });
@@ -878,7 +882,8 @@ export class Calculator extends React.Component {
           height: Dimensions.get("window").width > 1000 ? "100%" : 200,
           width: 400,
           padding: 10,
-          backgroundColor: PRIMARY_COLOR,
+          backgroundColor:
+            Dimensions.get("window").width > 1000 ? PRIMARY_COLOR : "none",
           borderRadius: 20,
           marginRight: Dimensions.get("window").width > 1000 ? 50 : 0,
           marginTop: Dimensions.get("window").width > 1000 ? 0 : 50,
@@ -1027,7 +1032,7 @@ export class Calculator extends React.Component {
           >
             <MaterialIcons name="note-add" size={32} color="black" />
             <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
-              Save Schedule
+              Copy Schedule
             </Text>
           </TouchableOpacity>
         </View>
@@ -1315,7 +1320,13 @@ export class Calculator extends React.Component {
                 </View>
               </View>
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center", marginTop: Dimensions.get("window").width > 1000 ? 0: 100 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: Dimensions.get("window").width > 1000 ? 0 : 100,
+              }}
+            >
               <View style={{ marginRight: 50 }}>
                 <Text
                   style={{ fontWeight: "bold", fontSize: 16, marginLeft: 10 }}
@@ -1355,7 +1366,7 @@ export class Calculator extends React.Component {
                 marginTop: 10,
                 flexDirection: "column",
                 justifyContent: "center",
-                opacity: this.state.listOpacity,
+                display: this.state.listOpacity,
                 // backgroundColor: PRIMARY_COLOR,
                 borderRadius: 20,
                 //alignItems: "center",
@@ -1565,6 +1576,18 @@ export class Calculator extends React.Component {
                 )}
               />
             </View>
+          </View>
+          <View>
+            <Text style={{ margin: 15, fontSize: 10, textAlign: "center" }}>
+              This website was created as part of a project funded by the
+              National Institute on Drug Abuse (R01DA045705) to Donovan Maust,
+              MD. {"\n"}
+              {"\n"}For questions or comments, please contact{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                Charity Hoffman, PhD, MSW
+              </Text>
+              {"\n"}(project coordinator; charityh@med.umich.edu).
+            </Text>
           </View>
         </View>
       </View>

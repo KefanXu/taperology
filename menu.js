@@ -204,17 +204,6 @@ export class Menu extends React.Component {
             </Text>
           </TouchableOpacity> */}
         </View>
-        {/* <View>
-          <Text style={{ margin: 15, fontSize: 10 }}>
-            This website was created as part of a project funded by the National
-            Institute on Drug Abuse (R01DA045705) to Donovan Maust, MD. {"\n"}
-            {"\n"}For questions or comments, please contact{" "}
-            <Text style={{ fontWeight: "bold" }}>
-              Charity Hoffman, PhD, MSW
-            </Text>
-            {"\n"}(project coordinator; charityh@med.umich.edu).
-          </Text>
-        </View> */}
       </View>
       // </Overlay>
     );
