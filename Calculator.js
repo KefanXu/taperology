@@ -352,7 +352,7 @@ export class Calculator extends React.Component {
       >
         <View
           style={{
-            backgroundColor: "black",
+            backgroundColor: "purple",
             borderRadius: 20,
             margin: 10,
             width: 150,
@@ -463,7 +463,7 @@ export class Calculator extends React.Component {
     <View
       style={{
         backgroundColor: "white",
-        width: 400,
+        width: 350,
         padding: 22,
         justifyContent: "center",
         alignItems: "center",
@@ -479,7 +479,7 @@ export class Calculator extends React.Component {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={{
-              backgroundColor: "black",
+              backgroundColor: "purple",
               padding: 10,
               marginVertical: 8,
               marginHorizontal: 16,
@@ -849,7 +849,7 @@ export class Calculator extends React.Component {
       <FlatList
         data={DATA}
         horizontal={true}
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
         renderItem={({ item }) => (
           <ScrollView
             style={{
@@ -860,9 +860,9 @@ export class Calculator extends React.Component {
               padding: 15,
               backgroundColor: "white",
             }}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 27, marginBottom: 5 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 27, marginBottom: 5, color:"purple" }}>
               {item.num}
             </Text>
             <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
@@ -883,7 +883,9 @@ export class Calculator extends React.Component {
           width: 400,
           padding: 10,
           backgroundColor:
-            Dimensions.get("window").width > 1000 ? PRIMARY_COLOR : "none",
+            Dimensions.get("window").width > 1000 ? "white" : "none",
+          borderColor:Dimensions.get("window").width > 1000 ? "purple" : "none",
+          borderWidth:2,
           borderRadius: 20,
           marginRight: Dimensions.get("window").width > 1000 ? 50 : 0,
           marginTop: Dimensions.get("window").width > 1000 ? 0 : 50,
@@ -1132,6 +1134,7 @@ export class Calculator extends React.Component {
                       style={{
                         fontWeight: "bold",
                         fontSize: 65,
+                        color:"purple"
                       }}
                     >
                       Taper Scheduler
@@ -1172,10 +1175,10 @@ export class Calculator extends React.Component {
                         marginTop: 10,
                         borderWidth: 2,
                         borderRadius: 30,
-                        borderColor: "black",
+                        borderColor: "purple",
                         alignItems: "center",
                         justifyContent: "center",
-                        backgroundColor: "black",
+                        backgroundColor: "purple",
                       }}
                       // disabled={false}
                       onPress={() => {
@@ -1230,10 +1233,10 @@ export class Calculator extends React.Component {
                         marginTop: 10,
                         borderWidth: 2,
                         borderRadius: 30,
-                        borderColor: "black",
+                        borderColor: "purple",
                         alignItems: "center",
                         justifyContent: "center",
-                        backgroundColor: "black",
+                        backgroundColor: "purple",
                       }}
                       onPress={this.showDatePicker}
                     >
@@ -1258,7 +1261,7 @@ export class Calculator extends React.Component {
                         marginTop: 10,
                         borderWidth: 3,
                         borderRadius: 30,
-                        borderColor: "black",
+                        borderColor: "purple",
                       }}
                     >
                       <TextInput
@@ -1297,8 +1300,8 @@ export class Calculator extends React.Component {
                         marginTop: 10,
                         borderWidth: 2,
                         borderRadius: 30,
-                        borderColor: "black",
-                        backgroundColor: "black",
+                        borderColor: "purple",
+                        backgroundColor: "purple",
                         alignItems: "center",
                         justifyContent: "center",
                       }}
@@ -1344,7 +1347,7 @@ export class Calculator extends React.Component {
                 disabled={this.state.isTipVis === "flex" ? true : false}
                 onPress={() => this.setState({ isTipVis: "flex" })}
               >
-                <AntDesign name="downcircle" size={24} color="black" />
+                <AntDesign name="downcircle" size={24} color="purple" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
@@ -1353,7 +1356,7 @@ export class Calculator extends React.Component {
                 disabled={this.state.isTipVis === "flex" ? false : true}
                 onPress={() => this.setState({ isTipVis: "none" })}
               >
-                <AntDesign name="upcircle" size={24} color="black" />
+                <AntDesign name="upcircle" size={24} color="purple" />
               </TouchableOpacity>
             </View>
 

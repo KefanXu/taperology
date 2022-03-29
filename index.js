@@ -144,7 +144,7 @@ export class Index extends React.Component {
       >
         <View
           style={{
-            backgroundColor: "black",
+            backgroundColor: "purple",
             borderRadius: 20,
             margin: 10,
             width: 150,
@@ -411,7 +411,7 @@ export class Index extends React.Component {
                 flexDirection: "column",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 65 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 65, color: "purple" }}>
                 Welcome to Taperology!
               </Text>
               <Text style={{}}>
@@ -422,7 +422,7 @@ export class Index extends React.Component {
                 patients. Think of this resource as a BZD resource clearinghouse
                 that pulls together information from a variety of sources to
                 help make these conversations slightly easier, organized into
-                the four following sections:
+                the three following sections:
               </Text>
             </View>
             <View
@@ -456,12 +456,14 @@ export class Index extends React.Component {
                         height: 10,
                         width: 100,
                         marginTop: 10,
-                        backgroundColor: "black",
+                        backgroundColor: "purple",
+                        borderRadius:10
+
                       }}
                     ></View>
                     <Text style={{ marginTop: 20 }}>
                       This section covers: BZD basics for both clinicians and
-                      clinicians; information about alternative strategies for
+                      patients; information about alternative strategies for
                       insomnia and anxiety (the most common indications for
                       BZD); and information about tapering.
                     </Text>
@@ -493,7 +495,9 @@ export class Index extends React.Component {
                         height: 10,
                         width: 100,
                         marginTop: 10,
-                        backgroundColor: "black",
+                        backgroundColor: "purple",
+                        borderRadius:10
+
                       }}
                     ></View>
                     <Text style={{ marginTop: 20 }}>
@@ -529,7 +533,8 @@ export class Index extends React.Component {
                         height: 10,
                         width: 100,
                         marginTop: 10,
-                        backgroundColor: "black",
+                        backgroundColor: "purple",
+                        borderRadius:10
                       }}
                     ></View>
                     <Text style={{ marginTop: 20 }}>

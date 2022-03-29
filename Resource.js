@@ -572,8 +572,10 @@ export class Resources extends React.Component {
       isLoginVisibleModal: false,
       isPopupModal: false,
       isReferPopupModal: false,
+      currentindex: 0,
     };
     this.dataModel = getDataModel();
+    this.listRef = React.createRef();
   }
   _renderReferModalPopup = () => (
     <View
@@ -603,7 +605,7 @@ export class Resources extends React.Component {
       >
         <View
           style={{
-            backgroundColor: "black",
+            backgroundColor: "purple",
             borderRadius: 20,
             margin: 10,
             width: 150,
@@ -631,7 +633,7 @@ export class Resources extends React.Component {
       }}
     >
       <View>
-        <Text style={{ fontSize: 32, fontWeight: "bold", margin: 10 }}>
+        <Text style={{ fontSize: 32, fontWeight: "bold", margin: 10, color:"purple" }}>
           {this.state.popupItem.title}
         </Text>
         <ScrollView style={{ margin: 10 }}>
@@ -651,7 +653,7 @@ export class Resources extends React.Component {
       >
         <View
           style={{
-            backgroundColor: "black",
+            backgroundColor: "purple",
             borderRadius: 20,
             margin: 10,
             width: 150,
@@ -737,11 +739,20 @@ export class Resources extends React.Component {
     }
   };
   _renderListView = (DATA) => (
-    <View style={{ marginTop: 20 }}>
+    <View style={{ marginTop: 20, flex: 1 }}>
+      {/* <Button
+        onPress={() => {
+          console.log("clicked");
+          this.listRef.current.scrollTo({ x: 24, y: 0, animated: true });
+        }}
+      >
+        <Text>Scroll Test</Text>
+      </Button> */}
       <FlatList
         data={DATA}
         horizontal={true}
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
+        persistentScrollbar={true}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={{
@@ -876,40 +887,72 @@ export class Resources extends React.Component {
                 margin: 10,
                 // backgroundColor:"red",
                 justifyContent: "space-between",
-                flexDirection: "row",
+                alignItems: Dimensions.get("window").width > 1000 ? "center" : "flex-start",
+                flexDirection: Dimensions.get("window").width > 1000 ? "row" : "column",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 65 }}>
-                Resources
-              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontWeight: "bold", fontSize: 65, color:"purple" }}>
+                  Resources
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontWeight: "bold", marginRight:20 }}>
+                  <Text>Press <Text style={{borderWidth:2, borderRadius:5}}>SHIFT</Text> to Scroll with Mouse Wheel</Text>
+                  <Text>{"\n"}Or Swipe Left on the TrackPad</Text>
+                </Text>
+                <AntDesign name="arrowright" size={24} color="black" />
+              </View>
             </View>
             <View style={{ margin: 10 }}>
               <View style={{ marginTop: 10 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Benzo Basics for Clinicians ❹
-                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View>
+                    <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
+                      Benzo Basics for Clinicians ❹
+                    </Text>
+                  </View>
+                </View>
                 {this._renderListView(BENZO_BASIC_CLINICIANS_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
                   Benzo Basics for Patients ❸
                 </Text>
                 {this._renderListView(BENZO_BASIC_PATIENT_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
                   Resources on Insomnia ❹
                 </Text>
                 {this._renderListView(INSOMNIA_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
                   Resources on Anxiety ❺
                 </Text>
                 {this._renderListView(ANXIETY_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
                   Resources on Tapering ❸
                 </Text>
                 {this._renderListView(TAPER_RESOURCE)}

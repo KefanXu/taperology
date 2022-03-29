@@ -56,7 +56,13 @@ export class Menu extends React.Component {
       <View
         style={{
           width: Dimensions.get("window").width * 0.8,
-          backgroundColor:PRIMARY_COLOR,
+          shadowColor: "black",
+          shadowOffset: 5,
+          borderWidth:1,
+          borderBottomWidth:6,
+          borderColor: PRIMARY_COLOR,
+          borderBottomColor:"purple",
+          backgroundColor:"white",
           margin: 5,
           borderRadius: 15,
           justifyContent: "center",
@@ -68,8 +74,8 @@ export class Menu extends React.Component {
           style={{
             flexDirection:"row",
             alignItems: "center",
-            justifyContent: "flex-start",
-            padding: Dimensions.get("window").width > 1000 ? 50 : 5,
+            justifyContent: "space-between",
+            padding: Dimensions.get("window").width > 1000 ? 20 : 5,
           }}
         >
           <View
@@ -77,6 +83,11 @@ export class Menu extends React.Component {
               justifyContent: Dimensions.get("window").width > 1000 ? "space-between" : "center",
               flex: Dimensions.get("window").width > 1000 ? 0.3 : 0.7,
               alignItems: "center",
+              borderColor:"rgba(0,0,0,0)",
+
+              borderRightColor:PRIMARY_COLOR,
+              
+              borderWidth:1,
             }}
           >
             <TouchableOpacity
@@ -111,6 +122,7 @@ export class Menu extends React.Component {
               justifyContent: "space-between",
               alignItems:"flex-end",
               flex: 0.7,
+              padding:30,
               flexDirection:
                 Dimensions.get("window").width > 1000 ? "row" : "column",
             }}
