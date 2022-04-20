@@ -838,7 +838,16 @@ export class Calculator extends React.Component {
     console.log(stringTable.create(this.state.scheduleData));
     Clipboard.setString(scheduleToCopy);
     this.setState({
-      confirmModalTxt: "New taper schedule saved to clipboard!",
+      confirmModalTxt: (
+        <Text>
+          New taper schedule saved to clipboard!{"\n"}
+          {"\n"}
+          <Text style={{ fontWeight: "300", fontSize: 12 }}>
+            Now use ctrl+V (or ⌘+V on a Mac) to paste the taper schedule into
+            your note
+          </Text>
+        </Text>
+      ),
     });
     this.setState({ isConfirmationVisibleModal: true });
   };
@@ -862,7 +871,14 @@ export class Calculator extends React.Component {
             }}
             showsVerticalScrollIndicator={true}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 27, marginBottom: 5, color:"purple" }}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 27,
+                marginBottom: 5,
+                color: "purple",
+              }}
+            >
               {item.num}
             </Text>
             <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
@@ -884,8 +900,9 @@ export class Calculator extends React.Component {
           padding: 10,
           backgroundColor:
             Dimensions.get("window").width > 1000 ? "white" : "none",
-          borderColor:Dimensions.get("window").width > 1000 ? "purple" : "none",
-          borderWidth:2,
+          borderColor:
+            Dimensions.get("window").width > 1000 ? "purple" : "none",
+          borderWidth: 2,
           borderRadius: 20,
           marginRight: Dimensions.get("window").width > 1000 ? 50 : 0,
           marginTop: Dimensions.get("window").width > 1000 ? 0 : 50,
@@ -970,7 +987,7 @@ export class Calculator extends React.Component {
           marginBottom: 5,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: PRIMARY_COLOR,
+          backgroundColor: "white",
           borderRadius: 20,
           width: 500,
         }}
@@ -989,7 +1006,7 @@ export class Calculator extends React.Component {
             }}
             disabled={this.state.isAddBtnDisable}
           >
-            <Ionicons name="add-circle" size={32} color="black" />
+            <Ionicons name="add-circle" size={32} color="purple" />
             <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
               Add Step
             </Text>
@@ -1007,7 +1024,7 @@ export class Calculator extends React.Component {
             }}
             disabled={this.state.isAddBtnDisable}
           >
-            <Ionicons name="remove-circle" size={32} color="black" />
+            <Ionicons name="remove-circle" size={32} color="purple" />
             <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
               Remove Step
             </Text>
@@ -1032,7 +1049,7 @@ export class Calculator extends React.Component {
             }}
             disabled={this.state.isAddBtnDisable}
           >
-            <MaterialIcons name="note-add" size={32} color="black" />
+            <MaterialIcons name="note-add" size={32} color="purple" />
             <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
               Copy Schedule
             </Text>
@@ -1134,7 +1151,7 @@ export class Calculator extends React.Component {
                       style={{
                         fontWeight: "bold",
                         fontSize: 65,
-                        color:"purple"
+                        color: "purple",
                       }}
                     >
                       Taper Scheduler
