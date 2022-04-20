@@ -599,6 +599,8 @@ export class Calculator extends React.Component {
     this.startDoseInput.current.clear();
   };
 
+  dosageInputCheck = () => {};
+
   calculateTapperSchedule = async () => {
     if (this.state.generateBtnTxt === "Reset") {
       await Analytics.logEvent("resetButtonTapped", {
@@ -757,6 +759,40 @@ export class Calculator extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
+  setDuration = (id, num) => {
+    let currentSchedule = this.state.scheduleData;
+    let toIncrease;
+    let numToUpdate;
+    for (let step of currentSchedule) {
+      if (step.id === id) {
+        if (num > step.duration) {
+          toIncrease = true;
+          numToUpdate = num - step.duration;
+        } else if (num < step.duration) {
+          toIncrease = false;
+          numToUpdate = step.duration - num;
+        }
+        step.duration = num;
+      }
+
+      if (step.id > id) {
+        if (toIncrease) {
+          step.startDate = moment(
+            moment(new Date(step.startDate)).add(1 + numToUpdate, "d")
+          )
+            .format()
+            .slice(0, 10);
+        } else {
+          step.startDate = moment(
+            moment(new Date(step.startDate)).subtract(numToUpdate - 1, "d")
+          )
+            .format()
+            .slice(0, 10);
+        }
+      }
+    }
+    this.setState({ schedule: currentSchedule });
+  };
   saveSchedule = async () => {
     let scheduleToSave = this.state.scheduleData;
     let newSchedule = {
@@ -779,6 +815,21 @@ export class Calculator extends React.Component {
       purpose: "Opens the internal settings",
     });
   };
+
+  isPositiveInteger = (str) => {
+    if (typeof str !== "string") {
+      return false;
+    }
+
+    const num = Number(str);
+
+    if (Number.isInteger(num) && num > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
   copyTo = () => {
     console.log("this.state.scheduleData", this.state.scheduleData);
     let scheduleToSave = this.state.scheduleData;
@@ -1300,6 +1351,43 @@ export class Calculator extends React.Component {
                         // value={this.state.reason}
                         onChangeText={async (text) => {
                           await this.setState({ startingDose: text });
+                          // if
+
+                          if (
+                            this.state.benzoType === "" ||
+                            this.state.benzoType === "Select the benzo type"
+                          ) {
+                            this.setState({ isAlertVisibleModal: true });
+                            this.setState({ alertTxt: "Benzo type missing" });
+                            return;
+                          }
+                          if (
+                            this.state.datePickerButtonTxt === "" ||
+                            this.state.datePickerButtonTxt ===
+                              "Pick the start date"
+                          ) {
+                            this.setState({ isAlertVisibleModal: true });
+                            this.setState({
+                              alertTxt: "Please specify the start date",
+                            });
+                            return;
+                          }
+                          // if (this.state.stepNum === "" || !/^\d+$/.test(this.state.stepNum)) {
+                          //   this.setState({ isAlertVisibleModal: true });
+                          //   this.setState({ alertTxt: "Total Step has to be a valid number" });
+                          //   return;
+                          // }
+                          if (
+                            this.state.startingDose === "" ||
+                            !/^\d+$/.test(this.state.startingDose)
+                          ) {
+                            this.setState({ isAlertVisibleModal: true });
+                            this.setState({
+                              alertTxt:
+                                "Starting dose has to be a valid number",
+                            });
+                            return;
+                          }
                           this.generateSchedule();
                         }}
                       />
@@ -1527,20 +1615,52 @@ export class Calculator extends React.Component {
                           this.reduceDuration(item.id);
                         }}
                       >
-                        <AntDesign name="caretleft" size={24} color="black" />
+                        <AntDesign name="caretleft" size={24} color="purple" />
                       </TouchableOpacity>
+
+                      <TextInput
+                        // style={styles.input}
+                        // onChangeText={onChangeNumber}
+                        onChangeText={async (text) => {
+                          if (this.isPositiveInteger(text)) {
+                            console.log(text);
+                            let parseToInt = parseInt(text);
+                            this.setDuration(item.id, parseToInt);
+                            // let currentNum = item.duration
+                            // if (parseToInt > currentNum) {
+                            //   let addNum = parseToInt - currentNum;
+                            //   for (let i = 0; i <= addNum; i++) {
+                            //     this.increaseDuration(item.id);
+                            //   }
+                            // }
+                          }
+                        }}
+                        style={{
+                          width: 40,
+                          textAlign: "center",
+                          borderRadius: 20,
+                          borderColor: "purple",
+                          borderWidth: 2,
+                          fontWeight: "bold",
+                          marginRight: 5,
+                        }}
+                        value={item.duration}
+                        placeholder="useless placeholder"
+                        keyboardType="numeric"
+                      />
                       <Text
                         style={{
                           fontSize:
                             Dimensions.get("window").width > 1000 ? 12 : 10,
                         }}
                       >
-                        {item.duration} days
+                        {/* {item.duration} */}
+                        days
                       </Text>
                       <TouchableOpacity
                         onPress={() => this.increaseDuration(item.id)}
                       >
-                        <AntDesign name="caretright" size={24} color="black" />
+                        <AntDesign name="caretright" size={24} color="purple" />
                       </TouchableOpacity>
                     </View>
                     <View
@@ -1572,7 +1692,7 @@ export class Calculator extends React.Component {
                           this.reduceDose(item.id);
                         }}
                       >
-                        <AntDesign name="caretleft" size={24} color="black" />
+                        <AntDesign name="caretleft" size={24} color="purple" />
                       </TouchableOpacity>
                       <Text
                         style={{
@@ -1589,7 +1709,7 @@ export class Calculator extends React.Component {
                       <TouchableOpacity
                         onPress={() => this.increaseDose(item.id)}
                       >
-                        <AntDesign name="caretright" size={24} color="black" />
+                        <AntDesign name="caretright" size={24} color="purple" />
                       </TouchableOpacity>
                     </View>
                   </View>
