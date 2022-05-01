@@ -390,9 +390,9 @@ export class Calculator extends React.Component {
       >
         {this.state.alertTxt}
       </Text>
-      {this._renderButton("Close", () =>
+      {/* {this._renderButton("Close", () =>
         this.setState({ isAlertVisibleModal: null })
-      )}
+      )} */}
     </View>
   );
   _renderModalContentConfirmation = () => (
@@ -492,7 +492,7 @@ export class Calculator extends React.Component {
               await this.setState({ benzoType: item.title });
               await this.setState({ currentStd: STRENGTHS[item.title] });
               this.setState({ visibleModal: false });
-              this.generateSchedule();
+              this.generateSchedule(true);
             }}
           >
             <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
@@ -521,18 +521,26 @@ export class Calculator extends React.Component {
     }
     return result;
   };
-  generateSchedule = () => {
+  generateSchedule = (isGenerateFromAddRemove) => {
     let initialDate = this.state.datePickerButtonTxt;
 
+    let currentSchedule = this.state.scheduleData;
+    let currentScheduleLength = currentSchedule.length;
     //console.log("initialDate", initialDate);
     let schedule = [];
     let startingInputDose = parseInt(this.state.startingDose);
     let startingDose = startingInputDose;
     let reducedDose = startingInputDose * 0.25;
     let recurrentDate = initialDate;
+    let duration;
     for (let i = 0; i < 2; i++) {
       let id = i + 1;
-      let duration = 14;
+      if (isGenerateFromAddRemove && i < currentScheduleLength) {
+        duration = currentSchedule[i].duration;
+      } else {
+        duration = 14;
+      }
+      
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
       let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
@@ -657,7 +665,7 @@ export class Calculator extends React.Component {
     let currentStepNum = this.state.stepNum;
     currentStepNum++;
     await this.setState({ stepNum: currentStepNum });
-    this.generateSchedule();
+    this.generateSchedule(true);
     // let duration = 14;
     // let currentSchedule = this.state.scheduleData;
     // let lastStep = currentSchedule[this.state.scheduleData.length - 1];
@@ -688,7 +696,7 @@ export class Calculator extends React.Component {
     let currentStepNum = this.state.stepNum;
     currentStepNum--;
     await this.setState({ stepNum: currentStepNum });
-    this.generateSchedule();
+    this.generateSchedule(true);
   };
 
   reduceDose = (id) => {
@@ -834,19 +842,19 @@ export class Calculator extends React.Component {
     console.log("this.state.scheduleData", this.state.scheduleData);
     let scheduleToSave = this.state.scheduleData;
     let scheduleBasicInfo =
-      "startDate: " +
+      "Start Date: " +
       scheduleToSave[0].startDate +
       "\n" +
-      "startDose: " +
+      "Start Dose: " +
       this.state.startingDose +
       "\n" +
-      "bezo type: " +
+      "Bezo Type: " +
       this.state.benzoType +
       "\n" +
-      "createdDate: " +
-      moment(new Date()).format() +
+      "Created Date: " +
+      moment(new Date()).format().slice(0,19) +
       "\n" +
-      "totalStep: " +
+      "Total Step: " +
       scheduleToSave.length +
       "\n" +
       "\n" +
@@ -1281,7 +1289,7 @@ export class Calculator extends React.Component {
                         await this.setState({
                           datePickerButtonTxt: selectedDate,
                         });
-                        this.generateSchedule();
+                        this.generateSchedule(true);
                         this.closeDatePicker();
                       }}
                       // validRange={{
@@ -1388,7 +1396,7 @@ export class Calculator extends React.Component {
                             });
                             return;
                           }
-                          this.generateSchedule();
+                          this.generateSchedule(true);
                         }}
                       />
                     </View>
