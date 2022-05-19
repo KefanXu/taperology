@@ -1,3 +1,7 @@
+/*
+This code refer to the menu bar on the top 
+which contains navigation to different sections
+*/
 import React, { useState } from "react";
 import {
   TextInput,
@@ -8,10 +12,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
-  // Modal,
   LayoutAnimation,
   SectionList,
-  // Button,
   Animated,
   StyleSheet,
   Dimensions,
@@ -21,48 +23,42 @@ import {
   FlatList,
   Modal,
 } from "react-native";
+
+//API to login with Google account
+//It's not used in the current version but can be activated if there is a future need.
 import { GoogleLogin } from "./googleLogin";
 import * as Analytics from "expo-firebase-analytics";
 
 import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
-// import AwesomeAlert from "react-native-awesome-alerts";
-// import Modal from "modal-enhanced-react-native-web";
+
 import { Overlay } from "react-native-elements";
 
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
 import { getDataModel } from "./DataModel";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import moment, { min } from "moment";
 
 const PRIMARY_COLOR = "#D8D8D8";
-const SEC_COLOR = "#848484";
 
 export class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.dataModel = getDataModel();
-    //   // this.loginDismiss = this.props.loginDismiss();
-    //   // this.navUserCenter = this.props.navUserCenter();
   }
 
   navUserCenter = () => this.props.navUserCenter();
   render() {
     return (
-      // <Overlay>
       <View
         style={{
           width: Dimensions.get("window").width * 0.8,
           shadowColor: "black",
           shadowOffset: 5,
-          borderWidth:1,
-          borderBottomWidth:6,
+          borderWidth: 1,
+          borderBottomWidth: 6,
           borderColor: PRIMARY_COLOR,
-          borderBottomColor:"purple",
-          backgroundColor:"white",
+          borderBottomColor: "purple",
+          backgroundColor: "white",
           margin: 5,
           borderRadius: 15,
           justifyContent: "center",
@@ -70,24 +66,27 @@ export class Menu extends React.Component {
           marginBottom: 50,
         }}
       >
+        {/* render the menu bar */}
         <View
           style={{
-            flexDirection:"row",
+            flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
             padding: Dimensions.get("window").width > 1000 ? 20 : 5,
           }}
         >
+          {/* render "Taperology" text */}
           <View
             style={{
-              justifyContent: Dimensions.get("window").width > 1000 ? "space-between" : "center",
+              justifyContent:
+                Dimensions.get("window").width > 1000
+                  ? "space-between"
+                  : "center",
               flex: Dimensions.get("window").width > 1000 ? 0.3 : 0.7,
               alignItems: "center",
-              borderColor:"rgba(0,0,0,0)",
-
-              borderRightColor:PRIMARY_COLOR,
-              
-              borderWidth:1,
+              borderColor: "rgba(0,0,0,0)",
+              borderRightColor: PRIMARY_COLOR,
+              borderWidth: 1,
             }}
           >
             <TouchableOpacity
@@ -107,39 +106,29 @@ export class Menu extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
-          {/* <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "50%",
-              // backgroundColor: "red",
-            }}
-          > */}
+          {/* render the rest of navigation text */}
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              alignItems:"flex-end",
+              alignItems: "flex-end",
               flex: 0.7,
-              padding:30,
+              padding: 30,
               flexDirection:
                 Dimensions.get("window").width > 1000 ? "row" : "column",
             }}
           >
+            {/* render "Resource" text */}
             <TouchableOpacity
               onPress={async () => {
                 this.props.navResource();
-                // console.log("navResource");
-                // await Analytics.logEvent("GoToResource", {
-                //   name: "ChangeScreen",
-                //   screen: "Menu",
-                //   // purpose: "Opens the internal settings",
-                // });
+                {
+                  /* navigate to "Resource" section, Google analytics tracking function should be added here */
+                }
               }}
               style={{ margin: 10 }}
             >
-              <View style={{ flex: 1, margin: 5, }}>
+              <View style={{ flex: 1, margin: 5 }}>
                 <Text
                   style={{
                     fontWeight: "bold",
@@ -150,9 +139,10 @@ export class Menu extends React.Component {
                 </Text>
               </View>
             </TouchableOpacity>
-
+            {/* render "Taper Scheduler" text */}
             <TouchableOpacity
               onPress={() => {
+                /* navigate to "Taper Scheduler" section, Google analytics tracking function should be added here */
                 this.props.navCal();
               }}
               style={{ margin: 10 }}
@@ -160,38 +150,30 @@ export class Menu extends React.Component {
               <View
                 style={{
                   flex: 1,
-                  // backgroundColor: SEC_COLOR,
                   margin: 5,
                   borderRadius: 5,
-                  // padding: 10,
                 }}
               >
-                <Text style={{ fontWeight: "bold", fontSize: Dimensions.get("window").width > 1000 ? 20 : 15, }}>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: Dimensions.get("window").width > 1000 ? 20 : 15,
+                  }}
+                >
                   Taper Scheduler
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                // this.props.navigation.navigate("Calculator", {
-                //   // needsUpdate: this.needsUpdate,
-                // });
-              }}
-              style={{ margin: 10 }}
-              disabled={true}
-            >
+            {/* render "Refer Patient" text */}
+            <TouchableOpacity style={{ margin: 10 }} disabled={true}>
               <View style={{ flex: 1, margin: 5 }}>
                 <Text
-                  style={{ fontWeight: "bold", fontSize: Dimensions.get("window").width > 1000 ? 20 : 15, }}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: Dimensions.get("window").width > 1000 ? 20 : 15,
+                  }}
                   onPress={async () => {
-                    // Linking.openURL(
-                    //   "https://findtreatment.samhsa.gov/locator?sAddr=48103&submit=Go"
-                    // );
-                    // await Analytics.logEvent("ClickReferPatient", {
-                    //   name: "ChangeScreen",
-                    //   screen: "Menu",
-                    //   // purpose: "Opens the internal settings",
-                    // });
+                    /* popup refer patient popup, Google analytics tracking function should be added here */
                     this.props.showReferPatientModal();
                   }}
                 >
@@ -200,24 +182,8 @@ export class Menu extends React.Component {
               </View>
             </TouchableOpacity>
           </View>
-          {/* </View> */}
-          {/* <View style={{ marginTop: 20, marginLeft: 15 }}>
-          <GoogleLogin />
-        </View> */}
-          {/* <TouchableOpacity
-            style={{ margin: 15, flexDirection:"row", alignItems:"center" }}
-            onPress={() => {
-              this.props.navUserCenter();
-            }}
-          >
-            <FontAwesome name="user-circle-o" size={32} color="black" />
-            <Text style={{ fontWeight: "bold", fontSize: 15, marginLeft:15 }}>
-              User Center
-            </Text>
-          </TouchableOpacity> */}
         </View>
       </View>
-      // </Overlay>
     );
   }
 }

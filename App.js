@@ -16,14 +16,14 @@ import firebase from "firebase";
 import "@firebase/firestore";
 import "@firebase/storage";
 import { firebaseConfig } from "./secret";
+//Initiate Firebase API
+//Not used in the current version, can be activated in the future
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
 const Stack = createStackNavigator();
-// Analytics.setUnavailabilityLogging(false);
 Analytics.setAnalyticsCollectionEnabled(true);
-// Analytics.setUserId("1");
 
 console.log("app init");
 
@@ -32,6 +32,7 @@ export default function App() {
   const navigationRef = React.useRef();
 
   return (
+    //Use navigation API here
     <NavigationContainer
       ref={navigationRef}
       onReady={() =>
@@ -52,7 +53,6 @@ export default function App() {
           // alert(`The route changed to ${currentRouteName}`);
           let eventName = "FROM" + previousRouteName + "TO" + currentRouteName;
           await Analytics.setCurrentScreen(currentRouteName);
-
           await Analytics.logEvent(eventName, {
             name: "ChangeScreen",
             screen: "Menu",
@@ -79,12 +79,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-// const styles = StyleSheet.create({
-// 	text: {
-// 		fontWeight: "bold",
-// 		fontSize: 30
-// 	}
-// })
-
-// export default App;

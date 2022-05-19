@@ -8,10 +8,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
-  // Modal,
   LayoutAnimation,
   SectionList,
-  // Button,
   Animated,
   StyleSheet,
   Dimensions,
@@ -22,19 +20,9 @@ import {
   Clipboard,
 } from "react-native";
 
-import { Button, DataTable, Card } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
-// import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
 import * as Analytics from "expo-firebase-analytics";
-
-// import firebase from "firebase";
-// import "@firebase/firestore";
-// import "@firebase/storage";
-// import { firebaseConfig } from "./secret";
-// if (firebase.apps.length === 0) {
-//   firebase.initializeApp(firebaseConfig);
-// }
 
 import {
   Ionicons,
@@ -44,13 +32,11 @@ import {
 } from "@expo/vector-icons";
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
-import { GoogleLogin } from "./googleLogin";
+// import { GoogleLogin } from "./googleLogin";
 
 import moment, { min } from "moment";
 import stringTable from "string-table";
-
-const PRIMARY_COLOR = "#D8D8D8";
-const SEC_COLOR = "#848484";
+//Benzo type to choose when users click the "Select the benzo type" button
 const BENZO_TYPE_DATA = [
   { title: "Alprazolam", id: "Alprazolam", strength: "3, 2, 1, 0.5, 0.25" },
   { title: "Lorazepam", id: "Lorazepam", strength: "2, 1, 0.5" },
@@ -143,74 +129,14 @@ const REFER_PATIENT_TXT = (
     {"\n"}
     {"\n"}
     <Text style={{ fontSize: 14 }}>
-      {/* This locator is provided by SAMHSA (the Substance Abuse and Mental Health
-      Services Administration). */}
       Just enter the patient's address or zip code to find mental health or
       substance use treatment facilities in their area. {"\n"}
       {"\n"}This locator is provided by SAMHSA (the Substance Abuse and Mental
       Health Services Administration).
     </Text>
-    {/* {"\n"}
-    {"\n"}
-    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-      Eligible mental health treatment facilities include:
-    </Text>
-    {"\n"}
-    <Text style={{ fontSize: 14 }}>
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Facilities that provide
-      mental health treatment services and are funded by the state mental health
-      agency (SMHA) or other state agency or department{"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Mental health treatment
-      facilities administered by the U.S. Department of Veterans Affairs{"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Private for-profit and
-      non-profit facilities that are licensed by a state agency to provide
-      mental health treatment services, or that are accredited by a national
-      treatment accreditation organization (e.g., The Joint Commission, NCQA,
-      etc.){"\n"}
-    </Text>
-    {"\n"}
-    {"\n"}
-    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-      Eligible substance use and addiction treatment facilities must meet at
-      least one of the criteria below:
-    </Text>
-    {"\n"}
-    <Text style={{ fontSize: 14 }}>
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>
-      Licensure/accreditation/approval to provide substance use treatment from
-      the state substance use agency (SSA) or a national treatment accreditation
-      organization (e.g., The Joint Commission, CARF, NCQA, etc.)
-      {"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Staff who hold specialized
-      credentials to provide substance use treatment services
-      {"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Authorization to bill
-      third-party payers for substance use treatment services using an alcohol
-      or drug client diagnosis
-      {"\n"}
-    </Text> */}
   </Text>
 );
-// const Item = ({ title }) => (
-//   <View style={styles.item}>
-//     <Text style={styles.title}>{title}</Text>
-//   </View>
-// );
-// const styles = StyleSheet.create({
-//   container: {
-//     // marginTop: StatusBar.currentHeight || 0,
-//   },
-//   item: {
-//     flex:1,
-//     backgroundColor: "#f9c2ff",
-//     padding: 20,
-//     marginVertical: 8,
-//     marginHorizontal: 16,
-//   },
-//   title: {
-//     fontSize: 32,
-//   },
-// });
+
 export class Calculator extends React.Component {
   constructor(props) {
     super(props);
@@ -222,7 +148,6 @@ export class Calculator extends React.Component {
       page: 0,
       optionsPerPage: [2, 3, 4],
       itemsPerPage: [2, 3, 4],
-      // slowAlert: false,
       visibleModal: false,
       isAlertVisibleModal: false,
       isConfirmationVisibleModal: false,
@@ -239,45 +164,52 @@ export class Calculator extends React.Component {
       currentStd: "",
       isTipVis: "flex",
     };
-    //this.stepInput = React.createRef();
     this.startDoseInput = React.createRef();
     this.dataModel = getDataModel();
   }
+  // This function is used to alert users when they try to save the generated schedule
+  // It was REMOVED in the current version, but can be activated in the future
   alertSignIn = () => {
     this.setState({ alertTxt: "Please Sign Up First" });
 
     this.setState({ isAlertVisibleModal: true });
   };
-  // alertAllSet = () => {
-  //   this.setState({ alertTxt: "Welcome to Taperology" });
 
-  //   this.setState({ isAlertVisibleModal: true });
-  // };
-  navResource = async () => {
-    // await Analytics.logEvent("ButtonTapped", {
-    //   name: "ChangeScreen",
-    //   screen: "Menu",
-    //   purpose: "Opens the internal settings",
-    // });
-    this.props.navigation.navigate("Resources", {
-      // needsUpdate: this.needsUpdate,
-    });
+  //Function to navigate to the Resource Section.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
+  navResource = () => {
+    this.props.navigation.navigate("Resources", {});
   };
+
+  //Function to navigate to the Index page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navIndex = () => {
-    this.props.navigation.navigate("Index", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Index", {});
   };
+
+  //Function to navigate to the Calculator page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navCal = () => {
-    this.props.navigation.navigate("Calculator", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Calculator", {});
   };
+  //Function to show the refer patient popup.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
+  showReferPatientModal = () => {
+    this.setState({ isReferPopupModal: true });
+  };
+  //Login function for logging in with Google account
+  //It was REMOVED in the current version, but can be activated in the future
   login = () => {
     if (this.dataModel.isLogin) {
       console.log("allow login");
     }
   };
+  //Function to navigate to user center
+  //It was REMOVED in the current version, but can be activated in the future
   navUserCenter = async () => {
     if (this.dataModel.isLogin) {
       await this.dataModel.loadUserSchedules(this.dataModel.key);
@@ -289,41 +221,20 @@ export class Calculator extends React.Component {
       this.setState({ isLoginVisibleModal: true });
     }
   };
+  //Function to directly navigate to user center when the user has already logged in
+  //It was REMOVED in the current version, but can be activated in the future
   navUserCenterDir = () => {
-    this.props.navigation.navigate("UserCenter", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("UserCenter", {});
   };
+  //Function to close the date picker
   closeDatePicker = () => {
     this.setState({ isDatePickerVis: false });
-    // console.log("close");
   };
+  //Function to show the date picker
   showDatePicker = () => {
     this.setState({ isDatePickerVis: true });
   };
-
-  _renderButton = (text, onPress) => (
-    <TouchableOpacity style={{ flex: 0.5 }} onPress={onPress}>
-      <View
-        style={{
-          backgroundColor: "black",
-          padding: 12,
-          margin: 16,
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 50,
-          borderColor: "rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Text style={{ fontWeight: "bold", fontSize: 16, color: "white" }}>
-          {text}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-  showReferPatientModal = () => {
-    this.setState({ isReferPopupModal: true });
-  };
+  //Render the refer patient popup
   _renderReferModalPopup = () => (
     <View
       style={{
@@ -339,7 +250,7 @@ export class Calculator extends React.Component {
       <View>{REFER_PATIENT_TXT}</View>
       <TouchableOpacity
         onPress={async () => {
-          // let eventName = this.state.popupItem.trackID;
+          //Write the Google Analytics function here
           await Analytics.logEvent("ReferPatient", {
             name: "ReferPatient",
             screen: "Calculator",
@@ -367,7 +278,7 @@ export class Calculator extends React.Component {
       </TouchableOpacity>
     </View>
   );
-
+  //Render the alert popup (popup when users enter the invalid data)
   _renderModalContent = () => (
     <View
       style={{
@@ -390,11 +301,9 @@ export class Calculator extends React.Component {
       >
         {this.state.alertTxt}
       </Text>
-      {/* {this._renderButton("Close", () =>
-        this.setState({ isAlertVisibleModal: null })
-      )} */}
     </View>
   );
+  //Render the confirmation popup (popup when users save the schedule)
   _renderModalContentConfirmation = () => (
     <View
       style={{
@@ -421,44 +330,49 @@ export class Calculator extends React.Component {
       <Ionicons name="checkmark-circle" size={34} color="black" />
     </View>
   );
-  _renderModalLogin = () => (
-    <View
-      style={{
-        backgroundColor: "white",
-        width: 300,
-        padding: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 20,
-        borderColor: "rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <FontAwesome name="user-circle-o" size={32} color="black" />
+  //This renders the login popup.
+  //It's not used in the current version but can be activated if there is a future need.
+  // _renderModalLogin = () => (
+  //   <View
+  //     style={{
+  //       backgroundColor: "white",
+  //       width: 300,
+  //       padding: 20,
+  //       justifyContent: "center",
+  //       alignItems: "center",
+  //       borderRadius: 20,
+  //       borderColor: "rgba(0, 0, 0, 0.1)",
+  //     }}
+  //   >
+  //     <FontAwesome name="user-circle-o" size={32} color="black" />
 
-      <View
-        style={{
-          flex: 1,
-          // backgroundColor: "red",
-          marginTop: 15,
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <GoogleLogin
-          navUserCenter={this.navUserCenterDir}
-          dismissLoginModal={this.dismissLoginModal}
-          entry={this.state.entry}
-          saveSchedule={this.saveSchedule}
-          alertSignIn={this.alertSignIn}
-        />
-      </View>
-    </View>
-  );
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         marginTop: 15,
+  //         width: "100%",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //       }}
+  //     >
+  //       <GoogleLogin
+  //         navUserCenter={this.navUserCenterDir}
+  //         dismissLoginModal={this.dismissLoginModal}
+  //         entry={this.state.entry}
+  //         saveSchedule={this.saveSchedule}
+  //         alertSignIn={this.alertSignIn}
+  //       />
+  //     </View>
+  //   </View>
+  // );
+
+
+  //This closes the login popup.
+  //It's not used in the current version but can be activated if there is a future need.
   dismissLoginModal = () => {
     this.setState({ isLoginVisibleModal: false });
   };
-
+  //Render the popup window when users click "Select the benzo type"
   _renderModalContentBenzoType = () => (
     <View
       style={{
@@ -471,8 +385,6 @@ export class Calculator extends React.Component {
         borderColor: "rgba(0, 0, 0, 0.1)",
       }}
     >
-      {/* <Text>Hi!</Text>
-      {this._renderButton("Close", () => this.setState({ visibleModal: null }))} */}
       <FlatList
         style={{ width: "90%" }}
         data={BENZO_TYPE_DATA}
@@ -498,17 +410,14 @@ export class Calculator extends React.Component {
             <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
               {item.title}
             </Text>
-            {/* <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
-              Strength / mg: {item.strength}
-            </Text> */}
           </TouchableOpacity>
         )}
       />
     </View>
   );
+  //Round the calculated dosage to match with the its strength (so can be fully divided)
   roundTo = (val, std) => {
     let init = 0;
-    // for (let i = 1; )
     do {
       init = init + std;
     } while (init < val);
@@ -521,18 +430,19 @@ export class Calculator extends React.Component {
     }
     return result;
   };
+  //Generate the taper schedule (used in "Generate Schedule", "Add Steps", "Remove Steps", ).
   generateSchedule = (isGenerateFromAddRemove) => {
     let initialDate = this.state.datePickerButtonTxt;
-
     let currentSchedule = this.state.scheduleData;
     let currentScheduleLength = currentSchedule.length;
-    //console.log("initialDate", initialDate);
     let schedule = [];
     let startingInputDose = parseInt(this.state.startingDose);
     let startingDose = startingInputDose;
     let reducedDose = startingInputDose * 0.25;
     let recurrentDate = initialDate;
     let duration;
+    //If the user is adding or removing a step, keep the changed value from being modified
+    //For the first two stages, reduce the dosage to 50%
     for (let i = 0; i < 2; i++) {
       let id = i + 1;
       if (isGenerateFromAddRemove && i < currentScheduleLength) {
@@ -540,7 +450,7 @@ export class Calculator extends React.Component {
       } else {
         duration = 14;
       }
-      
+
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
       let roundedDose = this.roundTo(recurrentDose, this.state.currentStd);
@@ -552,20 +462,28 @@ export class Calculator extends React.Component {
         dosage: roundedDose,
       };
       schedule.push(step);
-      recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+      if (isGenerateFromAddRemove && i < currentScheduleLength) {
+        duration = currentSchedule[i].duration;
+      } else {
+        duration = 14;
+      }
+      recurrentDate = moment(
+        moment(new Date(recurrentDate)).add(duration + 1, "d")
+      )
         .format()
         .slice(0, 10);
     }
-    // reducedDose = startingInputDose * 0.05;
     let remainingDose = startingDose;
+    //The rest stages will reduce the dosage to 0mg
     reducedDose = remainingDose / (this.state.stepNum - 2);
-    console.log("reducedDose", reducedDose);
-    // console.log("startingDose", startingDose);
-    // console.log("reducedDose", reducedDose);
     let ifAdd = true;
     for (let i = 2; i < this.state.stepNum; i++) {
       let id = i + 1;
-      let duration = 14;
+      if (isGenerateFromAddRemove && i < currentScheduleLength) {
+        duration = currentSchedule[i].duration;
+      } else {
+        duration = 14;
+      }
       let recurrentDose = startingDose - reducedDose;
       startingDose = recurrentDose;
       if (recurrentDose < this.state.currentStd) {
@@ -587,14 +505,15 @@ export class Calculator extends React.Component {
       if (roundedDose === 0) {
         ifAdd = false;
       }
-      recurrentDate = moment(moment(new Date(recurrentDate)).add(15, "d"))
+      recurrentDate = moment(
+        moment(new Date(recurrentDate)).add(duration + 1, "d")
+      )
         .format()
         .slice(0, 10);
     }
-    console.log("schedule", schedule);
-
     this.setState({ scheduleData: schedule });
   };
+  //Reset the calculator
   reset = async () => {
     this.setState({ benzoType: "Select the benzo type" });
     this.setState({ datePickerButtonTxt: "Pick the start date" });
@@ -603,12 +522,10 @@ export class Calculator extends React.Component {
     this.setState({ listOpacity: "none" });
     this.setState({ generateBtnTxt: "Generate Schedule" });
     this.setState({ isAddBtnDisable: true });
-    //this.stepInput.current.clear();
     this.startDoseInput.current.clear();
   };
-
-  dosageInputCheck = () => {};
-
+  //This function is fired when the user click the "Generate Schedule"
+  //It will click if users enter valid data
   calculateTapperSchedule = async () => {
     if (this.state.generateBtnTxt === "Reset") {
       await Analytics.logEvent("resetButtonTapped", {
@@ -634,11 +551,6 @@ export class Calculator extends React.Component {
         this.setState({ alertTxt: "Please specify the start date" });
         return;
       }
-      // if (this.state.stepNum === "" || !/^\d+$/.test(this.state.stepNum)) {
-      //   this.setState({ isAlertVisibleModal: true });
-      //   this.setState({ alertTxt: "Total Step has to be a valid number" });
-      //   return;
-      // }
       if (
         this.state.startingDose === "" ||
         !/^\d+$/.test(this.state.startingDose)
@@ -651,7 +563,6 @@ export class Calculator extends React.Component {
       this.setState({ generateBtnTxt: "Reset" });
       this.setState({ listOpacity: "flex" });
       this.setState({ confirmModalTxt: "New taper schedule created!" });
-      // this.setState({ isConfirmationVisibleModal: true });
       this.setState({ isAddBtnDisable: false });
     }
     await Analytics.logEvent("GenerateSchedule", {
@@ -661,44 +572,21 @@ export class Calculator extends React.Component {
     });
     this.setState({ isTipVis: "none" });
   };
+  //Fired when the user clicks "Add Step"
   addStep = async () => {
     let currentStepNum = this.state.stepNum;
     currentStepNum++;
     await this.setState({ stepNum: currentStepNum });
     this.generateSchedule(true);
-    // let duration = 14;
-    // let currentSchedule = this.state.scheduleData;
-    // let lastStep = currentSchedule[this.state.scheduleData.length - 1];
-    // if (lastStep && lastStep.dosage > 0) {
-    //   let recurrentDose =
-    //     lastStep.dosage - parseInt(this.state.startingDose) * 0.05;
-    //   let step = {
-    //     id: lastStep.id + 1,
-    //     duration: duration,
-    //     startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
-    //       .format()
-    //       .slice(0, 10),
-    //     dosage: recurrentDose,
-    //   };
-    //   currentSchedule.push(step);
-    //   this.setState({ scheduleData: currentSchedule });
-    //   this.setState({ confirmModalTxt: "One step added." });
-    // } else {
-    //   this.setState({ confirmModalTxt: "Can't add more steps" });
-    // }
-
-    // this.setState({ isConfirmationVisibleModal: true });
   };
+  //Fired when the user clicks "Remove Step"
   removeStep = async () => {
-    // let currentSchedule = this.state.scheduleData;
-    // currentSchedule.pop();
-    // this.setState({ scheduleData: currentSchedule });
     let currentStepNum = this.state.stepNum;
     currentStepNum--;
     await this.setState({ stepNum: currentStepNum });
     this.generateSchedule(true);
   };
-
+  //Fired when the user clicks the left arrow on "Target Dosage"
   reduceDose = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -712,6 +600,7 @@ export class Calculator extends React.Component {
     }
     this.setState({ scheduleData: currentSchedule });
   };
+  //Fired when the user clicks the right arrow on "Target Dosage"
   increaseDose = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -725,6 +614,7 @@ export class Calculator extends React.Component {
     }
     this.setState({ scheduleData: currentSchedule });
   };
+  //Fired when the user clicks the left arrow on "Duration"
   reduceDuration = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -733,11 +623,6 @@ export class Calculator extends React.Component {
           return;
         } else {
           step.duration--;
-          // step.startDate = moment(
-          //   moment(new Date(step.startDate)).subtract(0, "d")
-          // )
-          //   .format()
-          //   .slice(0, 10);
         }
       }
       if (step.id > id) {
@@ -750,6 +635,7 @@ export class Calculator extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
+  //Fired when the user clicks the right arrow on "Duration"
   increaseDuration = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -767,6 +653,7 @@ export class Calculator extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
+  //Manually set duration in the text input field
   setDuration = (id, num) => {
     let currentSchedule = this.state.scheduleData;
     let toIncrease;
@@ -801,6 +688,8 @@ export class Calculator extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
+  //This function is used to save user-generated schedule to the user center that's linked to their Google account
+  //It was REMOVED in the current version but can be activated in the future
   saveSchedule = async () => {
     let scheduleToSave = this.state.scheduleData;
     let newSchedule = {
@@ -823,21 +712,19 @@ export class Calculator extends React.Component {
       purpose: "Opens the internal settings",
     });
   };
-
+  //Check if the user input is valid
+  //Used in the duration text field input
   isPositiveInteger = (str) => {
     if (typeof str !== "string") {
       return false;
     }
-
     const num = Number(str);
-
     if (Number.isInteger(num) && num > 0) {
       return true;
     }
-
     return false;
   };
-
+  //Copy the generated schedule to users' clipboard
   copyTo = () => {
     console.log("this.state.scheduleData", this.state.scheduleData);
     let scheduleToSave = this.state.scheduleData;
@@ -852,7 +739,7 @@ export class Calculator extends React.Component {
       this.state.benzoType +
       "\n" +
       "Created Date: " +
-      moment(new Date()).format().slice(0,19) +
+      moment(new Date()).format().slice(0, 19) +
       "\n" +
       "Total Step: " +
       scheduleToSave.length +
@@ -910,6 +797,7 @@ export class Calculator extends React.Component {
     });
     this.setState({ isConfirmationVisibleModal: true });
   };
+  //Render the text in the "Tips for tapering"
   _renderListView = (DATA) => (
     <View
       style={{ marginTop: 20, marginLeft: 10, display: this.state.isTipVis }}
@@ -951,6 +839,7 @@ export class Calculator extends React.Component {
   );
 
   render() {
+    //Render the tip view on the top ("Common Dose Strength")
     let tipView = (
       <View
         style={{
@@ -1038,6 +927,7 @@ export class Calculator extends React.Component {
         </View>
       </View>
     );
+    //Render the buttons which appear after schedule generated ("Add Step", "Remove Step", "Copy Schedule")
     let scheduleBtnView = (
       <View
         style={{
@@ -1098,12 +988,6 @@ export class Calculator extends React.Component {
               //backgroundColor:"red"
             }}
             onPress={async () => {
-              // if (this.dataModel.isLogin) {
-              //   this.saveSchedule();
-              // } else {
-              //   this.setState({ isLoginVisibleModal: true });
-              //   this.setState({ entry: "save" });
-              // }
               this.copyTo();
             }}
             disabled={this.state.isAddBtnDisable}
@@ -1121,7 +1005,6 @@ export class Calculator extends React.Component {
         <View
           style={{
             flex: 1,
-            //backgroundColor: "blue",
             margin: 5,
             flexDirection: "column",
             height: "100%",
@@ -1130,6 +1013,7 @@ export class Calculator extends React.Component {
             alignItems: "center",
           }}
         >
+          {/* Render refer patient popup */}
           <Modal
             style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isReferPopupModal}
@@ -1137,6 +1021,7 @@ export class Calculator extends React.Component {
           >
             {this._renderReferModalPopup()}
           </Modal>
+          {/* Render alert popup */}
           <Modal
             style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isAlertVisibleModal}
@@ -1146,6 +1031,7 @@ export class Calculator extends React.Component {
           >
             {this._renderModalContent()}
           </Modal>
+          {/* Render confirmation schedule (popup when users copy schedule)  */}
           <Modal
             style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isConfirmationVisibleModal}
@@ -1155,7 +1041,8 @@ export class Calculator extends React.Component {
           >
             {this._renderModalContentConfirmation()}
           </Modal>
-          <Modal
+          {/* Render the login popup, REMOVED in this version  */}
+          {/* <Modal
             style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isLoginVisibleModal}
             onBackdropPress={() =>
@@ -1163,7 +1050,9 @@ export class Calculator extends React.Component {
             }
           >
             {this._renderModalLogin()}
-          </Modal>
+          </Modal> */}
+          
+          {/* Render the bezo selection list popup */}
           <Modal
             style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.visibleModal}
@@ -1171,13 +1060,13 @@ export class Calculator extends React.Component {
           >
             {this._renderModalContentBenzoType()}
           </Modal>
+          {/* Render the menu */}
           <Menu
             navResource={this.navResource}
             navIndex={this.navIndex}
             navCal={this.navCal}
             navUserCenter={this.navUserCenter}
             showReferPatientModal={this.showReferPatientModal}
-            // login={this.login}
           />
           <View
             style={{
@@ -1186,12 +1075,11 @@ export class Calculator extends React.Component {
               margin: 5,
             }}
           >
+            {/* Render title + buttons  */}
             <View
               style={{
                 height: Dimensions.get("window").width > 1000 ? 280 : 600,
                 margin: 10,
-
-                // justifyContent: "space-between",
                 flexDirection: "row",
               }}
             >
@@ -1201,8 +1089,6 @@ export class Calculator extends React.Component {
                     flexDirection:
                       Dimensions.get("window").width > 1000 ? "row" : "column",
                     justifyContent: "space-between",
-                    // alignItems:"center"
-                    // backgroundColor: "red",
                   }}
                 >
                   <View style={{ flexDirection: "column" }}>
@@ -1218,18 +1104,11 @@ export class Calculator extends React.Component {
                   </View>
                   {tipView}
                 </View>
-                {/* <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                Generate the taper schedule
-              </Text> */}
-
                 {/* Input field */}
                 <View
                   style={{
-                    // flex: 0.06,
                     height: Dimensions.get("window").width > 1000 ? 80 : 250,
-                    // flex: 1,
                     marginTop: Dimensions.get("window").width > 1000 ? 10 : 40,
-                    // backgroundColor: "red",
                     flexDirection:
                       Dimensions.get("window").width > 1000 ? "row" : "column",
                     justifyContent:
@@ -1274,9 +1153,7 @@ export class Calculator extends React.Component {
                   {/* Pick the start date */}
                   <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ fontWeight: "bold" }}>#2 Start Date</Text>
-
                     <DatePickerModal
-                      // locale={'en'} optional, default: automatic
                       mode="single"
                       visible={this.state.isDatePickerVis}
                       onDismiss={this.closeDatePicker}
@@ -1285,21 +1162,12 @@ export class Calculator extends React.Component {
                         let selectedDate = moment(new Date(date.date))
                           .format()
                           .slice(0, 10);
-                        //console.log("selectedDate", selectedDate);
                         await this.setState({
                           datePickerButtonTxt: selectedDate,
                         });
                         this.generateSchedule(true);
                         this.closeDatePicker();
                       }}
-                      // validRange={{
-                      //   startDate: new Date(2021, 1, 2),  // optional
-                      //   endDate: new Date(), // optional
-                      // }}
-                      // onChange={} // same props as onConfirm but triggered without confirmed by user
-                      // saveLabel="Save" // optional
-                      // label="Select date" // optional
-                      // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
                     />
                     <TouchableOpacity
                       style={{
@@ -1326,7 +1194,7 @@ export class Calculator extends React.Component {
                       </Text>
                     </TouchableOpacity>
                   </View>
-
+                  {/* Specify starting dosage */}
                   <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ fontWeight: "bold" }}>#3 Starting Dose</Text>
                     <View
@@ -1341,7 +1209,6 @@ export class Calculator extends React.Component {
                       }}
                     >
                       <TextInput
-                        // secureTextEntry={true}
                         ref={this.startDoseInput}
                         placeholder="e.g., 100, 120 (mg)"
                         style={Platform.select({
@@ -1356,7 +1223,6 @@ export class Calculator extends React.Component {
                         maxLength={35}
                         autoCapitalize="none"
                         autoCorrect={false}
-                        // value={this.state.reason}
                         onChangeText={async (text) => {
                           await this.setState({ startingDose: text });
                           // if
@@ -1380,11 +1246,6 @@ export class Calculator extends React.Component {
                             });
                             return;
                           }
-                          // if (this.state.stepNum === "" || !/^\d+$/.test(this.state.stepNum)) {
-                          //   this.setState({ isAlertVisibleModal: true });
-                          //   this.setState({ alertTxt: "Total Step has to be a valid number" });
-                          //   return;
-                          // }
                           if (
                             this.state.startingDose === "" ||
                             !/^\d+$/.test(this.state.startingDose)
@@ -1401,6 +1262,7 @@ export class Calculator extends React.Component {
                       />
                     </View>
                   </View>
+                  {/* Render "Generate Schedule Button" */}
                   <View style={{ flex: 0.25, height: "80%", width: "100%" }}>
                     <Text style={{ color: "white", opacity: 0 }}>
                       {this.state.generateBtnTxt}
@@ -1420,7 +1282,6 @@ export class Calculator extends React.Component {
                       }}
                       onPress={() => {
                         this.calculateTapperSchedule();
-                        // this.setState({ generateBtnTxt: "Reset" });
                       }}
                     >
                       <Text
@@ -1436,6 +1297,7 @@ export class Calculator extends React.Component {
                 </View>
               </View>
             </View>
+            {/* Render "Tips for tapering"  */}
             <View
               style={{
                 flexDirection: "row",
@@ -1474,6 +1336,7 @@ export class Calculator extends React.Component {
             </View>
 
             {this._renderListView(TIP_DATA)}
+            {/* Render the generated schedule */}
             <View
               style={{
                 height: 1200,
@@ -1483,14 +1346,13 @@ export class Calculator extends React.Component {
                 flexDirection: "column",
                 justifyContent: "center",
                 display: this.state.listOpacity,
-                // backgroundColor: PRIMARY_COLOR,
                 borderRadius: 20,
-                //alignItems: "center",
               }}
             >
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 {scheduleBtnView}
               </View>
+              {/* Render the header of the form */}
               <View
                 style={{
                   padding: 1,
@@ -1504,7 +1366,6 @@ export class Calculator extends React.Component {
                   borderBottomColor: "black",
                   borderBottomWidth: 2,
                   marginHorizontal: 32,
-                  // backgroundColor:"red"
                 }}
               >
                 <View
@@ -1512,8 +1373,6 @@ export class Calculator extends React.Component {
                     flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
-                    // padding: 15,
-                    // backgroundColor:"red",
                   }}
                 >
                   <Text
@@ -1530,7 +1389,6 @@ export class Calculator extends React.Component {
                     flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
-                    // padding: 15,
                   }}
                 >
                   <Text
@@ -1547,7 +1405,6 @@ export class Calculator extends React.Component {
                     flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
-                    // padding: 15,
                   }}
                 >
                   <Text
@@ -1564,7 +1421,6 @@ export class Calculator extends React.Component {
                     flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
-                    // padding: 15,
                   }}
                 >
                   <Text
@@ -1577,6 +1433,7 @@ export class Calculator extends React.Component {
                   </Text>
                 </View>
               </View>
+              {/* Render the body of the form */}
               <FlatList
                 data={this.state.scheduleData}
                 renderItem={({ item }) => (
@@ -1598,7 +1455,6 @@ export class Calculator extends React.Component {
                         flex: 1,
                         alignItems: "center",
                         justifyContent: "center",
-                        // backgroundColor:"blue"
                       }}
                     >
                       <Text
@@ -1627,20 +1483,11 @@ export class Calculator extends React.Component {
                       </TouchableOpacity>
 
                       <TextInput
-                        // style={styles.input}
-                        // onChangeText={onChangeNumber}
                         onChangeText={async (text) => {
                           if (this.isPositiveInteger(text)) {
                             console.log(text);
                             let parseToInt = parseInt(text);
                             this.setDuration(item.id, parseToInt);
-                            // let currentNum = item.duration
-                            // if (parseToInt > currentNum) {
-                            //   let addNum = parseToInt - currentNum;
-                            //   for (let i = 0; i <= addNum; i++) {
-                            //     this.increaseDuration(item.id);
-                            //   }
-                            // }
                           }
                         }}
                         style={{
@@ -1662,7 +1509,6 @@ export class Calculator extends React.Component {
                             Dimensions.get("window").width > 1000 ? 12 : 10,
                         }}
                       >
-                        {/* {item.duration} */}
                         days
                       </Text>
                       <TouchableOpacity
@@ -1725,6 +1571,7 @@ export class Calculator extends React.Component {
               />
             </View>
           </View>
+          {/* Render the bottom disclaimer */}
           <View>
             <Text style={{ margin: 15, fontSize: 10, textAlign: "center" }}>
               This website was created as part of a project funded by the

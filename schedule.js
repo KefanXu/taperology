@@ -1,3 +1,8 @@
+// This file provide ways to manipulate the schedule in user center
+// Since the User Center has been removed in the current version, this file is not in use
+// *TO BE NOTICE: This file copied codes from the Calculator.js file but didn't update simultaneously
+// *Thus lots of functions in this field need to be adjusted to match the current mechanism used in Calculator.js
+// *If there is a need to activate this function in the future, I would recommend to rewrite this part by referring to the current Calculator.js and this file
 import React, { useState } from "react";
 import {
   TextInput,
@@ -8,10 +13,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
-  // Modal,
   LayoutAnimation,
   SectionList,
-  // Button,
   Animated,
   StyleSheet,
   Dimensions,
@@ -22,7 +25,6 @@ import {
 
 import { Button, DataTable } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
-// import AwesomeAlert from "react-native-awesome-alerts";
 import Modal from "modal-enhanced-react-native-web";
 import * as Analytics from "expo-firebase-analytics";
 
@@ -36,7 +38,6 @@ import {
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
 import { GoogleLogin } from "./googleLogin";
-// import { DatePickerModal } from "react-native-paper-dates";
 
 import moment, { min } from "moment";
 const PRIMARY_COLOR = "#D8D8D8";
@@ -52,11 +53,6 @@ const STRENGTHS = {
 export class Schedule extends React.Component {
   constructor(props) {
     super(props);
-    // console.log(
-    //   "scheduleData: this.props.scheduleData",
-    //   this.props.scheduleData
-    // );
-    // console.log("height",Dimensions.get("window").height);
     this.dataModel = getDataModel();
     this.state = {
       scheduleData: this.props.scheduleData,
@@ -68,28 +64,15 @@ export class Schedule extends React.Component {
       currentStd: "",
       isDatePickerVis: false,
       datePickerDate: "",
-      // height: Dimensions.get("window").height
     };
-    // console.log("STRENGTHS[this.props.data.bezo]",STRENGTHS[this.props.data.bezo]);
-    // console.log("this.state.currentStd",this.state.currentStd);
   }
+  // When the user wants to delete a schedule, show the warning popup
   showDeleteWarningModal = () => {
     this.setState({ isDeleteWarningModalVis: true });
   };
-  resetSchedule = () => {
-    // console.log("resetSchedule", this.props.data);
-    this.setState({ scheduleData: this.props.scheduleData });
-
-    this.setState({ data: this.props.data });
-    this.setState({ userKey: this.props.userKey });
-    this.setState({ stepNum: this.props.data.totalStep });
-    this.setState({ startingDose: this.props.data.startDose });
-    this.setState({ currentStd: STRENGTHS[this.props.data.bezo] });
-    //  console.log("this.state.currentStd",this.state.currentStd);
-  };
+  //Round the calculated dosage to match with the its strength (so can be fully divided)
   roundTo = (val, std) => {
     let init = 0;
-    // for (let i = 1; )
     do {
       init = init + std;
     } while (init < val);
@@ -102,6 +85,7 @@ export class Schedule extends React.Component {
     }
     return result;
   };
+  //Generate the taper schedule (used in "Add Steps", "Remove Steps", and "Save as new schedule").
   generateSchedule = async () => {
     let initialDate;
     if (this.state.isDatePickerVis) {
@@ -111,7 +95,6 @@ export class Schedule extends React.Component {
     }
 
     let currentSchedule = this.state.scheduleData;
-    //console.log("initialDate", initialDate);
     let schedule = [];
     let startingInputDose = parseInt(this.state.startingDose);
     let startingDose = startingInputDose;
@@ -135,7 +118,6 @@ export class Schedule extends React.Component {
         .format()
         .slice(0, 10);
     }
-    // reducedDose = startingInputDose * 0.05;
     let remainingDose = startingDose;
     reducedDose = remainingDose / (this.state.stepNum - 2);
     console.log("startingDose", startingDose);
@@ -178,37 +160,25 @@ export class Schedule extends React.Component {
       await this.setState({ scheduleData: currentSchedule });
     }
   };
+  //Save a new schedule and update it on Firebase
   saveSchedule = async (scheduleToSave) => {
     let newScheduleProfile = Object.assign({}, this.props.data);
     newScheduleProfile.startDate = this.state.datePickerDate;
     newScheduleProfile.createdDate = moment(new Date()).format();
     newScheduleProfile.schedule = scheduleToSave;
-    // let scheduleToSave = this.state.scheduleData;
-    // let newSchedule = {
-    //   startDate: this.state.datePickerDate,
-    //   startDose: this.state.startingDose,
-    //   bezo: this.state.benzoType,
-    //   createdDate: moment(new Date()).format(),
-    //   totalStep: scheduleToSave.length,
-    //   schedule: scheduleToSave,
-    // };
+
     await this.dataModel.createNewSchedule(
       this.dataModel.key,
       newScheduleProfile
     );
-    // this.reset();
-    // this.setState({
-    //   confirmModalTxt: "New taper schedule saved!",
-    // });
-    // this.setState({ isConfirmationVisibleModal: true });
+
     await this.update();
     await Analytics.logEvent("saveAsNewSchedule", {
-      // name: "ChangeScreen",
       screen: "UserCenter",
       purpose: "Opens the internal settings",
     });
   };
-
+  //Fired when the user clicks the left arrow on "Target Dosage"
   reduceDose = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -222,6 +192,7 @@ export class Schedule extends React.Component {
     }
     this.setState({ scheduleData: currentSchedule });
   };
+  //Fired when the user clicks the right arrow on "Target Dosage"
   increaseDose = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -235,6 +206,7 @@ export class Schedule extends React.Component {
     }
     this.setState({ scheduleData: currentSchedule });
   };
+  //Fired when the user clicks the left arrow on "Duration"
   reduceDuration = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
@@ -243,11 +215,6 @@ export class Schedule extends React.Component {
           return;
         } else {
           step.duration--;
-          // step.startDate = moment(
-          //   moment(new Date(step.startDate)).subtract(0, "d")
-          // )
-          //   .format()
-          //   .slice(0, 10);
         }
       }
       if (step.id > id) {
@@ -260,14 +227,12 @@ export class Schedule extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
+  //Fired when the user clicks the right arrow on "Duration"
   increaseDuration = (id) => {
     let currentSchedule = this.state.scheduleData;
     for (let step of currentSchedule) {
       if (step.id === id) {
         step.duration++;
-        // step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
-        //   .format()
-        //   .slice(0, 10);
       }
       if (step.id > id) {
         step.startDate = moment(moment(new Date(step.startDate)).add(2, "d"))
@@ -277,88 +242,50 @@ export class Schedule extends React.Component {
     }
     this.setState({ schedule: currentSchedule });
   };
+  //Fired when the user clicks "Add Step"
   addStep = async () => {
-    // console.log("this.state.stepNum", this.props.data.stepNum);
-    // console.log("this.state.scheduleData", this.state.scheduleData);
     let currentStepNum = this.state.stepNum;
     currentStepNum++;
     await this.setState({ stepNum: currentStepNum });
     this.generateSchedule();
-
-    // let duration = 14;
-    // let currentSchedule = this.state.scheduleData;
-    // let lastStep = currentSchedule[this.state.scheduleData.length - 1];
-    // // console.log("lastStep.dosage", lastStep.dosage);
-    // // console.log("this.state.startingDose", this.props.data.startDose);
-    // if (lastStep && lastStep.dosage > 0) {
-    //   let recurrentDose =
-    //     lastStep.dosage - parseInt(this.props.data.startDose) * 0.05;
-    //   let step = {
-    //     id: lastStep.id + 1,
-    //     duration: duration,
-    //     startDate: moment(moment(new Date(lastStep.startDate)).add(15, "d"))
-    //       .format()
-    //       .slice(0, 10),
-    //     dosage: recurrentDose,
-    //   };
-    //   console.log("recurrentDose", recurrentDose);
-
-    //   currentSchedule.push(step);
-    //   this.setState({ scheduleData: currentSchedule });
-    //   // this.setState({ confirmModalTxt: "One step added." });
-    // } else {
-    //   // this.setState({ confirmModalTxt: "Can't add more steps" });
-    // }
-
-    // this.setState({ isConfirmationVisibleModal: true });
-    // console.log("step", step);
   };
+  //Fired when the user clicks "Remove Step"
   removeStep = async () => {
     let lastStep = this.state.scheduleData[this.state.scheduleData.length - 1];
     if (lastStep.id > 2) {
-      // let currentSchedule = this.state.scheduleData;
-      // currentSchedule.pop();
-      // this.setState({ scheduleData: currentSchedule });
       let currentStepNum = this.state.stepNum;
       currentStepNum--;
       await this.setState({ stepNum: currentStepNum });
       this.generateSchedule();
     }
   };
+  //Update an existing schedule and update it on Firebase
   updateSchedule = async () => {
-    // let newSchedule = this.state.scheduleData;
     let newScheduleProfile = this.props.data;
     newScheduleProfile.totalStep = this.state.scheduleData.length;
     newScheduleProfile.schedule = this.state.scheduleData;
     let userKey = this.state.userKey;
     let scheduleKey = newScheduleProfile.key;
-    // console.log("newSchedule", newSchedule);
     console.log("newScheduleProfile", newScheduleProfile);
     this.dismiss();
     this.dataModel.updateSchedule(userKey, scheduleKey, newScheduleProfile);
     await Analytics.logEvent("saveScheduleChanges", {
       name: "saveScheduleChanges",
       screen: "UserCenter",
-      // purpose: "Opens the internal settings",
     });
   };
+  //Fired when the user clicks the delete button, then popup the alert window
   deleteSchedule = async () => {
-    // let scheduleKey = this.props.data.key;
-    // let userKey = this.state.userKey;
     await this.setState({ isDeleteWarningModalVis: true });
-
-    // await this.dataModel.deleteSchedule(userKey, scheduleKey);
-    // await this.dataModel.loadUserSchedules(this.state.userKey);
-    // await this.update();
-    // this.dismiss();
   };
+  //Close the delete alert window
   deleteScheduleCancel = async () => {
     await this.setState({ isDeleteWarningModalVis: false });
   };
+  //Delete a schedule once the user confirms, update it on the Firebase
   deleteScheduleConfirmed = async () => {
     let scheduleKey = this.props.data.key;
     let userKey = this.state.userKey;
-    // await this.setState({isDeleteWarningModalVis: true});
 
     await this.dataModel.deleteSchedule(userKey, scheduleKey);
     await this.dataModel.loadUserSchedules(this.state.userKey);
@@ -368,29 +295,30 @@ export class Schedule extends React.Component {
     await Analytics.logEvent("deleteSchedule", {
       name: "deleteSchedule",
       screen: "UserCenter",
-      // purpose: "Opens the internal settings",
     });
   };
+  //Close the schedule, passed from UserCenter.js
   dismiss = () => {
     this.props.dismiss();
   };
+  //Update schedule with changes, passed from UserCenter.js
   update = () => {
     this.props.update();
   };
-  confirmDelete = () => {
-    this.props.confirmDelete();
-  };
+  //Close the Date Picker popup
   closeDatePicker = () => {
     this.setState({ isDatePickerVis: false });
   };
+  //Fired when the user click "Save as"
   saveAsNew = () => {
     this.generateSchedule();
   };
+
   render() {
     return (
       <View style={{ width: "100%" }}>
+        {/* Render the date picker */}
         <DatePickerModal
-          // locale={'en'} optional, default: automatic
           label="Select Start Date"
           mode="single"
           visible={this.state.isDatePickerVis}
@@ -400,23 +328,14 @@ export class Schedule extends React.Component {
             let selectedDate = moment(new Date(date.date))
               .format()
               .slice(0, 10);
-            //console.log("selectedDate", selectedDate);
             await this.setState({
               datePickerDate: selectedDate,
             });
-            // this.generateSchedule();
             this.saveAsNew();
             this.closeDatePicker();
           }}
-          // validRange={{
-          //   startDate: new Date(2021, 1, 2),  // optional
-          //   endDate: new Date(), // optional
-          // }}
-          // onChange={} // same props as onConfirm but triggered without confirmed by user
-          // saveLabel="Save" // optional
-          // label="Select date" // optional
-          // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
         />
+        {/* Render the Delete Alert Popup */}
         <Modal
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           isVisible={this.state.isDeleteWarningModalVis}
@@ -463,7 +382,7 @@ export class Schedule extends React.Component {
             </View>
           </View>
         </Modal>
-
+        {/* Render the button block and basic info */}
         <View
           style={{
             marginLeft: 20,
@@ -471,9 +390,6 @@ export class Schedule extends React.Component {
             flexDirection: "row",
             justifyContent: "space-between",
             marginRight: 20,
-            // backgroundColor:"blue"
-            // borderBottomColor: PRIMARY_COLOR,
-            // borderBottomWidth: 2,
           }}
         >
           <View style={{ margin: 10 }}>
@@ -512,7 +428,6 @@ export class Schedule extends React.Component {
                 alignItems: "center",
                 width: 150,
                 flex: 1,
-                //backgroundColor:"red"
               }}
               onPress={() => {
                 this.addStep();
@@ -555,7 +470,6 @@ export class Schedule extends React.Component {
                 marginLeft: 15,
                 width: 180,
                 flex: 1,
-                // backgroundColor:"blue"
               }}
               onPress={() => {
                 this.updateSchedule();
@@ -600,7 +514,6 @@ export class Schedule extends React.Component {
                 justifyContent: "center",
                 alignItems: "center",
                 width: 150,
-                // backgroundColor:"red"
               }}
               onPress={() => {
                 this.deleteSchedule();
@@ -620,31 +533,8 @@ export class Schedule extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
-          {/* <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              width: 200,
-              marginLeft: 20,
-              //backgroundColor:"red"
-            }}
-            onPress={async () => {
-              if (this.dataModel.isLogin) {
-                this.saveSchedule();
-              } else {
-                this.setState({ isLoginVisibleModal: true });
-                this.setState({ entry: "save" });
-              }
-            }}
-            disabled={this.state.isAddBtnDisable}
-          >
-            <MaterialIcons name="note-add" size={32} color="black" />
-            <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
-              Save Schedule
-            </Text>
-          </TouchableOpacity> */}
         </View>
+        {/* Render the header of the schedule */}
         <View
           style={{
             padding: 20,
@@ -698,6 +588,7 @@ export class Schedule extends React.Component {
             </Text>
           </View>
         </View>
+        {/* Render the body of the schedule */}
         <View
           style={{
             height: 500,
@@ -705,8 +596,6 @@ export class Schedule extends React.Component {
             flexDirection: "row",
             justifyContent: "center",
             opacity: this.state.listOpacity,
-
-            //alignItems: "center",
           }}
         >
           <FlatList
@@ -718,13 +607,12 @@ export class Schedule extends React.Component {
               let firstStepStartDate = new Date(firstStep.startDate);
               let thisStep = this.state.scheduleData[parseInt(item.id) - 1];
               let thisStepStartDate = new Date(thisStep.startDate);
+              // Hight the current stage
               if (todayDate >= firstStepStartDate) {
                 if (this.state.scheduleData[parseInt(item.id)]) {
                   let nextStep = this.state.scheduleData[parseInt(item.id)];
-                  // console.log("nextStep", nextStep);
                   let todayDate = new Date();
                   let nextStartDate = new Date(nextStep.startDate);
-                  // console.log("nextStartDate", nextStartDate);
                   if (
                     todayDate < nextStartDate &&
                     todayDate >= thisStepStartDate
@@ -760,6 +648,7 @@ export class Schedule extends React.Component {
                     backgroundColor: isNow ? PRIMARY_COLOR : "none",
                   }}
                 >
+                  {/* Step Column */}
                   <View
                     style={{
                       flex: 1,
@@ -769,6 +658,7 @@ export class Schedule extends React.Component {
                   >
                     <Text style={{ fontSize: 14 }}>Step {item.id}</Text>
                   </View>
+                  {/* Duration Column */}
                   <View
                     style={{
                       flex: 1,
@@ -791,6 +681,7 @@ export class Schedule extends React.Component {
                       <AntDesign name="caretright" size={24} color="black" />
                     </TouchableOpacity>
                   </View>
+                  {/* Start Date Column */}
                   <View
                     style={{
                       flex: 1,
@@ -800,6 +691,7 @@ export class Schedule extends React.Component {
                   >
                     <Text style={{ fontSize: 14 }}>{item.startDate}</Text>
                   </View>
+                  {/* Dosage Column */}
                   <View
                     style={{
                       flex: 1,

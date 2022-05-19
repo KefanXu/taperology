@@ -1,3 +1,5 @@
+// This field is used to render the User Center section
+// It was REMOVED from the current version but can be activated in the future
 import React, { useState } from "react";
 import {
   TextInput,
@@ -42,7 +44,8 @@ import { DataTable, ProgressBar, Colors } from "react-native-paper";
 import { CircularSlider } from "react-native-elements-universe";
 
 const PRIMARY_COLOR = "#D8D8D8";
-const SEC_COLOR = "#848484";
+
+//Text in the refer patient popup
 const REFER_PATIENT_TXT = (
   <Text style={{ margin: 10 }}>
     <Text style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -112,33 +115,40 @@ export class UserCenter extends React.Component {
       isReferPopupModal: false,
     };
   }
-
+  // Load the schedule view with users' saved schedules in Google Firebase
   updateScheduleView = async () => {
     console.log("update schedule");
-    // this.dataModel = getDataModel();
     let userKey = this.dataModel.key;
     await this.dataModel.loadUserSchedules(userKey);
     this.schedules = this.dataModel.plans;
     await this.setState({ schedules: this.schedules });
   };
+
   refreshSchedule = () => {
     this.schedule.current.resetSchedule();
   };
+  //Function to navigate to the Resource Section.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navResource = () => {
-    this.props.navigation.navigate("Resources", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Resources", {});
   };
+
+  //Function to navigate to the Index page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navIndex = () => {
-    this.props.navigation.navigate("Index", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Index", {});
   };
+
+  //Function to navigate to the Calculator page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navCal = () => {
-    this.props.navigation.navigate("Calculator", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Calculator", {});
   };
+
+  //Function to navigate to user center
   navUserCenter = () => {
     if (this.dataModel.isLogin) {
       this.props.navigation.navigate("UserCenter", {
@@ -148,12 +158,15 @@ export class UserCenter extends React.Component {
       this.setState({ isLoginVisibleModal: true });
     }
   };
+  //Close the login popup window
   loginDismiss = () => {
     this.setState({ isLoginVisibleModal: false });
   };
+  //Close the schedule popup window
   schedulePopUpDismiss = () => {
     this.setState({ isScheduleVisibleModal: false });
   };
+  //Render the popup window that contains the schedule view
   _renderModalSchedule = () => {
     console.log("_renderModalSchedule");
     return (
@@ -176,7 +189,6 @@ export class UserCenter extends React.Component {
             marginTop: 0,
             justifyContent: "center",
             alignItems: "flex-end",
-            // backgroundColor: "red",
           }}
         >
           <Ionicons
@@ -199,23 +211,14 @@ export class UserCenter extends React.Component {
           dismiss={this.schedulePopUpDismiss}
           update={this.updateScheduleView}
         />
-
-        {/* <View
-          style={{
-            flex: 1,
-            // backgroundColor: "red",
-            marginTop: 15,
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        ></View> */}
       </View>
     );
   };
+  //Function that shows the refer patient popup
   showReferPatientModal = () => {
     this.setState({ isReferPopupModal: true });
   };
+  //Render the refer patient popup window
   _renderReferModalPopup = () => (
     <View
       style={{
@@ -231,7 +234,6 @@ export class UserCenter extends React.Component {
       <View>{REFER_PATIENT_TXT}</View>
       <TouchableOpacity
         onPress={async () => {
-          // let eventName = this.state.popupItem.trackID;
           await Analytics.logEvent("ReferPatient", {
             name: "ReferPatient",
             screen: "Calculator",
@@ -262,19 +264,18 @@ export class UserCenter extends React.Component {
 
   render() {
     return (
-      <View style={{ justifyContent:"center" }}>
+      <View style={{ justifyContent: "center" }}>
         <View
           style={{
             flex: 1,
-
-            //backgroundColor: "blue",
             margin: 5,
             flexDirection: "column",
             width: "100%",
             justifyContent: "center",
-            alignItems:"center"
+            alignItems: "center",
           }}
         >
+          {/* Render the refer patient popup window */}
           <Modal
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isReferPopupModal}
@@ -282,6 +283,7 @@ export class UserCenter extends React.Component {
           >
             {this._renderReferModalPopup()}
           </Modal>
+          {/* Render the schedule popup window  */}
           <Modal
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isScheduleVisibleModal}
@@ -291,6 +293,7 @@ export class UserCenter extends React.Component {
           >
             {this._renderModalSchedule()}
           </Modal>
+          {/* Render the menu and pass in functions */}
           <Menu
             navResource={this.navResource}
             navIndex={this.navIndex}
@@ -302,16 +305,14 @@ export class UserCenter extends React.Component {
           <View
             style={{
               width: 1000,
-              //backgroundColor: "red",
-
               margin: 5,
             }}
           >
+            {/* Render the top title */}
             <View
               style={{
                 height: 100,
                 margin: 10,
-                // backgroundColor:"red",
                 justifyContent: "space-between",
                 flexDirection: "row",
               }}
@@ -324,7 +325,6 @@ export class UserCenter extends React.Component {
               style={{
                 margin: 10,
                 flexDirection: "row",
-                // backgroundColor: "red",
                 height: 500,
               }}
             >
@@ -332,19 +332,15 @@ export class UserCenter extends React.Component {
                 <Text style={{ fontWeight: "bold", fontSize: 24 }}>
                   Taper Schedules
                 </Text>
-
+                {/* Render the list of users' saved schedules */}
                 <View
                   style={{
                     marginTop: 15,
                     marginRight: 15,
                     height: 400,
                     width: 1000,
-                    // borderRadius: 20,
-                    // borderColor: "black",
-                    // borderWidth: 3,
                     justifyContent: "flex-start",
                     alignItems: "center",
-                    // backgroundColor:"red"
                   }}
                 >
                   <FlatList
@@ -371,11 +367,6 @@ export class UserCenter extends React.Component {
                           <TouchableOpacity
                             onPress={async () => {
                               console.log("item", item);
-                              // console.log(
-                              //   "this.state.schedules",
-                              //   this.state.schedules
-                              // );
-
                               await this.setState({
                                 currentSchedule: item.schedule,
                                 currentData: item,
@@ -459,8 +450,6 @@ export class UserCenter extends React.Component {
                                     {currentDosage} mg
                                   </Text>
                                 </View>
-
-                                {/* <CircularSlider maxAngle={90} /> */}
                               </View>
                             </View>
                           </TouchableOpacity>
@@ -470,22 +459,6 @@ export class UserCenter extends React.Component {
                   />
                 </View>
               </View>
-              {/* <View style={{ marginTop: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                Saved Resource
-              </Text>
-              <View
-                style={{
-                  marginTop: 15,
-                  marginRight: 15,
-                  height: "100%",
-                  width: 400,
-                  borderRadius: 30,
-                  borderColor: "black",
-                  borderWidth: 3,
-                }}
-              ></View>
-            </View> */}
             </View>
           </View>
         </View>

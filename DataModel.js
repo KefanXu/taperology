@@ -1,10 +1,14 @@
+// DataModel.js contains functions that used to manipulate users' personal data
+// including accounts and their saved schedules
+// The current version doesn't have any user-related functions so this file is not in use.
+
 import firebase from "firebase";
 import "@firebase/firestore";
 import "@firebase/storage";
+// Import Firebase Configuration file here from a secret.js file
 import { firebaseConfig } from "./secret";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-// import * as Google from "expo-google-app-auth";
 
 class DataModel {
   constructor() {
@@ -19,20 +23,17 @@ class DataModel {
     this.key = "";
     this.asyncInit();
   }
-
+  // Initiate firebase
   asyncInit = async () => {
     this.usersRef = firebase.firestore().collection("users");
     this.users = [];
     this.plans = [];
     this.currentUser = "";
-    // this.plans = [];
     this.key = "";
-    // await this.askPermission();
     await this.loadUsers();
-    // await this.loadUserSchedules(this.key);
     console.log("this.plans", this.plans);
   };
-
+  // Load user list
   loadUsers = async () => {
     let querySnap = await this.usersRef.get();
     querySnap.forEach(async (qDocSnap) => {
@@ -51,6 +52,7 @@ class DataModel {
     });
     console.log("this.users", this.users);
   };
+  // Load user's saved schedule
   loadUserSchedules = async (key) => {
     this.plans = [];
     let userPlanCollection = await this.usersRef
@@ -63,9 +65,8 @@ class DataModel {
       plan.key = key;
       this.plans.push(plan);
     });
-    // console.log("this.plans",this.plans);
   };
-
+  // When a new user sign up, add the new user to Firebase
   createNewUser = async (username) => {
     let newUser = {
       email: username,
@@ -81,12 +82,14 @@ class DataModel {
     this.currentUser = username;
     this.key = key;
   };
+  // Add a new schedule to the user's profile
   createNewSchedule = async (key, newSchedule) => {
     let userPlanCollection = await this.usersRef
       .doc(key)
       .collection("taper_schedules")
       .add(newSchedule);
   };
+  // Update an existing schedule
   updateSchedule = async (userKey, scheduleKey, newSchedule) => {
     let scheduleRef = this.usersRef
       .doc(userKey)
@@ -94,6 +97,7 @@ class DataModel {
       .doc(scheduleKey);
     await scheduleRef.update(newSchedule);
   };
+  // Delete a schedule
   deleteSchedule = async (userKey, scheduleKey) => {
     console.log("scheduleKey", scheduleKey);
     console.log("userKey", userKey);
@@ -103,10 +107,6 @@ class DataModel {
       .doc(scheduleKey);
     await scheduleRef.delete();
   };
-
-  // googleLogin = async () => {
-  //   const [request, response, promptAsync] = Google.useAuthRequest(config);
-  // };
 }
 let theDataModel = undefined;
 

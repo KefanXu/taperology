@@ -1,46 +1,32 @@
+/*
+This code refer to the website index page 
+which contains a welcome info 
+and links to each sections
+*/
 import React, { useState } from "react";
 import {
-  TextInput,
   Text,
   View,
-  ScrollView,
-  Image,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Alert,
-  // Modal,
-  LayoutAnimation,
-  SectionList,
-  Button,
   Dimensions,
-  Animated,
-  StyleSheet,
   Linking,
 } from "react-native";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from "@react-navigation/drawer";
-import {
-  Ionicons,
-  AntDesign,
-  FontAwesome,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import { Avatar, Card, Title, Paragraph } from "react-native-paper";
-import * as Analytics from "expo-firebase-analytics";
-import { Hoverable, Pressable } from "react-native-web-hover";
 
-import { FlatList } from "react-native-web";
+import { FontAwesome } from "@expo/vector-icons";
+import * as Analytics from "expo-firebase-analytics";
+import { Hoverable } from "react-native-web-hover";
+
 import { Menu } from "./menu";
 import { getDataModel } from "./DataModel";
 import Modal from "modal-enhanced-react-native-web";
+
+//This imports the Google Login component.
+//It's not used in the current version but can be activated if there is a future need.
 import { GoogleLogin } from "./googleLogin";
 
 const PRIMARY_COLOR = "#D8D8D8";
-const SEC_COLOR = "#848484";
+
+//Text used in the refer patient popup
 const REFER_PATIENT_TXT = (
   <Text style={{ margin: 10 }}>
     <Text style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -56,53 +42,8 @@ const REFER_PATIENT_TXT = (
       This locator is provided by SAMHSA (the Substance Abuse and Mental Health
       Services Administration).
     </Text>
-    {/* {"\n"}
-    {"\n"}
-    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-      Eligible mental health treatment facilities include:
-    </Text>
-    {"\n"}
-    <Text style={{ fontSize: 14 }}>
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Facilities that provide
-      mental health treatment services and are funded by the state mental health
-      agency (SMHA) or other state agency or department{"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Mental health treatment
-      facilities administered by the U.S. Department of Veterans Affairs{"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Private for-profit and
-      non-profit facilities that are licensed by a state agency to provide
-      mental health treatment services, or that are accredited by a national
-      treatment accreditation organization (e.g., The Joint Commission, NCQA,
-      etc.){"\n"}
-    </Text>
-    {"\n"}
-    {"\n"}
-    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-      Eligible substance use and addiction treatment facilities must meet at
-      least one of the criteria below:
-    </Text>
-    {"\n"}
-    <Text style={{ fontSize: 14 }}>
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>
-      Licensure/accreditation/approval to provide substance use treatment from
-      the state substance use agency (SSA) or a national treatment accreditation
-      organization (e.g., The Joint Commission, CARF, NCQA, etc.)
-      {"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Staff who hold specialized
-      credentials to provide substance use treatment services
-      {"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Authorization to bill
-      third-party payers for substance use treatment services using an alcohol
-      or drug client diagnosis
-      {"\n"}
-    </Text> */}
   </Text>
 );
-
-const TAPERING_DATA = [
-  { title: "Mysl", url: "", abstract: "" },
-  { title: "Mysl", url: "", abstract: "" },
-  { title: "Mysl", url: "", abstract: "" },
-];
 
 export class Index extends React.Component {
   constructor(props) {
@@ -116,6 +57,8 @@ export class Index extends React.Component {
     };
     this.dataModel = getDataModel();
   }
+
+  //Render the refer patient popup
   _renderReferModalPopup = () => (
     <View
       style={{
@@ -131,7 +74,7 @@ export class Index extends React.Component {
       <View>{REFER_PATIENT_TXT}</View>
       <TouchableOpacity
         onPress={async () => {
-          // let eventName = this.state.popupItem.trackID;
+          //Use this Google Analytics API to track if user click the refer patient link
           await Analytics.logEvent("ReferPatient", {
             name: "ReferPatient",
             screen: "Calculator",
@@ -159,54 +102,8 @@ export class Index extends React.Component {
       </TouchableOpacity>
     </View>
   );
-  _renderModalPopup = () => (
-    <View
-      style={{
-        height: 500,
-        width: 400,
-        backgroundColor: "white",
-        borderRadius: 20,
-        marginRight: 10,
-        padding: 10,
-        justifyContent: "space-between",
-      }}
-    >
-      <View>
-        <Text style={{ fontSize: 32, fontWeight: "bold", margin: 10 }}>
-          {this.state.popupItem.title}
-        </Text>
-        <ScrollView style={{ margin: 10 }}>
-          <Text style={{ fontSize: 14 }}>{this.state.popupItem.abstract}</Text>
-        </ScrollView>
-      </View>
-      <TouchableOpacity
-        onPress={async () => {
-          let eventName = this.state.popupItem.trackID;
-          await Analytics.logEvent(eventName, {
-            name: "ResourceClicked",
-            screen: "Resource",
-          });
-          this.setState({ isPopupModal: false });
-          Linking.openURL(this.state.popupItem.url);
-        }}
-      >
-        <View
-          style={{
-            backgroundColor: "black",
-            borderRadius: 20,
-            margin: 10,
-            width: 150,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
-            Go to resource
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
+  //This renders the login popup.
+  //It's not used in the current version but can be activated if there is a future need.
   _renderModalLogin = () => (
     <View
       style={{
@@ -224,7 +121,6 @@ export class Index extends React.Component {
       <View
         style={{
           flex: 1,
-          // backgroundColor: "red",
           marginTop: 15,
           width: "100%",
           justifyContent: "center",
@@ -240,125 +136,67 @@ export class Index extends React.Component {
       </View>
     </View>
   );
+
+  //This navigation function navigate users to the user center after they logged in.
+  //It's not used in the current version but can be activated if there is a future need.
   navUserCenterDir = () => {
-    this.props.navigation.navigate("UserCenter", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("UserCenter", {});
   };
+
+  //Function to close the login popup
+  //It's not used in the current version but can be activated if there is a future need.
   dismissLoginModal = () => {
     this.setState({ isLoginVisibleModal: false });
   };
+
+  //Function to navigate to the Resource Section.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navResource = () => {
-    this.props.navigation.navigate("Resources", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Resources", {});
   };
+
+  //Function to navigate to the Index page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navIndex = () => {
-    this.props.navigation.navigate("Index", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Index", {});
   };
+
+  //Function to navigate to the Calculator page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navCal = () => {
-    this.props.navigation.navigate("Calculator", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Calculator", {});
   };
+
+  //Function to show the refer patient popup.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   showReferPatientModal = () => {
     this.setState({ isReferPopupModal: true });
   };
+
+  //Function to navigate to the user center and load users' saved schedules.
+  //Passed into the googleLogin (googleLogin.js) component.
+  //It's not used in the current version but can be activated if there is a future need.
   navUserCenter = async () => {
     if (this.dataModel.isLogin) {
       await this.dataModel.loadUserSchedules(this.dataModel.key);
-      this.props.navigation.navigate("UserCenter", {
-        // needsUpdate: this.needsUpdate,
-      });
+      this.props.navigation.navigate("UserCenter", {});
     } else {
       this.setState({ entry: "menu" });
       this.setState({ isLoginVisibleModal: true });
     }
   };
-  _renderListView = (DATA) => (
-    <View style={{ marginTop: 20 }}>
-      <FlatList
-        data={DATA}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={{
-              height: 350,
-              width: 350,
-              borderRadius: 20,
-              marginRight: 10,
-              padding: 10,
-            }}
-            onPress={() => {
-              // console.log("item",item);
-              this.setState({ popupItem: item });
-              // console.log("this.state.popupItem",this.state.popupItem);
-              this.setState({ isPopupModal: true });
-            }}
-          >
-            <Card mode="elevated" style={{ borderRadius: 20 }}>
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 10,
-                }}
-              >
-                <Image
-                  style={{
-                    flex: 1,
-                    width: 200,
-                    height: 200,
-                    resizeMode: "stretch",
-                    borderRadius: 20,
-                  }}
-                  source={{ uri: item.imgURL }}
-                />
-              </View>
-              <Card.Title
-                style={{ margin: 10, fontSize: 15 }}
-                title={item.title}
-                subtitle={item.subtitle}
-                // left={LeftContent}
-              />
 
-              {/* <Card.Content>
-                <Title>Card title</Title>
-                <Paragraph>Card content</Paragraph>
-              </Card.Content> */}
-
-              {/* <Card.Actions>
-                <Button>Cancel</Button>
-                <Button>Ok</Button>
-              </Card.Actions> */}
-            </Card>
-            {/* <Text
-              style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
-              onPress={() => Linking.openURL(item.url)}
-            >
-              {item.title}
-            </Text> */}
-            {/* <ScrollView style={{ margin: 10 }}>
-              <Text style={{ fontSize: 14 }}>{item.abstract}</Text>
-            </ScrollView> */}
-            {/* <View style={{ justifyContent: "center", alignContent: "center" }}>
-              <FontAwesome name="book" size={128} color="black" />
-            </View> */}
-          </TouchableOpacity>
-        )}
-      />
-    </View>
-  );
   render() {
     return (
+      //Render the top level view
       <View style={{ justifyContent: "center" }}>
         <View
           style={{
             flex: 1,
-            //backgroundColor: "blue",
             margin: 5,
             flexDirection: "column",
             width: "100%",
@@ -366,6 +204,7 @@ export class Index extends React.Component {
             alignItems: "center",
           }}
         >
+          {/* Render the refer patient popup (pop up when users click either the menu and Refer Patient block) */}
           <Modal
             style={{ justifyContent: "center", alignItems: "center" }}
             isVisible={this.state.isReferPopupModal}
@@ -373,22 +212,7 @@ export class Index extends React.Component {
           >
             {this._renderReferModalPopup()}
           </Modal>
-          <Modal
-            style={{ justifyContent: "center", alignItems: "center" }}
-            isVisible={this.state.isLoginVisibleModal}
-            onBackdropPress={() =>
-              this.setState({ isLoginVisibleModal: false })
-            }
-          >
-            {this._renderModalLogin()}
-          </Modal>
-          <Modal
-            style={{ justifyContent: "center", alignItems: "center" }}
-            isVisible={this.state.isPopupModal}
-            onBackdropPress={() => this.setState({ isPopupModal: false })}
-          >
-            {this._renderModalPopup()}
-          </Modal>
+          {/* Render the imported menu component and pass patient functions */}
           <Menu
             navResource={this.navResource}
             navIndex={this.navIndex}
@@ -396,13 +220,14 @@ export class Index extends React.Component {
             navUserCenter={this.navUserCenter}
             showReferPatientModal={this.showReferPatientModal}
           />
+          {/* Render the whole text section (including title and blocks underneath) */}
           <View
             style={{
               width: this.state.windowWidth * 0.8,
-              // backgroundColor: "red",
               margin: 5,
             }}
           >
+            {/* Render the title and text underneath */}
             <View
               style={{
                 height: Dimensions.get("window").width > 1000 ? 160 : 320,
@@ -411,7 +236,9 @@ export class Index extends React.Component {
                 flexDirection: "column",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 65, color: "purple" }}>
+              <Text
+                style={{ fontWeight: "bold", fontSize: 65, color: "purple" }}
+              >
                 Welcome to Taperology!
               </Text>
               <Text style={{}}>
@@ -425,6 +252,7 @@ export class Index extends React.Component {
                 the three following sections:
               </Text>
             </View>
+            {/* Render the first row of the hoverable blocks */}
             <View
               style={{
                 margin: 0,
@@ -432,6 +260,8 @@ export class Index extends React.Component {
                   Dimensions.get("window").width > 1000 ? "row" : "column",
               }}
             >
+              {/* Hoverable block of Resources */}
+
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
@@ -457,8 +287,7 @@ export class Index extends React.Component {
                         width: 100,
                         marginTop: 10,
                         backgroundColor: "purple",
-                        borderRadius:10
-
+                        borderRadius: 10,
                       }}
                     ></View>
                     <Text style={{ marginTop: 20 }}>
@@ -470,6 +299,7 @@ export class Index extends React.Component {
                   </TouchableOpacity>
                 )}
               </Hoverable>
+              {/* Hoverable block of Taper Scheduler */}
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
@@ -496,8 +326,7 @@ export class Index extends React.Component {
                         width: 100,
                         marginTop: 10,
                         backgroundColor: "purple",
-                        borderRadius:10
-
+                        borderRadius: 10,
                       }}
                     ></View>
                     <Text style={{ marginTop: 20 }}>
@@ -510,7 +339,11 @@ export class Index extends React.Component {
                 )}
               </Hoverable>
             </View>
+            {/* Render the second row of the hoverable blocks */}
+
             <View style={{ margin: 0, flexDirection: "row" }}>
+              {/* Hoverable block of Refer Patient */}
+
               <Hoverable>
                 {({ hovered }) => (
                   <TouchableOpacity
@@ -534,7 +367,7 @@ export class Index extends React.Component {
                         width: 100,
                         marginTop: 10,
                         backgroundColor: "purple",
-                        borderRadius:10
+                        borderRadius: 10,
                       }}
                     ></View>
                     <Text style={{ marginTop: 20 }}>
@@ -545,47 +378,9 @@ export class Index extends React.Component {
                   </TouchableOpacity>
                 )}
               </Hoverable>
-              {/* <Hoverable>
-                {({ hovered }) => (
-                  <TouchableOpacity
-                    style={{
-                      height: 200,
-                      width: 500,
-                      marginTop: 10,
-                      padding: 20,
-                      borderRadius: 20,
-                      backgroundColor: hovered ? PRIMARY_COLOR : "#F2F2F2",
-                    }}
-                    onPress={() => this.navUserCenter()}
-                  >
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                      <FontAwesome
-                        name="user-circle-o"
-                        size={24}
-                        color="black"
-                      />
-                      <Text style={{ fontWeight: "bold", fontSize: 24, marginLeft: 10 }}>
-                        User Center
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        height: 10,
-                        width: 100,
-                        marginTop: 10,
-                        backgroundColor: "black",
-                      }}
-                    ></View>
-                    <Text style={{ marginTop: 20 }}>
-                      If you would like to save the taper schedules that you
-                      generate, you can logon using your Google account and save
-                      them here.
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </Hoverable> */}
             </View>
           </View>
+          {/* Render the bottom disclaimer */}
           <View>
             <Text style={{ margin: 15, fontSize: 10, textAlign: "center" }}>
               This website was created as part of a project funded by the

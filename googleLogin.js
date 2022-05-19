@@ -1,3 +1,7 @@
+// This file returns a Google login button
+// Users can login with their Google account and receive personal data (saved schedules)
+// Since the current version doesn't have any user-related feature 
+// This file is left for any future use
 import * as React from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -15,10 +19,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
-  // Modal,
   LayoutAnimation,
   SectionList,
-  // Button,
   Animated,
   StyleSheet,
   Dimensions,
@@ -30,15 +32,14 @@ import {
 
 WebBrowser.maybeCompleteAuthSession();
 
+//Add config here to initiate Google login service 
 const config = {
-  // expoClientId:
-  //   "734078016442-rs8o5titja31ne113sl1s8nhsftfi1f9.apps.googleusercontent.com",
-  webClientId:
-    "734078016442-rs8o5titja31ne113sl1s8nhsftfi1f9.apps.googleusercontent.com",
-  scopes: ["https://www.googleapis.com/auth/userinfo.email"],
+
 };
 
 export function GoogleLogin(props) {
+  // Using Expo's Authentication API:
+  // https://docs.expo.dev/guides/authentication/#google
   const [request, response, promptAsync] = Google.useAuthRequest(config);
   let auth;
   let dataModel = getDataModel();
@@ -52,8 +53,7 @@ export function GoogleLogin(props) {
       auth = authentication;
 
       let accessToken = auth.accessToken;
-      //console.log("auth",auth);
-      // console.log("dataModel.isLogin",dataModel.isLogin);
+
       let userInfoResponse = await fetch(
         "https://www.googleapis.com/userinfo/v2/me",
         {
@@ -76,9 +76,7 @@ export function GoogleLogin(props) {
           }
         }
       }
-      // if (requestFrom === "1") {
-      //   // console.log("requestFrom",requestFrom);
-      // }
+
       if (!isUserExist) {
         if (requestFrom === "1") {
           dataModel.createNewUser(userEmail);
@@ -90,6 +88,8 @@ export function GoogleLogin(props) {
         }
       }
       dataModel.isLogin = true;
+      // User can login by clicking on the button in the menu bar 
+      // Or they will be asked to log in when they want to save a schedule
       if (entry === "menu") {
         navUserCenter();
         dismissLoginModal();
@@ -101,28 +101,8 @@ export function GoogleLogin(props) {
   }, [response]);
 
   return (
+    // Render a clickable button 
     <View>
-      {/* <TouchableOpacity
-        disabled={!request}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 20,
-          height: 30,
-          justifyContent: "center",
-          alignItems: "center",
-          width: 200,
-
-          // marginTop: 50,
-          // marginLeft: 15,
-        }}
-        onPress={async () => {
-          await promptAsync();
-        }}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>
-          Login with Google
-        </Text>
-      </TouchableOpacity> */}
       <TouchableOpacity
         disabled={!request}
         style={{
@@ -133,13 +113,9 @@ export function GoogleLogin(props) {
           alignItems: "center",
           width: 200,
           marginTop: 10,
-
-          // marginTop: 50,
-          // marginLeft: 15,
         }}
         onPress={async () => {
           await setRequestFrom((requestFrom) => (requestFrom = "1"));
-          // console.log("requestFrom",requestFrom);
           await promptAsync();
         }}
       >
@@ -147,28 +123,6 @@ export function GoogleLogin(props) {
           Sign in with Google
         </Text>
       </TouchableOpacity>{" "}
-      {/* <TouchableOpacity
-        disabled={!request}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 20,
-          height: 30,
-          justifyContent: "center",
-          alignItems: "center",
-          width: "60%",
-          marginTop: 50,
-          marginLeft: 15,
-        }}
-        onPress={async () => {
-          
-          let isLogin = await AuthSession.dismiss();
-          console.log("isLogin",isLogin);
-        }}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>
-          Logout
-        </Text>
-      </TouchableOpacity> */}
     </View>
   );
 }

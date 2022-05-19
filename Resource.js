@@ -1,53 +1,33 @@
+/*
+This code refer to the Resource page 
+which contains a collection of taper resource ordered in different categories
+*/
 import React, { useState } from "react";
 import {
-  TextInput,
   Text,
   View,
   ScrollView,
   Image,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Alert,
-  // Modal,
-  LayoutAnimation,
-  SectionList,
-  Button,
   Dimensions,
-  Animated,
-  StyleSheet,
   Linking,
 } from "react-native";
-import { Modal as NativeModal } from "react-native";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from "@react-navigation/drawer";
-import {
-  Ionicons,
-  AntDesign,
-  FontAwesome,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import {
-  Avatar,
-  Card,
-  Title,
-  Paragraph,
-  Appbar,
-  FAB,
-} from "react-native-paper";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { Card } from "react-native-paper";
 import * as Analytics from "expo-firebase-analytics";
-
+import Modal from "modal-enhanced-react-native-web";
 import { FlatList } from "react-native-web";
 import { Menu } from "./menu";
-import { getDataModel } from "./DataModel";
-import Modal from "modal-enhanced-react-native-web";
-import { GoogleLogin } from "./googleLogin";
 
-const PRIMARY_COLOR = "#D8D8D8";
-const SEC_COLOR = "#848484";
+//This imports the data model for the user login function.
+//It's not used in the current version but can be activated if there is a future need.
+import { getDataModel } from "./DataModel";
+
+//This imports the Google Login component.
+//It's not used in the current version but can be activated if there is a future need.
+// import { GoogleLogin } from "./googleLogin";
+
+//Text used in the refer patient popup
 const REFER_PATIENT_TXT = (
   <Text style={{ margin: 10 }}>
     <Text style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -63,48 +43,10 @@ const REFER_PATIENT_TXT = (
       This locator is provided by SAMHSA (the Substance Abuse and Mental Health
       Services Administration).
     </Text>
-    {/* {"\n"}
-    {"\n"}
-    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-      Eligible mental health treatment facilities include:
-    </Text>
-    {"\n"}
-    <Text style={{ fontSize: 14 }}>
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Facilities that provide
-      mental health treatment services and are funded by the state mental health
-      agency (SMHA) or other state agency or department{"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Mental health treatment
-      facilities administered by the U.S. Department of Veterans Affairs{"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Private for-profit and
-      non-profit facilities that are licensed by a state agency to provide
-      mental health treatment services, or that are accredited by a national
-      treatment accreditation organization (e.g., The Joint Commission, NCQA,
-      etc.){"\n"}
-    </Text>
-    {"\n"}
-    {"\n"}
-    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-      Eligible substance use and addiction treatment facilities must meet at
-      least one of the criteria below:
-    </Text>
-    {"\n"}
-    <Text style={{ fontSize: 14 }}>
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>
-      Licensure/accreditation/approval to provide substance use treatment from
-      the state substance use agency (SSA) or a national treatment accreditation
-      organization (e.g., The Joint Commission, CARF, NCQA, etc.)
-      {"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Staff who hold specialized
-      credentials to provide substance use treatment services
-      {"\n"}
-      <Text style={{ fontSize: 20 }}>{"\u2022"}</Text>Authorization to bill
-      third-party payers for substance use treatment services using an alcohol
-      or drug client diagnosis
-      {"\n"}
-    </Text> */}
   </Text>
 );
 
+//Text used in the Benzo Basics for Clinicians section. Additional future resource can be added here.
 const BENZO_BASIC_CLINICIANS_DATA = [
   {
     title: "The Ashton Manual",
@@ -196,6 +138,8 @@ const BENZO_BASIC_CLINICIANS_DATA = [
     test: <Text></Text>,
   },
 ];
+
+//Text used in the Benzo Basics for Patient section. Additional future resource can be added here.
 const BENZO_BASIC_PATIENT_DATA = [
   {
     title: "BZD risk infographic",
@@ -271,6 +215,8 @@ const BENZO_BASIC_PATIENT_DATA = [
     ),
   },
 ];
+
+//Text used in the Resource on Insomnia section. Additional future resource can be added here.
 const INSOMNIA_DATA = [
   {
     title: "Insomnia Coach Sleep App",
@@ -360,32 +306,9 @@ const INSOMNIA_DATA = [
       </Text>
     ),
   },
-  // {
-  //   title: "BZD Deprescribing",
-  //   trackID: "INSOMNIA_DATA_3",
-  //   url: "https://drive.google.com/file/d/1-YIrbpLY-nsuV_R5WDLOz9emR8FQrs8a/view?usp=sharing",
-  //   imgURL:
-  //     "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/Noun_PDF.png?token=AJTYIQEOSAIW24SD62AGXO3BRGIYS",
-  //   subtitle: "Pamphlet",
-  //   abstract: (
-  //     <Text>
-  //       This 2-page pamphlet was created by{" "}
-  //       <Text
-  //         style={{ color: "blue" }}
-  //         onPress={() => {
-  //           Linking.openURL("https://deprescribing.org/resources/");
-  //         }}
-  //       >
-  //         deprescribing.org
-  //       </Text>
-  //       , a group led by a Canadian pharmacist (Dr. Barbara Farrell) and
-  //       geriatrician (Dr. Cara Tannenbaum) seeking to promote appropriate
-  //       deprescribing. ( They have a variety of additional patient- and
-  //       provider-facing resources, for a variety of different medications.)
-  //     </Text>
-  //   ),
-  // },
 ];
+
+//Text used in the Resource on Anxiety section. Additional future resource can be added here.
 const ANXIETY_DATA = [
   {
     title: "Breathing Retraining",
@@ -474,6 +397,8 @@ const ANXIETY_DATA = [
     ),
   },
 ];
+
+//Text used in the Resource on Tapering section. Additional future resource can be added here.
 const TAPER_RESOURCE = [
   {
     title: "The Ashton Manual (Overview)",
@@ -547,21 +472,6 @@ const TAPER_RESOURCE = [
       </Text>
     ),
   },
-  // {
-  //   title: "Quick Start Guide",
-  //   trackID: "BENZO_BASIC_DATA_4",
-  //   url: "https://drive.google.com/file/d/1-MfFm832mP7hcv_ao5dhMQnkGkyecO0a/view?usp=sharing",
-  //   imgURL:
-  //     "https://raw.githubusercontent.com/KefanXu/taperologyIMG/main/QuickStart.png?token=AJTYIQAGE4ZQZBGFGJNFOXLBRLAGS",
-  //   abstract:
-  //     "This is a brief, one-page infographic presenting potentially harms associated with prescription benzodiazepine use that may be useful in discussion with patients and family members.",
-  //   subtitle: "1-page Infographic",
-  // },
-];
-const TAPERING_DATA = [
-  { title: "Mysl", url: "", abstract: "" },
-  { title: "Mysl", url: "", abstract: "" },
-  { title: "Mysl", url: "", abstract: "" },
 ];
 
 export class Resources extends React.Component {
@@ -577,6 +487,8 @@ export class Resources extends React.Component {
     this.dataModel = getDataModel();
     this.listRef = React.createRef();
   }
+
+  //Render the refer patient popup
   _renderReferModalPopup = () => (
     <View
       style={{
@@ -592,7 +504,6 @@ export class Resources extends React.Component {
       <View>{REFER_PATIENT_TXT}</View>
       <TouchableOpacity
         onPress={async () => {
-          // let eventName = this.state.popupItem.trackID;
           await Analytics.logEvent("ReferPatient", {
             name: "ReferPatient",
             screen: "Calculator",
@@ -620,6 +531,8 @@ export class Resources extends React.Component {
       </TouchableOpacity>
     </View>
   );
+
+  //Render the popup window when each resource is clicked
   _renderModalPopup = () => (
     <View
       style={{
@@ -633,7 +546,14 @@ export class Resources extends React.Component {
       }}
     >
       <View>
-        <Text style={{ fontSize: 32, fontWeight: "bold", margin: 10, color:"purple" }}>
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "bold",
+            margin: 10,
+            color: "purple",
+          }}
+        >
           {this.state.popupItem.title}
         </Text>
         <ScrollView style={{ margin: 10 }}>
@@ -668,86 +588,98 @@ export class Resources extends React.Component {
       </TouchableOpacity>
     </View>
   );
-  _renderModalLogin = () => (
-    <View
-      style={{
-        backgroundColor: "white",
-        width: 300,
-        padding: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 20,
-        borderColor: "rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <FontAwesome name="user-circle-o" size={32} color="black" />
 
-      <View
-        style={{
-          flex: 1,
-          // backgroundColor: "red",
-          marginTop: 15,
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <GoogleLogin
-          navUserCenter={this.navUserCenterDir}
-          dismissLoginModal={this.dismissLoginModal}
-          entry={this.state.entry}
-          saveSchedule={this.saveSchedule}
-        />
-      </View>
-    </View>
-  );
+  //This renders the login popup.
+  //It's not used in the current version but can be activated if there is a future need.
+  // _renderModalLogin = () => (
+  //   <View
+  //     style={{
+  //       backgroundColor: "white",
+  //       width: 300,
+  //       padding: 20,
+  //       justifyContent: "center",
+  //       alignItems: "center",
+  //       borderRadius: 20,
+  //       borderColor: "rgba(0, 0, 0, 0.1)",
+  //     }}
+  //   >
+  //     <FontAwesome name="user-circle-o" size={32} color="black" />
+
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         // backgroundColor: "red",
+  //         marginTop: 15,
+  //         width: "100%",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //       }}
+  //     >
+  //       <GoogleLogin
+  //         navUserCenter={this.navUserCenterDir}
+  //         dismissLoginModal={this.dismissLoginModal}
+  //         entry={this.state.entry}
+  //         saveSchedule={this.saveSchedule}
+  //       />
+  //     </View>
+  //   </View>
+  // );
+
+  //This navigation function navigate users to the user center after they logged in.
+  //It's not used in the current version but can be activated if there is a future need.
   navUserCenterDir = () => {
-    this.props.navigation.navigate("UserCenter", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("UserCenter", {});
   };
+
+  //Function to close the login popup
+  //It's not used in the current version but can be activated if there is a future need.
   dismissLoginModal = () => {
     this.setState({ isLoginVisibleModal: false });
   };
+
+  //Function to navigate to the Resource Section.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navResource = () => {
-    this.props.navigation.navigate("Resources", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Resources", {});
   };
+
+  //Function to navigate to the Index page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navIndex = () => {
-    this.props.navigation.navigate("Index", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Index", {});
   };
+
+  //Function to navigate to the Calculator page.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   navCal = () => {
-    this.props.navigation.navigate("Calculator", {
-      // needsUpdate: this.needsUpdate,
-    });
+    this.props.navigation.navigate("Calculator", {});
   };
+
+  //Function to show the refer patient popup.
+  //Passed into the menu (menu.js) component.
+  //Write Google Analytics functions here if this is the user behavior to track.
   showReferPatientModal = () => {
     this.setState({ isReferPopupModal: true });
   };
+
+  //Function to navigate to the user center and load users' saved schedules.
+  //Passed into the googleLogin (googleLogin.js) component.
+  //It's not used in the current version but can be activated if there is a future need.
   navUserCenter = async () => {
     if (this.dataModel.isLogin) {
       await this.dataModel.loadUserSchedules(this.dataModel.key);
-      this.props.navigation.navigate("UserCenter", {
-        // needsUpdate: this.needsUpdate,
-      });
+      this.props.navigation.navigate("UserCenter", {});
     } else {
       this.setState({ entry: "menu" });
       this.setState({ isLoginVisibleModal: true });
     }
   };
+  //Render each row of the resource cards
   _renderListView = (DATA) => (
     <View style={{ marginTop: 20, flex: 1 }}>
-      {/* <Button
-        onPress={() => {
-          console.log("clicked");
-          this.listRef.current.scrollTo({ x: 24, y: 0, animated: true });
-        }}
-      >
-        <Text>Scroll Test</Text>
-      </Button> */}
       <FlatList
         data={DATA}
         horizontal={true}
@@ -763,9 +695,7 @@ export class Resources extends React.Component {
               padding: 10,
             }}
             onPress={() => {
-              // console.log("item",item);
               this.setState({ popupItem: item });
-              // console.log("this.state.popupItem",this.state.popupItem);
               this.setState({ isPopupModal: true });
             }}
           >
@@ -792,31 +722,8 @@ export class Resources extends React.Component {
                 style={{ margin: 10, fontSize: 15 }}
                 title={item.title}
                 subtitle={item.subtitle}
-                // left={LeftContent}
               />
-
-              {/* <Card.Content>
-                <Title>Card title</Title>
-                <Paragraph>Card content</Paragraph>
-              </Card.Content> */}
-
-              {/* <Card.Actions>
-                <Button>Cancel</Button>
-                <Button>Ok</Button>
-              </Card.Actions> */}
             </Card>
-            {/* <Text
-              style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}
-              onPress={() => Linking.openURL(item.url)}
-            >
-              {item.title}
-            </Text> */}
-            {/* <ScrollView style={{ margin: 10 }}>
-              <Text style={{ fontSize: 14 }}>{item.abstract}</Text>
-            </ScrollView> */}
-            {/* <View style={{ justifyContent: "center", alignContent: "center" }}>
-              <FontAwesome name="book" size={128} color="black" />
-            </View> */}
           </TouchableOpacity>
         )}
       />
@@ -824,6 +731,7 @@ export class Resources extends React.Component {
   );
   render() {
     return (
+      //Render the top level view
       <View style={{ justifyContent: "center" }}>
         <View
           style={{
@@ -835,6 +743,8 @@ export class Resources extends React.Component {
             alignItems: "center",
           }}
         >
+          {/* Render the refer patient popup (pop up when users click either the menu and Refer Patient block) */}
+
           <Modal
             style={{
               justifyContent: "center",
@@ -845,7 +755,8 @@ export class Resources extends React.Component {
           >
             {this._renderReferModalPopup()}
           </Modal>
-          <Modal
+          {/*  This renders the login popup. It's not used in the current version but can be activated if there is a future need. */}
+          {/* <Modal
             style={{
               justifyContent: "center",
               alignItems: "center",
@@ -856,7 +767,9 @@ export class Resources extends React.Component {
             }
           >
             {this._renderModalLogin()}
-          </Modal>
+          </Modal> */}
+          
+          {/* Render the popup window when each resource is clicked */}
           <Modal
             style={{
               justifyContent: "center",
@@ -867,6 +780,7 @@ export class Resources extends React.Component {
           >
             {this._renderModalPopup()}
           </Modal>
+          {/* Render the imported menu component and pass patient functions */}
           <Menu
             navResource={this.navResource}
             navIndex={this.navIndex}
@@ -874,6 +788,7 @@ export class Resources extends React.Component {
             navUserCenter={this.navUserCenter}
             showReferPatientModal={this.showReferPatientModal}
           />
+          {/* Render the view that consists of all resource cards */}
 
           <View
             style={{
@@ -881,14 +796,19 @@ export class Resources extends React.Component {
               margin: 5,
             }}
           >
+            {/* Render the title block, including the mouse control suggestion text */}
+
             <View
               style={{
                 height: 100,
                 margin: 10,
-                // backgroundColor:"red",
                 justifyContent: "space-between",
-                alignItems: Dimensions.get("window").width > 1000 ? "center" : "flex-start",
-                flexDirection: Dimensions.get("window").width > 1000 ? "row" : "column",
+                alignItems:
+                  Dimensions.get("window").width > 1000
+                    ? "center"
+                    : "flex-start",
+                flexDirection:
+                  Dimensions.get("window").width > 1000 ? "row" : "column",
               }}
             >
               <View
@@ -898,7 +818,9 @@ export class Resources extends React.Component {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontWeight: "bold", fontSize: 65, color:"purple" }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 65, color: "purple" }}
+                >
                   Resources
                 </Text>
               </View>
@@ -909,13 +831,20 @@ export class Resources extends React.Component {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontWeight: "bold", marginRight:20 }}>
-                  <Text>Press <Text style={{borderWidth:2, borderRadius:5}}>SHIFT</Text> to Scroll with Mouse Wheel</Text>
+                <Text style={{ fontWeight: "bold", marginRight: 20 }}>
+                  <Text>
+                    Press{" "}
+                    <Text style={{ borderWidth: 2, borderRadius: 5 }}>
+                      SHIFT
+                    </Text>{" "}
+                    to Scroll with Mouse Wheel
+                  </Text>
                   <Text>{"\n"}Or Swipe Left on the TrackPad</Text>
                 </Text>
                 <AntDesign name="arrowright" size={24} color="black" />
               </View>
             </View>
+            {/* Render the view below the title */}
             <View style={{ margin: 10 }}>
               <View style={{ marginTop: 10 }}>
                 <View
@@ -926,7 +855,13 @@ export class Resources extends React.Component {
                   }}
                 >
                   <View>
-                    <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 24,
+                        color: "purple",
+                      }}
+                    >
                       Benzo Basics for Clinicians ❹
                     </Text>
                   </View>
@@ -934,31 +869,40 @@ export class Resources extends React.Component {
                 {this._renderListView(BENZO_BASIC_CLINICIANS_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}
+                >
                   Benzo Basics for Patients ❸
                 </Text>
                 {this._renderListView(BENZO_BASIC_PATIENT_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}
+                >
                   Resources on Insomnia ❹
                 </Text>
                 {this._renderListView(INSOMNIA_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}
+                >
                   Resources on Anxiety ❺
                 </Text>
                 {this._renderListView(ANXIETY_DATA)}
               </View>
               <View style={{ marginTop: 30 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 24, color: "purple" }}
+                >
                   Resources on Tapering ❸
                 </Text>
                 {this._renderListView(TAPER_RESOURCE)}
               </View>
             </View>
           </View>
+          {/* Render the bottom disclaimer */}
           <View>
             <Text style={{ margin: 15, fontSize: 10, textAlign: "center" }}>
               This website was created as part of a project funded by the
