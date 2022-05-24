@@ -10,13 +10,13 @@ The tapering process involves several challenges. A rapid tapering process may c
 The website consists of the following sections:
 
 1. **Homepage**
-  - Introducing the website and explaining the functions of different sections. 
+    - Introducing the website and explaining the functions of different sections. 
 2. **Resource**
-  - Resources for clicians and resources that clicians can offer to their patients to help guide their tapering process (e.g., resources on insomnia and anxiety).
+    - Resources for clicians and resources that clicians can offer to their patients to help guide their tapering process (e.g., resources on insomnia and anxiety).
 3. **Taper Scheduler**
-  - A taper scheduler that helps clicians generate taper schedules and allows clicians to customize them to meet patients' conditions.
+    - A taper scheduler that helps clicians generate taper schedules and allows clicians to customize them to meet patients' conditions.
 4. **Refer Patient**
-  - A link to the SAMHSA Behavioral Health Treatment Services Locator. 
+    - A link to the SAMHSA Behavioral Health Treatment Services Locator. 
 
 ## Tech
 
