@@ -24,10 +24,29 @@ This website was developed using **React Native** under the [Expo](https://docs.
 
 The website also used Google as another service provider. The website is hosted by Google Firebase. In the previous versions, the website also used Firebase as the cloud database to store users' personal data, including their login emails and saved schedules. The website uses [Google Analytics](https://docs.expo.dev/versions/latest/sdk/firebase-analytics/) to track users' usage of different sections and functions. These tracking data will be displayed in the Firebase dashboard.
 
-Below are the descriptions for usage of the project's files. For more details, please refer to the code comment inside the files.
+Below are the descriptions for usage of the project's files. For more details, please refer to the code comments inside the files.
+
+Files in use (.js files):
+- App.js
+- babel.config.js
+- Calculator.js
+- index.js
+- menu.js
+- Resource.js
+
+To be noticed, the project still contains files that are responsible for user specific actions (e.g., logging in, signing up, saving schedules, updating saved schedules, etc.). Those files are not in-use since we removed the User Center page. Those functions can be activated in the future. Those files are:
+- DataModel.js
+- googleLogin.js
+- schedule.js
+- UserCenter.js
 
 **App.js**
 
+This file initiate the Firebase app (required for using Google Firebase Analytics). The file uses [react-navigation](https://reactnavigation.org) library to navigate through different sections. 
+
+To be noticed, the ```onStateChange()```  function is just an example to showcase the way to track if the user switch from one section to another. It can either be deleted or used in other places. 
+
+Also, if the developer want to load different fonts, here is the place. 
 
 
 ## How to start
