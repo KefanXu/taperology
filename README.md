@@ -24,7 +24,7 @@ This website was developed using **React Native** under the [Expo](https://docs.
 
 The website also used Google as another service provider. The website is hosted by Google Firebase. In the previous versions, the website also used Firebase as the cloud database to store users' personal data, including their login emails and saved schedules. The website uses [Google Analytics](https://docs.expo.dev/versions/latest/sdk/firebase-analytics/) to track users' usage of different sections and functions. These tracking data will be displayed in the Firebase dashboard.
 
-Below are the descriptions for usage of the project's files:
+Below are the descriptions for usage of the project's files. For more details, please refer to the code comment inside the files.
 
 **App.js**
 
