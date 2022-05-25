@@ -65,3 +65,26 @@ The Resource.js file renders the Resource page. It renders lists of resource inf
 This file renders the Taper Sceduler page. It contains functions which allow users to generate and modify the taper schedule.
 
 ## How to start
+
+### Install React Native and Expo
+
+As mentioned, this website was developed using React Native and Expo. The Expo development environment is also recommended by React Native Development Team. The developer can check out the document on both [React Native](https://reactnative.dev/docs/environment-setup) and [Expo website](https://docs.expo.dev/get-started/installation/). 
+
+Developing react native app within Expo requires few dependents:
+- [Node.js](https://nodejs.org/en/)
+- [Git](https://git-scm.com/)
+- [Watchman](https://facebook.github.io/watchman/docs/install#buildinstall)
+
+1. To install Expo CLI:
+```
+npm install --global expo-cli
+```
+2. Clone this repository
+```
+$ git clone https://github.com/KefanXu/taperology
+```
+3. Install all dependencies from package.json 
+```
+npm install
+```
+
