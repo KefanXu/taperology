@@ -93,3 +93,12 @@ npm install
 - Create a new .js file called secret.js 
     - To be noticed, this ```secret.js``` file is imported in the App.js file to initialize the Firebase app and gain access to Firebase related functions, such as Google Firebase Analytics. This is also why this file is also imported in the DataModel.js file. If the developer wants to use other platforms to host the website and track the usage, all codes that are related to Google Firebase Analytics need to be removed and the ```secret.js``` needs to be replaced with another configuration file.
 
+5. Run and test the project:
+
+```
+expo start -w
+```
+
+6. Publish and update the website
+
+- If the developer hope to keep using Firebase to host the website, please follow this [instruction](https://docs.expo.dev/distribution/publishing-websites/#firebase-hosting) that Expo offered.
