@@ -16,8 +16,9 @@ import firebase from "firebase";
 import "@firebase/firestore";
 import "@firebase/storage";
 import { firebaseConfig } from "./secret";
+import { colors } from "react-native-elements";
 //Initiate Firebase API
-//Not used in the current version, can be activated in the future
+//This is a dependent for the expo-firebase-analytics API
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -35,6 +36,7 @@ export default function App() {
     //Use navigation API here
     <NavigationContainer
       ref={navigationRef}
+      // theme={{colors:{background:"white"}}}
       onReady={() =>
         (routeNameRef.current = navigationRef.current.getCurrentRoute().name)
       }

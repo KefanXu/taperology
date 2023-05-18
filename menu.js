@@ -43,7 +43,9 @@ const PRIMARY_COLOR = "#D8D8D8";
 export class Menu extends React.Component {
   constructor(props) {
     super(props);
-    this.dataModel = getDataModel();
+    // This is used to load users' personal data
+    // REMOVED FROM THE CURRENT VERSION
+    // this.dataModel = getDataModel();
   }
 
   navUserCenter = () => this.props.navUserCenter();

@@ -55,7 +55,9 @@ export class Index extends React.Component {
       isReferPopupModal: false,
       windowWidth: Dimensions.get("window").width,
     };
-    this.dataModel = getDataModel();
+    // This is used to load users' personal data
+    // REMOVED FROM THE CURRENT VERSION
+    // this.dataModel = getDataModel();
   }
 
   //Render the refer patient popup
