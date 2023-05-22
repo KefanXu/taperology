@@ -241,7 +241,7 @@ export class Index extends React.Component {
               <Text
                 style={{ fontWeight: "bold", fontSize: 65, color: "purple" }}
               >
-                Welcome to Taperology!
+                Welcome to Benzo Basics!
               </Text>
               <Text style={{}}>
                 Clinicians may wish to reduce and or stop prescribing

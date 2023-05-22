@@ -104,7 +104,7 @@ export class Menu extends React.Component {
                   fontSize: Dimensions.get("window").width > 1000 ? 35 : 35,
                 }}
               >
-                Taperology
+                Benzo Basics
               </Text>
             </TouchableOpacity>
           </View>
