@@ -1,5 +1,7 @@
 # Taperology
 
+Copyright © 2023 The Regents of the University of Michigan
+
 ## Background
 
 ## Introduction to Taperology
