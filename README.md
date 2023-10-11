@@ -18,7 +18,10 @@ The website consists of the following sections:
 3. **Taper Scheduler**
     - A taper scheduler that helps clicians generate taper schedules and allows clicians to customize them to meet patients' conditions.
 4. **Refer Patient**
-    - A link to the SAMHSA Behavioral Health Treatment Services Locator. 
+    - A link to the SAMHSA Behavioral Health Treatment Services Locator.
+  
+## Dependencies 
+[Link text Here](https://link-url-here.org)
 
 ## Tech
 
