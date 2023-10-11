@@ -24,7 +24,8 @@ The website consists of the following sections:
 
 | Dependencies | Licence |
 |--------------|---------|
-|      Expo        |         |
+|      [Expo]([https://link-url-here.org](https://github.com/expo/expo/tree/sdk-49#license
+))        |     MIT Licence    |
 |              |         |
 |              |         |
 
