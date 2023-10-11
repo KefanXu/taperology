@@ -1,0 +1,40 @@
+
+This product includes software from the Expo project (MIT License).
+https://github.com/expo/expo/tree/sdk-49#license
+ * Licensed under the MIT License;
+
+This product includes software from the React Native (MIT License).
+https://github.com/wesm/featherhttps://github.com/facebook/react-native#-license
+ * Licensed under the MIT License;
+
+This product includes software from the React Navigation 6 (MIT License).
+https://github.com/react-navigation/react-navigation
+ * Licensed under the MIT License;
+
+This product includes software from the React Native Elements (MIT License).
+https://github.com/react-native-elements/react-native-elements
+ * Licensed under the MIT License;
+
+This product includes software from the react-native-paper-dates (MIT License).
+https://github.com/web-ridge/react-native-paper-dates
+ * Licensed under the MIT License;
+
+This product includes software from the React Native Web Modal (MIT License)
+https://github.com/Dekoruma/react-native-web-modal/tree/master
+ * Licensed under the MIT License;
+
+This product includes software from the React Native Paper (MIT License)
+https://github.com/callstack/react-native-paper
+ * Licensed under the MIT License;
+
+This product includes software from the Moment.js (MIT License)
+https://github.com/moment/moment/
+ * Licensed under the MIT License;
+
+This product includes software from the React Native Web (MIT License)
+https://github.com/necolas/react-native-web/tree/master
+ * Licensed under the MIT License;
+
+This product includes software from the React Native Firebase (Apache 2.0)
+ * Copyright (c) 2016-present Invertase Limited <oss@invertase.io>
+https://github.com/invertase/react-native-firebase/tree/main
