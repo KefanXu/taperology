@@ -24,9 +24,16 @@ The website consists of the following sections:
 
 | Dependencies | Licence |
 |--------------|---------|
-|      [Expo]([https://link-url-here.org](https://github.com/expo/expo/tree/sdk-49#license)        |     MIT Licence    |
-|              |         |
-|              |         |
+|      [Expo](https://github.com/expo/expo/tree/sdk-49#license)        |     MIT Licence    |
+|      [React Native](https://github.com/wesm/featherhttps://github.com/facebook/react-native#-license)        |     MIT Licence    |
+|      [React Navigation 6](https://github.com/react-navigation/react-navigation)        |     MIT Licence    |
+|      [React Native Elements](https://github.com/react-native-elements/react-native-elements)        |     MIT Licence    |
+|      [react-native-paper-dates](https://github.com/web-ridge/react-native-paper-dates)        |     MIT Licence    |
+|      [React Native Web Modal](https://github.com/Dekoruma/react-native-web-modal/tree/master)        |     MIT Licence    |
+|      [React Native Paper](https://github.com/callstack/react-native-paper)        |     MIT Licence    |
+|      [Moment.js](https://github.com/moment/moment/)        |     MIT Licence    |
+|      [React Native Web](https://github.com/necolas/react-native-web/tree/master)        |     MIT Licence    |
+|      [React Native Firebase](https://github.com/invertase/react-native-firebase/tree/main)        |     Apache 2.0   |
 
 ## Tech
 
