@@ -21,7 +21,12 @@ The website consists of the following sections:
     - A link to the SAMHSA Behavioral Health Treatment Services Locator.
   
 ## Dependencies 
-[Link text Here](https://link-url-here.org)
+
+| Dependencies | Licence |
+|--------------|---------|
+|      Expo        |         |
+|              |         |
+|              |         |
 
 ## Tech
 
