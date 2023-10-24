@@ -18,6 +18,8 @@ The website consists of the following sections:
 4. **Refer Patient**
     - A link to the SAMHSA Behavioral Health Treatment Services Locator.
   
+**Visiting the [site](https://benzobasics.com) here.**
+  
 ## Dependencies 
 
 | Dependencies | Licence |
