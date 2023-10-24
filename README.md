@@ -1,8 +1,6 @@
-# Taperology
+# [Taperology](https://benzobasics.com)
 
 Copyright © 2023 The Regents of the University of Michigan
-
-## Background
 
 ## Introduction to Taperology
 This project is a website that aims to help clinicians reduce and or stop prescribing benzodiazepines (BZD) for some of their patients. The website adopts the taper methodology to achieve this goal. In this context, tapering refers to the patient's practice of gradually reducing the dosage of benzodiazepines and eventually withdrawing from using the drug.
